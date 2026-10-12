@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Fundamentals - A Beginner's Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+        .presentation { width: 100vw; height: 100vh; position: relative; }
+        .slide {
+            width: 100%; height: 100%;
+            display: none; position: absolute; top: 0; left: 0;
+            padding: 50px 70px 80px 70px;
+            background: white;
+            animation: slideIn 0.5s ease-out;
+            overflow-y: auto;
+        }
+        .slide.active { display: flex; flex-direction: column; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide.title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; text-align: center; justify-content: center;
+            overflow-y: auto; padding-bottom: 100px;
+        }
+        .slide.title-slide h1 { font-size: 3.5em; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .slide.title-slide .subtitle { font-size: 1.8em; opacity: 0.95; margin-bottom: 50px; }
+        .slide.title-slide .tagline {
+            font-size: 2.3em; font-weight: bold;
+            background: rgba(255,255,255,0.2); padding: 20px 40px;
+            border-radius: 10px; display: inline-block; margin-bottom: 60px;
+        }
+        .author-info {
+            margin-top: 50px; padding: 30px;
+            background: rgba(255,255,255,0.15); border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .author-info h3 { font-size: 2em; margin-bottom: 15px; color: white; }
+        .author-info a {
+            color: white; text-decoration: none; font-size: 1.3em;
+            border-bottom: 2px solid rgba(255,255,255,0.5); transition: all 0.3s ease;
+        }
+        .author-info a:hover { border-bottom-color: white; opacity: 0.8; }
+        .slide.separator-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; text-align: center; justify-content: center; align-items: center;
+        }
+        .slide.separator-slide h1 { font-size: 4em; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .slide.separator-slide p { font-size: 1.8em; color: white; opacity: 0.95; }
+        .slide-footer {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); text-align: center;
+            font-size: 0.85em; color: #888; z-index: 999;
+        }
+        .slide-footer a { color: #667eea; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.3s ease; }
+        .slide-footer a:hover { border-bottom-color: #667eea; }
+        h2 { color: #667eea; font-size: 2.2em; margin-bottom: 25px; border-bottom: 4px solid #667eea; padding-bottom: 12px; }
+        h3 { color: #764ba2; font-size: 1.5em; margin-top: 22px; margin-bottom: 12px; }
+        h4 { color: #667eea; font-size: 1.25em; margin-top: 12px; margin-bottom: 8px; }
+        p { font-size: 1.1em; line-height: 1.6; margin-bottom: 12px; color: #333; }
+        ul { margin-left: 35px; margin-bottom: 12px; }
+        li { font-size: 1.05em; line-height: 1.7; margin-bottom: 10px; color: #444; }
+        strong { color: #667eea; font-weight: 600; }
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 22px 28px; border-radius: 12px; margin: 18px 0;
+            border-left: 5px solid #667eea; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .highlight-box h3 { margin-top: 0; color: #667eea; }
+        .code-block {
+            background: #f8f9fa; color: #2d2d2d;
+            padding: 22px 28px; border-radius: 10px;
+            border-left: 5px solid #667eea;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em; line-height: 1.65;
+            white-space: pre; overflow-x: auto;
+            margin: 18px 0; box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            tab-size: 4; flex-shrink: 0;
+        }
+        /* Interactive: Token Visualizer */
+        .token-viz {
+            background: #f8f9fa; padding: 25px 30px; border-radius: 12px;
+            border-left: 5px solid #667eea; margin: 20px 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08); flex-shrink: 0;
+        }
+        .token-viz h4 { margin-top: 0; color: #667eea; }
+        .token-viz textarea {
+            width: 100%; padding: 12px 15px; border: 2px solid #667eea;
+            border-radius: 8px; font-size: 1em; font-family: 'Segoe UI', sans-serif;
+            min-height: 70px; resize: vertical;
+        }
+        .token-viz textarea:focus { outline: none; border-color: #764ba2; box-shadow: 0 0 0 3px rgba(102,126,234,0.2); }
+        .token-display {
+            margin-top: 15px; padding: 15px;
+            background: white; border-radius: 8px; min-height: 50px;
+            line-height: 2.3; font-family: 'Consolas', monospace;
+        }
+        .token-chunk {
+            display: inline-block; padding: 3px 8px; margin: 3px 2px;
+            border-radius: 5px; font-size: 0.95em;
+        }
+        .token-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-top: 15px;
+        }
+        .token-stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 14px; border-radius: 8px; text-align: center;
+        }
+        .token-stat-card .stat-value { font-size: 2em; font-weight: 700; }
+        .token-stat-card .stat-label { font-size: 0.85em; opacity: 0.9; }
+        /* Interactive: Cost Calculator */
+        .cost-calc {
+            background: #f8f9fa; padding: 25px 30px; border-radius: 12px;
+            border-left: 5px solid #667eea; margin: 20px 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08); flex-shrink: 0;
+        }
+        .cost-calc h4 { margin-top: 0; color: #667eea; }
+        .cost-inputs { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 15px; margin-bottom: 15px; align-items: end; }
+        .cost-inputs label { display: block; font-size: 0.9em; font-weight: 600; color: #555; margin-bottom: 5px; }
+        .cost-inputs input, .cost-inputs select {
+            width: 100%; padding: 9px 12px; border: 2px solid #667eea;
+            border-radius: 6px; font-size: 1em;
+        }
+        .cost-inputs input:focus, .cost-inputs select:focus { outline: none; border-color: #764ba2; }
+        .cost-results { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .cost-result-card { padding: 18px; border-radius: 10px; text-align: center; }
+        .cost-result-card .cost-label { font-size: 0.9em; font-weight: 600; margin: 0; }
+        .cost-result-card .cost-value { font-size: 1.8em; font-weight: 700; margin: 8px 0 0; }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 22px 0; }
+        .comparison-card { padding: 22px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .comparison-card h4 { margin-top: 0; font-size: 1.3em; }
+        table { width: 100%; border-collapse: collapse; margin: 18px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 13px; text-align: left; font-size: 1.05em; font-weight: 600; }
+        td { padding: 12px 13px; border-bottom: 1px solid #e0e0e0; font-size: 1em; line-height: 1.55; }
+        tr:hover { background: #f5f7fa; }
+        .benefit-list { background: #f8f9fa; padding: 18px 28px; border-radius: 10px; margin: 12px 0; border-left: 4px solid #667eea; }
+        .warning-box { background: #fff3e0; padding: 18px 22px; border-radius: 10px; border-left: 5px solid #ff9800; margin: 18px 0; }
+        .success-box { background: #e8f5e9; padding: 18px 22px; border-radius: 10px; border-left: 5px solid #4caf50; margin: 18px 0; }
+        .architecture-diagram { display: flex; flex-direction: column; gap: 12px; margin: 22px 0; }
+        .arch-layer { padding: 16px 20px; border-radius: 10px; border-left: 5px solid; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        .emoji { font-size: 1.2em; margin-right: 10px; }
+        .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
+        .toc-section { background: white; padding: 18px; border-radius: 10px; border-left: 4px solid #667eea; }
+        .toc-section h3 { color: #667eea; font-size: 1.3em; margin: 0 0 12px 0; }
+        .toc-section ul { margin-left: 20px; }
+        .toc-section li { font-size: 1em; margin-bottom: 6px; color: #555; }
+        .stack-diagram { display: flex; flex-direction: column-reverse; gap: 2px; margin: 18px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .stack-layer { padding: 13px 20px; text-align: center; font-weight: 600; font-size: 1.05em; }
+        .nav { position: fixed; bottom: 20px; right: 30px; z-index: 1000; }
+        .nav button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 11px 22px; margin: 0 5px;
+            border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: 600;
+            transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .nav button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+        .nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .slide-counter {
+            position: fixed; bottom: 20px; left: 30px; background: white;
+            padding: 10px 18px; border-radius: 20px; font-size: 1.05em;
+            font-weight: 600; color: #667eea; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active">
+            <h1>🤖 GenAI Fundamentals</h1>
+            <div class="subtitle">A Beginner's Guide — From AI to Transformers</div>
+            <div class="tagline">Understand AI. Master GenAI.</div>
+        </div>
+
+        <!-- Slide 2: Agenda -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">📋</span>Agenda</h1>
+            <div class="toc-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="toc-section">
+                    <h3>Part 1-2: Foundations</h3>
+                    <ul>
+                        <li>What is AI?</li>
+                        <li>Intelligent System Components</li>
+                        <li>Types of AI Systems</li>
+                        <li>Structured vs Unstructured Data</li>
+                        <li>Labelled vs Unlabelled Data</li>
+                    </ul>
+                </div>
+                <div class="toc-section">
+                    <h3>Part 3-5: ML &amp; DL</h3>
+                    <ul>
+                        <li>Machine Learning Basics</li>
+                        <li>Supervised &amp; Unsupervised</li>
+                        <li>Common ML Algorithms</li>
+                        <li>Deep Learning &amp; Neural Nets</li>
+                        <li>ML/DL for NLP &amp; Vision</li>
+                    </ul>
+                </div>
+                <div class="toc-section">
+                    <h3>Part 6-7: GenAI Models</h3>
+                    <ul>
+                        <li>Generative vs Predictive AI</li>
+                        <li>Text, Image, Audio, Video Gen</li>
+                        <li>What are Parameters?</li>
+                        <li>Top LLMs &amp; Image Models</li>
+                        <li>Open Source vs Proprietary</li>
+                    </ul>
+                </div>
+                <div class="toc-section">
+                    <h3>Part 8: Tokens &amp; Pricing</h3>
+                    <ul>
+                        <li>What is Tokenization?</li>
+                        <li>Tokenization Techniques</li>
+                        <li>Interactive Token Visualizer</li>
+                        <li>Pricing Comparison Table</li>
+                        <li>Context Window</li>
+                    </ul>
+                </div>
+                <div class="toc-section">
+                    <h3>Part 9: Transformers</h3>
+                    <ul>
+                        <li>Transformer Architecture</li>
+                        <li>Attention Mechanism</li>
+                        <li>Encoder/Decoder Models</li>
+                        <li>Mixture of Experts (MoE)</li>
+                        <li>Model Selection Matrix</li>
+                    </ul>
+                </div>
+                <div class="toc-section">
+                    <h3>Part 10: Wrap Up</h3>
+                    <ul>
+                        <li>Best Practices</li>
+                        <li>Common Pitfalls</li>
+                        <li>Learning Path</li>
+                        <li>Key Takeaways</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Separator Part 1 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🧠</span>Part 1</h1>
+            <p>AI Foundations — What is Artificial Intelligence?</p>
+        </div>
+
+        <!-- Slide 4: What is AI -->
+        <div class="slide">
+            <h2><span class="emoji">🤔</span>What is Artificial Intelligence?</h2>
+            <div class="highlight-box">
+                <h3>The Working Definition</h3>
+                <p><strong>Artificial Intelligence (AI)</strong> is the science of building machines and software that can perform tasks normally requiring human intelligence — like understanding language, recognizing images, making decisions, learning from experience, or solving problems.</p>
+            </div>
+            <h3>AI Is All Around You</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Your smartphone keyboard</strong> predicts the next word as you type</li>
+                    <li><strong>Netflix and YouTube</strong> recommend what to watch next</li>
+                    <li><strong>Banking apps</strong> detect fraudulent transactions in milliseconds</li>
+                    <li><strong>Google Maps</strong> calculates the fastest route considering live traffic</li>
+                    <li><strong>Voice assistants</strong> (Siri, Alexa, Google) understand spoken language</li>
+                    <li><strong>Email spam filters</strong> sort your inbox automatically</li>
+                    <li><strong>ChatGPT, Claude, Gemini</strong> write essays and code on demand</li>
+                </ul>
+            </div>
+            <h3>The Three "Levels" of AI (Conceptually)</h3>
+            <div class="comparison-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">Narrow AI ✅</h4>
+                    <p>Excels at <em>one</em> task: spam filters, image classifiers, ChatGPT. <strong>All AI today is this.</strong></p>
+                </div>
+                <div class="comparison-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
+                    <h4 style="color: #e65100;">General AI 🔮</h4>
+                    <p>Human-level across all cognitive tasks. <strong>Doesn't exist yet</strong> — still a research goal.</p>
+                </div>
+                <div class="comparison-card" style="background: #ffebee; border-left: 5px solid #f44336;">
+                    <h4 style="color: #c62828;">Super AI 🚀</h4>
+                    <p>Surpasses human intelligence. <strong>Hypothetical and contested.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Components of an Intelligent System (SVG) -->
+        <div class="slide">
+            <h2><span class="emoji">🧩</span>Components of an Intelligent System</h2>
+            <div class="highlight-box">
+                <h3>Five Building Blocks</h3>
+                <p>Every AI system — from a thermostat to GPT-5 — combines some subset of these five components. The more sophisticated the AI, the richer each component becomes.</p>
+            </div>
+            <svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 1000px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="ai-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                    <filter id="ai-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                    </filter>
+                    <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#667eea"/>
+                        <stop offset="100%" stop-color="#764ba2"/>
+                    </linearGradient>
+                </defs>
+                <!-- 1. Perception -->
+                <rect x="40" y="140" width="150" height="100" rx="12" fill="#e3f2fd" stroke="#2196f3" stroke-width="2.5" filter="url(#ai-shadow)"/>
+                <text x="115" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#1565c0">1. Perception</text>
+                <text x="115" y="195" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">Sensors / Inputs</text>
+                <text x="115" y="215" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">cameras, text, audio,</text>
+                <text x="115" y="230" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">data streams</text>
+                <line x1="190" y1="190" x2="245" y2="190" stroke="#667eea" stroke-width="2.5" marker-end="url(#ai-arrow)"/>
+                <!-- 2. Knowledge -->
+                <rect x="250" y="60" width="170" height="100" rx="12" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2.5" filter="url(#ai-shadow)"/>
+                <text x="335" y="90" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#6a1b9a">2. Knowledge</text>
+                <text x="335" y="115" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#6a1b9a">Memory &amp; rules,</text>
+                <text x="335" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#6a1b9a">facts, training data,</text>
+                <text x="335" y="150" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#6a1b9a">learned patterns</text>
+                <!-- 3. Reasoning -->
+                <rect x="250" y="220" width="170" height="100" rx="12" fill="url(#brainGradient)" stroke="#667eea" stroke-width="2.5" filter="url(#ai-shadow)"/>
+                <text x="335" y="250" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700" fill="white">3. Reasoning</text>
+                <text x="335" y="275" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="white">Decision making,</text>
+                <text x="335" y="293" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="white">inference, planning,</text>
+                <text x="335" y="308" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="white">problem solving</text>
+                <line x1="335" y1="160" x2="335" y2="218" stroke="#9c27b0" stroke-width="2.5" stroke-dasharray="4,3"/>
+                <text x="350" y="195" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">uses</text>
+                <line x1="420" y1="270" x2="475" y2="270" stroke="#667eea" stroke-width="2.5" marker-end="url(#ai-arrow)"/>
+                <!-- 4. Action -->
+                <rect x="480" y="220" width="160" height="100" rx="12" fill="#e8f5e9" stroke="#4caf50" stroke-width="2.5" filter="url(#ai-shadow)"/>
+                <text x="560" y="250" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#2e7d32">4. Action</text>
+                <text x="560" y="275" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#2e7d32">Output / response,</text>
+                <text x="560" y="293" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#2e7d32">prediction, generated</text>
+                <text x="560" y="308" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#2e7d32">text, motor commands</text>
+                <line x1="640" y1="270" x2="695" y2="270" stroke="#667eea" stroke-width="2.5" marker-end="url(#ai-arrow)"/>
+                <!-- World/Environment -->
+                <rect x="700" y="220" width="160" height="100" rx="12" fill="#fff3e0" stroke="#ff9800" stroke-width="2.5" filter="url(#ai-shadow)"/>
+                <text x="780" y="265" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#e65100">Environment</text>
+                <text x="780" y="290" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">Real world / user</text>
+                <!-- 5. Learning (feedback loop) -->
+                <rect x="340" y="345" width="280" height="30" rx="6" fill="#fce4ec" stroke="#ec407a" stroke-width="2"/>
+                <text x="480" y="365" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#ad1457">5. Learning ↻ feedback loop</text>
+                <path d="M 780 320 Q 780 360 620 360" fill="none" stroke="#ec407a" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ai-arrow)"/>
+                <path d="M 340 360 Q 200 360 115 240" fill="none" stroke="#ec407a" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ai-arrow)"/>
+                <!-- Title at top -->
+                <text x="450" y="30" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#667eea">The Anatomy of an Intelligent System</text>
+            </svg>
+        </div>
+
+        <!-- Slide 6: Types of AI Systems (Hierarchical Tree) -->
+        <div class="slide">
+            <h2><span class="emoji">🌳</span>The Many Faces of AI: Major Types</h2>
+            <div class="highlight-box">
+                <p>"AI" is an <strong>umbrella term</strong>. Underneath it sit several distinct disciplines, each with its own techniques and use cases. Most people today think "AI = ChatGPT", but the reality is far richer.</p>
+            </div>
+            <svg viewBox="0 0 1000 360" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 1050px; display: block; margin: 18px auto;">
+                <defs>
+                    <linearGradient id="aiRoot" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#667eea"/>
+                        <stop offset="100%" stop-color="#764ba2"/>
+                    </linearGradient>
+                </defs>
+                <!-- Root: AI -->
+                <rect x="420" y="20" width="160" height="55" rx="10" fill="url(#aiRoot)" stroke="#667eea" stroke-width="2.5"/>
+                <text x="500" y="45" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700" fill="white">Artificial</text>
+                <text x="500" y="65" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700" fill="white">Intelligence</text>
+                <!-- Connector down -->
+                <line x1="500" y1="75" x2="500" y2="105" stroke="#667eea" stroke-width="2.5"/>
+                <!-- Horizontal bar -->
+                <line x1="90" y1="105" x2="910" y2="105" stroke="#667eea" stroke-width="2.5"/>
+                <!-- Vertical lines to children -->
+                <line x1="90" y1="105" x2="90" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <line x1="255" y1="105" x2="255" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <line x1="418" y1="105" x2="418" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <line x1="582" y1="105" x2="582" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <line x1="745" y1="105" x2="745" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <line x1="910" y1="105" x2="910" y2="135" stroke="#667eea" stroke-width="2.5"/>
+                <!-- Child 1: ML -->
+                <rect x="20" y="135" width="140" height="65" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                <text x="90" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#1565c0">Machine</text>
+                <text x="90" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#1565c0">Learning</text>
+                <text x="90" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">Learns from data</text>
+                <text x="90" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ fraud, recsys</text>
+                <!-- Child 2: Optimization -->
+                <rect x="185" y="135" width="140" height="65" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+                <text x="255" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#6a1b9a">Optimization</text>
+                <text x="255" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#6a1b9a">&amp; Search</text>
+                <text x="255" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#6a1b9a">Finds best solution</text>
+                <text x="255" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ portfolios, routes</text>
+                <!-- Child 3: Expert Systems -->
+                <rect x="348" y="135" width="140" height="65" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                <text x="418" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#2e7d32">Expert</text>
+                <text x="418" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#2e7d32">Systems</text>
+                <text x="418" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#2e7d32">Rule-based logic</text>
+                <text x="418" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ underwriting</text>
+                <!-- Child 4: Robotics -->
+                <rect x="512" y="135" width="140" height="65" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                <text x="582" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#e65100">Robotics</text>
+                <text x="582" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#e65100">&amp; RPA</text>
+                <text x="582" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">Physical / process</text>
+                <text x="582" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ warehousing</text>
+                <!-- Child 5: Mechatronics -->
+                <rect x="675" y="135" width="140" height="65" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+                <text x="745" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#c62828">Mechatronics</text>
+                <text x="745" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#c62828">&amp; Control</text>
+                <text x="745" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#c62828">Sensors + actuators</text>
+                <text x="745" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ self-driving cars</text>
+                <!-- Child 6: NLP/Symbolic -->
+                <rect x="840" y="135" width="140" height="65" rx="8" fill="#fce4ec" stroke="#ec407a" stroke-width="2"/>
+                <text x="910" y="160" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#ad1457">Symbolic /</text>
+                <text x="910" y="178" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#ad1457">Logic AI</text>
+                <text x="910" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#ad1457">Symbolic reasoning</text>
+                <text x="910" y="234" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#666">→ theorem proving</text>
+                <!-- ML drill-down: branches into DL and Classical ML -->
+                <line x1="90" y1="245" x2="90" y2="275" stroke="#2196f3" stroke-width="2"/>
+                <line x1="40" y1="275" x2="140" y2="275" stroke="#2196f3" stroke-width="2"/>
+                <line x1="40" y1="275" x2="40" y2="298" stroke="#2196f3" stroke-width="2"/>
+                <line x1="140" y1="275" x2="140" y2="298" stroke="#2196f3" stroke-width="2"/>
+                <rect x="5" y="298" width="70" height="38" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1.5"/>
+                <text x="40" y="320" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="600" fill="#1565c0">Classical</text>
+                <rect x="105" y="298" width="70" height="38" rx="6" fill="url(#aiRoot)" stroke="#667eea" stroke-width="1.5"/>
+                <text x="140" y="315" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="white">Deep</text>
+                <text x="140" y="328" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="white">Learning</text>
+                <!-- annotation -->
+                <text x="500" y="345" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#888">Modern GenAI lives inside Deep Learning ↑ inside Machine Learning ↑ inside AI</text>
+            </svg>
+        </div>
+
+        <!-- Slide 7: Types of AI in Detail -->
+        <div class="slide">
+            <h2><span class="emoji">🔍</span>AI Types in Detail: Real Examples</h2>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>What It Does</th>
+                    <th>BFSI &amp; Real-World Examples</th>
+                </tr>
+                <tr>
+                    <td><strong>Machine Learning</strong></td>
+                    <td>Learns patterns from historical data; makes predictions on new data</td>
+                    <td>Credit-card fraud detection, loan default prediction, customer churn, recommendation engines (Netflix, Amazon)</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimization &amp; Search</strong></td>
+                    <td>Finds the best solution from millions of possibilities under constraints</td>
+                    <td>Portfolio optimization, ATM cash-loading schedules, branch staffing, supply-chain routing, airline pricing</td>
+                </tr>
+                <tr>
+                    <td><strong>Expert Systems</strong></td>
+                    <td>Encodes human expertise as if-then rules ("knowledge bases")</td>
+                    <td>Medical diagnosis (MYCIN), insurance underwriting rules, tax-software logic, regulatory compliance checks</td>
+                </tr>
+                <tr>
+                    <td><strong>Robotics &amp; RPA</strong></td>
+                    <td>Physical robots OR software robots that automate workflows</td>
+                    <td>Warehouse pick-and-place (Amazon), bank-back-office RPA (UiPath bots reconciling transactions)</td>
+                </tr>
+                <tr>
+                    <td><strong>Mechatronics &amp; Control</strong></td>
+                    <td>Sensors + actuators + control logic for closed-loop physical systems</td>
+                    <td>Self-driving cars, ATMs, industrial automation, drones, autonomous trading systems</td>
+                </tr>
+                <tr>
+                    <td><strong>Symbolic / Logic AI</strong></td>
+                    <td>Reasoning with formal logic and symbols (not statistical)</td>
+                    <td>Theorem proving, semantic web, knowledge graphs, formal verification of smart contracts</td>
+                </tr>
+                <tr>
+                    <td><strong>Deep Learning</strong></td>
+                    <td>Multi-layered neural networks; learns features from raw data</td>
+                    <td>Image classification, speech recognition, language translation, foundation for ChatGPT &amp; Claude</td>
+                </tr>
+            </table>
+            <div class="warning-box">
+                <p><strong>Key insight:</strong> Most modern enterprise AI uses a <em>blend</em> of these — e.g., a fraud-detection system might combine ML scoring + rule-based filters + optimization to choose what to block.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Traditional AI for Predictive Analytics -->
+        <div class="slide">
+            <h2><span class="emoji">📊</span>Traditional AI for Predictive Analytics</h2>
+            <div class="highlight-box">
+                <h3>The Workhorse of Enterprise AI (and Still Is)</h3>
+                <p><strong>Predictive analytics</strong> uses historical data to forecast future events — what will happen, how likely, and when. This was AI's biggest commercial win <em>long before</em> ChatGPT existed.</p>
+            </div>
+            <h3>Common Predictive Use Cases in BFSI</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Credit scoring:</strong> Will this applicant repay a loan?</li>
+                    <li><strong>Fraud detection:</strong> Is this transaction fraudulent? (real-time, &lt;100ms)</li>
+                    <li><strong>Customer churn:</strong> Which customers are likely to leave in the next 90 days?</li>
+                    <li><strong>Demand forecasting:</strong> How much cash does this ATM need next week?</li>
+                    <li><strong>Risk modeling:</strong> What's the expected loss on this portfolio?</li>
+                    <li><strong>Next-best-action:</strong> Which product should we offer this customer?</li>
+                    <li><strong>Anti-money-laundering:</strong> Does this transaction pattern look suspicious?</li>
+                </ul>
+            </div>
+            <div class="success-box">
+                <h4>Why It Still Matters in the GenAI Era</h4>
+                <p>GenAI is impressive but expensive, slow, and probabilistic. For high-volume, low-latency, deterministic tasks like fraud scoring (millions of transactions per second), traditional ML is <strong>still the right tool</strong>. Don't use a sledgehammer when a scalpel works.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Separator Part 2 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">📦</span>Part 2</h1>
+            <p>The Data That Powers AI</p>
+        </div>
+
+        <!-- Slide 10: Structured vs Unstructured Data -->
+        <div class="slide">
+            <h2><span class="emoji">📋</span>Structured vs. Unstructured Data</h2>
+            <div class="highlight-box">
+                <p><strong>Every AI system runs on data.</strong> But not all data is created equal. The shape of your data determines which AI techniques can work with it.</p>
+            </div>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+                    <h4 style="color: #1565c0;">📋 Structured Data</h4>
+                    <p>Fits neatly into rows and columns. Has a fixed schema. Stored in databases or spreadsheets.</p>
+                    <p><strong>Examples (BFSI):</strong></p>
+                    <ul style="margin-left: 18px;">
+                        <li>Customer demographics tables</li>
+                        <li>Transaction logs (date, amount, account)</li>
+                        <li>Stock prices &amp; OHLC data</li>
+                        <li>Loan applications (income, age, credit score)</li>
+                        <li>Insurance claim records</li>
+                    </ul>
+                    <p><strong>~20%</strong> of enterprise data is structured.</p>
+                </div>
+                <div class="comparison-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
+                    <h4 style="color: #e65100;">🗂️ Unstructured Data</h4>
+                    <p>Doesn't fit a neat schema. Free-form. Needs preprocessing before traditional ML can use it.</p>
+                    <p><strong>Examples (BFSI):</strong></p>
+                    <ul style="margin-left: 18px;">
+                        <li>Customer support emails &amp; chats</li>
+                        <li>Call-center audio recordings</li>
+                        <li>KYC document scans (PDFs, images)</li>
+                        <li>News articles &amp; analyst reports</li>
+                        <li>Social media mentions of the bank</li>
+                        <li>Branch CCTV footage</li>
+                    </ul>
+                    <p><strong>~80%</strong> of enterprise data is unstructured.</p>
+                </div>
+            </div>
+            <div class="success-box">
+                <h4>Why GenAI Is Such a Big Deal</h4>
+                <p>For 50 years, the unstructured 80% was largely untapped by traditional ML — too messy. <strong>Deep Learning and Large Language Models finally cracked this</strong>: they can read documents, understand voice, interpret images, and extract insights directly from raw text. Suddenly, the entire "dark data" inside enterprises became analyzable.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Semi-structured detour + Labelled vs Unlabelled -->
+        <div class="slide">
+            <h2><span class="emoji">🏷️</span>Labelled vs. Unlabelled Data</h2>
+            <div class="highlight-box">
+                <h3>The "Answer Key" Distinction</h3>
+                <p>Beyond shape, data is also classified by whether it comes with the <strong>"correct answers"</strong> attached. This single difference splits ML into supervised vs. unsupervised approaches.</p>
+            </div>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">✅ Labelled Data</h4>
+                    <p>Each example has a <strong>known answer (label)</strong> attached. The label is what the model should learn to predict.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul style="margin-left: 18px;">
+                        <li>1 million loan applications, each tagged <em>"defaulted"</em> or <em>"repaid"</em></li>
+                        <li>10,000 emails labelled <em>"spam"</em> or <em>"not spam"</em></li>
+                        <li>Photos of cats and dogs, each tagged with the animal</li>
+                        <li>Customer reviews tagged <em>positive / negative / neutral</em></li>
+                    </ul>
+                    <p><strong>Used for:</strong> Supervised Learning</p>
+                </div>
+                <div class="comparison-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+                    <h4 style="color: #6a1b9a;">❓ Unlabelled Data</h4>
+                    <p>Raw data with <strong>no answers attached</strong>. Just observations. The model must find patterns on its own.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul style="margin-left: 18px;">
+                        <li>1 million transactions with no fraud labels</li>
+                        <li>Customer behaviour logs (clicks, sessions)</li>
+                        <li>News articles scraped from the web</li>
+                        <li>All the text on Wikipedia (which is how LLMs train!)</li>
+                    </ul>
+                    <p><strong>Used for:</strong> Unsupervised Learning, self-supervised pre-training</p>
+                </div>
+            </div>
+            <div class="warning-box">
+                <h4>The Labelling Bottleneck</h4>
+                <p>Labelling data is <strong>expensive and slow</strong>. It requires humans to manually tag every example. One reason GenAI is revolutionary: foundation models learn from <em>unlabelled</em> internet text via "self-supervision" — no labels needed.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Separator Part 3 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🤖</span>Part 3</h1>
+            <p>Machine Learning — Letting Data Speak</p>
+        </div>
+
+        <!-- Slide 13: What is ML -->
+        <div class="slide">
+            <h2><span class="emoji">📈</span>What is Machine Learning?</h2>
+            <div class="highlight-box">
+                <h3>The Definition</h3>
+                <p><strong>Machine Learning (ML)</strong> is the subfield of AI where the computer <em>learns patterns from data</em> instead of being explicitly programmed with rules. Show it enough examples, and it figures out the rules itself.</p>
+            </div>
+            <h3>Traditional Programming vs Machine Learning</h3>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #ffebee; border-left: 5px solid #f44336;">
+                    <h4 style="color: #c62828;">Traditional Programming</h4>
+                    <p style="font-family: monospace; background: white; padding: 12px; border-radius: 6px;">Rules + Data → Answers</p>
+                    <p>You write <em>if-then-else</em> rules. The computer follows them.</p>
+                    <p><em>"If transaction &gt; $10,000 AND location is foreign AND time is 3 AM → block."</em></p>
+                </div>
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">Machine Learning</h4>
+                    <p style="font-family: monospace; background: white; padding: 12px; border-radius: 6px;">Data + Answers → Rules</p>
+                    <p>You provide examples. The computer <em>infers</em> the rules.</p>
+                    <p><em>"Here are 10 million past transactions, labelled fraud/legit. Figure out the pattern."</em></p>
+                </div>
+            </div>
+            <h3>The Three Flavours of ML</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Supervised Learning:</strong> Train on labelled data; predict labels on new data</li>
+                    <li><strong>Unsupervised Learning:</strong> Find hidden structure in unlabelled data</li>
+                    <li><strong>Reinforcement Learning:</strong> Learn by trial-and-error with rewards (game-playing, robotics)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 14: Supervised vs Unsupervised (SVG) -->
+        <div class="slide">
+            <h2><span class="emoji">⚖️</span>Supervised vs. Unsupervised Learning</h2>
+            <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 1000px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="sup-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                    <filter id="sup-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                    </filter>
+                </defs>
+                <!-- Supervised lane (top) -->
+                <text x="50" y="35" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700" fill="#2e7d32">Supervised Learning</text>
+                <text x="50" y="55" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#666">Goal: predict a known answer</text>
+                <rect x="40" y="75" width="150" height="70" rx="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="115" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#2e7d32">📋 Labelled</text>
+                <text x="115" y="115" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#2e7d32">Data</text>
+                <text x="115" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#2e7d32">X features + Y answers</text>
+                <line x1="190" y1="110" x2="245" y2="110" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="250" y="75" width="160" height="70" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="330" y="105" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">🎓 Train Model</text>
+                <text x="330" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">Learn X → Y mapping</text>
+                <text x="330" y="138" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#e65100">by minimizing errors</text>
+                <line x1="410" y1="110" x2="465" y2="110" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="470" y="75" width="160" height="70" rx="10" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="550" y="105" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#1565c0">🔮 Predict</text>
+                <text x="550" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">on new unseen X</text>
+                <text x="550" y="138" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#1565c0">→ get predicted Y</text>
+                <line x1="630" y1="110" x2="685" y2="110" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="690" y="75" width="170" height="70" rx="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2.5" filter="url(#sup-shadow)"/>
+                <text x="775" y="105" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#2e7d32">✅ Examples</text>
+                <text x="775" y="123" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#2e7d32">Fraud detection,</text>
+                <text x="775" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#2e7d32">credit scoring, churn</text>
+                <!-- Divider line -->
+                <line x1="20" y1="170" x2="880" y2="170" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+                <!-- Unsupervised lane (bottom) -->
+                <text x="50" y="200" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700" fill="#6a1b9a">Unsupervised Learning</text>
+                <text x="50" y="220" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#666">Goal: discover hidden structure</text>
+                <rect x="40" y="240" width="150" height="65" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="115" y="263" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a">❓ Unlabelled</text>
+                <text x="115" y="278" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a">Data</text>
+                <text x="115" y="298" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">Only X, no Y</text>
+                <line x1="190" y1="272" x2="245" y2="272" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="250" y="240" width="220" height="65" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="360" y="263" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">🔎 Find Patterns</text>
+                <text x="360" y="283" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">groups, similarities,</text>
+                <text x="360" y="297" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">anomalies, structure</text>
+                <line x1="470" y1="272" x2="525" y2="272" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="530" y="240" width="160" height="65" rx="10" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" filter="url(#sup-shadow)"/>
+                <text x="610" y="265" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#1565c0">📊 Insights</text>
+                <text x="610" y="285" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1565c0">clusters / outliers</text>
+                <line x1="690" y1="272" x2="745" y2="272" stroke="#667eea" stroke-width="2.5" marker-end="url(#sup-arrow)"/>
+                <rect x="750" y="240" width="120" height="65" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2.5" filter="url(#sup-shadow)"/>
+                <text x="810" y="263" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#6a1b9a">✅ Examples</text>
+                <text x="810" y="281" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">Customer</text>
+                <text x="810" y="293" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">segmentation,</text>
+                <text x="810" y="304" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">anomaly detect</text>
+            </svg>
+            <div class="success-box">
+                <h4>Quick Banking Examples</h4>
+                <p><strong>Supervised:</strong> "Predict if this loan will default" — we have 10 years of labelled loans (defaulted/repaid).<br>
+                <strong>Unsupervised:</strong> "Group customers into spending personas" — no predefined groups; let the algorithm discover them.</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Common ML Algorithms -->
+        <div class="slide">
+            <h2><span class="emoji">⚙️</span>Common ML Algorithms by Task</h2>
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>What It Predicts</th>
+                    <th>Common Algorithms</th>
+                </tr>
+                <tr>
+                    <td><strong>Classification</strong> (supervised)</td>
+                    <td>A category / label (yes/no, A/B/C)</td>
+                    <td>Logistic Regression, Decision Trees, Random Forest, XGBoost, LightGBM, SVM, Naive Bayes, k-NN, Neural Networks</td>
+                </tr>
+                <tr>
+                    <td><strong>Regression</strong> (supervised)</td>
+                    <td>A continuous number (price, age, demand)</td>
+                    <td>Linear Regression, Ridge/Lasso, Decision Tree Regressor, Random Forest, Gradient Boosting (XGBoost), Neural Networks</td>
+                </tr>
+                <tr>
+                    <td><strong>Clustering</strong> (unsupervised)</td>
+                    <td>Groups of similar items</td>
+                    <td>K-Means, Hierarchical Clustering, DBSCAN, Gaussian Mixture Models, HDBSCAN</td>
+                </tr>
+                <tr>
+                    <td><strong>Dimensionality Reduction</strong> (unsupervised)</td>
+                    <td>Lower-dimensional representation of high-D data</td>
+                    <td>PCA (Principal Components), t-SNE, UMAP, LDA, Autoencoders</td>
+                </tr>
+                <tr>
+                    <td><strong>Anomaly Detection</strong></td>
+                    <td>Spots data points that don't fit the pattern</td>
+                    <td>Isolation Forest, One-Class SVM, LOF, Autoencoders</td>
+                </tr>
+                <tr>
+                    <td><strong>Association Rules</strong></td>
+                    <td>Items that go together ("market basket")</td>
+                    <td>Apriori, FP-Growth, Eclat</td>
+                </tr>
+                <tr>
+                    <td><strong>Reinforcement Learning</strong></td>
+                    <td>Best action to take, given a state</td>
+                    <td>Q-Learning, Deep Q-Networks (DQN), Policy Gradients, PPO, Actor-Critic</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <p><strong>The 80/20 rule:</strong> In production, you'll see <strong>XGBoost/LightGBM for tabular classification &amp; regression</strong>, <strong>K-Means for clustering</strong>, and <strong>Random Forest as a safe default</strong> more often than anything else. Master these first; specialize from there.</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: ML Applications -->
+        <div class="slide">
+            <h2><span class="emoji">💼</span>ML Applications: Real-World Use Cases</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">Supervised Learning Wins</h4>
+                    <ul style="margin-left: 18px;">
+                        <li><strong>Credit risk scoring</strong> — predict default probability</li>
+                        <li><strong>Fraud detection</strong> — flag suspicious transactions</li>
+                        <li><strong>Churn prediction</strong> — who's about to leave?</li>
+                        <li><strong>Insurance claim triage</strong> — auto-approve vs investigate</li>
+                        <li><strong>Demand forecasting</strong> — branch cash needs</li>
+                        <li><strong>Email spam filtering</strong></li>
+                        <li><strong>Medical diagnosis</strong> from lab results</li>
+                        <li><strong>Property price prediction</strong> (Zillow estimates)</li>
+                    </ul>
+                </div>
+                <div class="comparison-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+                    <h4 style="color: #6a1b9a;">Unsupervised Learning Wins</h4>
+                    <ul style="margin-left: 18px;">
+                        <li><strong>Customer segmentation</strong> — discover personas</li>
+                        <li><strong>Market-basket analysis</strong> — "people who buy X also buy Y"</li>
+                        <li><strong>Anomaly detection</strong> in transaction streams</li>
+                        <li><strong>Topic modeling</strong> on customer feedback</li>
+                        <li><strong>Recommender systems</strong> (collaborative filtering)</li>
+                        <li><strong>Network analysis</strong> for AML (money laundering)</li>
+                        <li><strong>Image compression</strong> &amp; feature extraction</li>
+                        <li><strong>Genome sequence analysis</strong></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="warning-box">
+                <h4>Hybrid: Semi-Supervised &amp; Self-Supervised</h4>
+                <p>Real-world data often has <em>some</em> labels but not all. <strong>Semi-supervised</strong> uses a mix. <strong>Self-supervised</strong> creates labels from the data itself (the trick that made GPT possible — predict the next word!).</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Limitations of ML -->
+        <div class="slide">
+            <h2><span class="emoji">⚠️</span>Limitations of Traditional ML</h2>
+            <div class="warning-box">
+                <h4>Where Classical ML Struggles</h4>
+                <p>ML is powerful but not magic. Knowing its <em>limits</em> is as important as knowing its powers.</p>
+            </div>
+            <h3>Key Limitations</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Needs structured/tabular data:</strong> Most classical ML can't directly process images, audio, or free-form text — you must hand-engineer features first.</li>
+                    <li><strong>Manual feature engineering:</strong> 80% of an ML project is converting raw data into useful features. This requires domain expertise and lots of time.</li>
+                    <li><strong>Garbage in, garbage out:</strong> Quality and quantity of training data dominate. Bias in data → bias in predictions.</li>
+                    <li><strong>Doesn't generalize beyond training distribution:</strong> A fraud model trained on 2019 data may fail badly in 2026 if fraud patterns evolved.</li>
+                    <li><strong>Hard to combine modalities:</strong> Mixing text + image + tabular data is awkward with classical ML.</li>
+                    <li><strong>Often a "black box":</strong> Tree ensembles like XGBoost can be hard to explain to regulators (though tools like SHAP help).</li>
+                    <li><strong>Concept drift:</strong> Real-world distributions shift; models silently degrade and need monitoring + retraining.</li>
+                </ul>
+            </div>
+            <div class="success-box">
+                <p><strong>The 2010s breakthrough:</strong> Deep Learning solved several of these — especially raw-data processing and feature engineering. That's what we'll explore next.</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Separator Part 4 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🧠</span>Part 4</h1>
+            <p>Deep Learning — Neural Networks at Scale</p>
+        </div>
+
+        <!-- Slide 19: What is Deep Learning -->
+        <div class="slide">
+            <h2><span class="emoji">🧠</span>What is Deep Learning?</h2>
+            <div class="highlight-box">
+                <h3>The Definition</h3>
+                <p><strong>Deep Learning (DL)</strong> is a subset of Machine Learning that uses <strong>artificial neural networks with many layers</strong> ("deep" networks). Inspired loosely by how the human brain organizes neurons, these networks learn to extract features automatically from raw data.</p>
+            </div>
+            <h3>The Mental Model: A Neuron</h3>
+            <div class="benefit-list">
+                <p>Each artificial "neuron" does three things:</p>
+                <ul>
+                    <li><strong>Receives inputs</strong> (numbers from previous layer)</li>
+                    <li><strong>Multiplies each input by a weight</strong> and sums them up</li>
+                    <li><strong>Applies an activation function</strong> and passes the result to the next layer</li>
+                </ul>
+                <p>Stack thousands of these neurons in dozens of layers, and the network can learn extremely complex patterns.</p>
+            </div>
+            <h3>The Hierarchy of Learning</h3>
+            <div class="stack-diagram">
+                <div class="stack-layer" style="background: #424242; color: white;">Input Layer — Raw pixels / words / audio samples</div>
+                <div class="stack-layer" style="background: #1976d2; color: white;">Hidden Layer 1 — Edges, basic sounds, short patterns</div>
+                <div class="stack-layer" style="background: #7b1fa2; color: white;">Hidden Layer 2 — Shapes, syllables, phrases</div>
+                <div class="stack-layer" style="background: #c2185b; color: white;">Hidden Layer 3 — Objects, words, sentences</div>
+                <div class="stack-layer" style="background: #388e3c; color: white;">Output Layer — "It's a cat" / "Sentiment: positive" / "Next word: 'fox'"</div>
+            </div>
+            <p>The deeper the layer, the more abstract the concepts it represents. This <strong>hierarchical feature learning</strong> is DL's superpower.</p>
+        </div>
+
+        <!-- Slide 20: ML vs DL (SVG) -->
+        <div class="slide">
+            <h2><span class="emoji">⚖️</span>Classical ML vs. Deep Learning</h2>
+            <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 950px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="mldl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                </defs>
+                <!-- Classical ML lane (top) -->
+                <text x="40" y="30" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#1565c0">📊 Classical Machine Learning</text>
+                <rect x="40" y="50" width="130" height="60" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                <text x="105" y="78" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#1565c0">Raw Data</text>
+                <text x="105" y="95" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#1565c0">(text, image, table)</text>
+                <line x1="170" y1="80" x2="220" y2="80" stroke="#667eea" stroke-width="2.5" marker-end="url(#mldl-arrow)"/>
+                <rect x="225" y="50" width="180" height="60" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                <text x="315" y="78" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">😓 Manual Feature</text>
+                <text x="315" y="95" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">Engineering (HUMAN!)</text>
+                <line x1="405" y1="80" x2="455" y2="80" stroke="#667eea" stroke-width="2.5" marker-end="url(#mldl-arrow)"/>
+                <rect x="460" y="50" width="150" height="60" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+                <text x="535" y="78" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a">Simple Model</text>
+                <text x="535" y="95" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">XGBoost, SVM, LR</text>
+                <line x1="610" y1="80" x2="660" y2="80" stroke="#667eea" stroke-width="2.5" marker-end="url(#mldl-arrow)"/>
+                <rect x="665" y="50" width="120" height="60" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                <text x="725" y="85" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#2e7d32">Prediction</text>
+                <text x="40" y="135" font-family="Segoe UI, sans-serif" font-size="11" font-style="italic" fill="#666">📝 Pros: works on small data, fast, interpretable. Cons: 80% of work is feature engineering.</text>
+                <!-- Divider -->
+                <line x1="20" y1="160" x2="880" y2="160" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+                <!-- Deep Learning lane (bottom) -->
+                <text x="40" y="190" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#6a1b9a">🧠 Deep Learning</text>
+                <rect x="40" y="210" width="130" height="60" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                <text x="105" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#1565c0">Raw Data</text>
+                <text x="105" y="255" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#1565c0">(text, image, table)</text>
+                <line x1="170" y1="240" x2="220" y2="240" stroke="#667eea" stroke-width="2.5" marker-end="url(#mldl-arrow)"/>
+                <rect x="225" y="210" width="385" height="60" rx="8" fill="url(#brainGradient)" stroke="#667eea" stroke-width="2.5"/>
+                <text x="417" y="235" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="white">Deep Neural Network</text>
+                <text x="417" y="255" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="white">✨ AUTO learns features AND maps them to output ✨</text>
+                <line x1="610" y1="240" x2="660" y2="240" stroke="#667eea" stroke-width="2.5" marker-end="url(#mldl-arrow)"/>
+                <rect x="665" y="210" width="120" height="60" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                <text x="725" y="245" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#2e7d32">Prediction</text>
+                <text x="40" y="295" font-family="Segoe UI, sans-serif" font-size="11" font-style="italic" fill="#666">📝 Pros: handles raw unstructured data, state-of-art accuracy. Cons: needs LOTS of data + GPUs.</text>
+            </svg>
+        </div>
+
+        <!-- Slide 21: Why DL became popular -->
+        <div class="slide">
+            <h2><span class="emoji">🚀</span>Why Deep Learning Exploded (~2012 Onwards)</h2>
+            <div class="highlight-box">
+                <h3>Neural Nets Aren't New — But They Just Started Working</h3>
+                <p>Neural networks were invented in the 1950s. They failed commercially for 50 years. Then around 2012, three things converged.</p>
+            </div>
+            <div class="comparison-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="comparison-card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+                    <h4 style="color: #1565c0;">📚 Data</h4>
+                    <p>The internet exploded. Suddenly there were billions of labelled images (ImageNet) and trillions of words of text. DL needs lots of data — and now we had it.</p>
+                </div>
+                <div class="comparison-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+                    <h4 style="color: #6a1b9a;">💻 Compute (GPUs)</h4>
+                    <p>NVIDIA's GPUs (originally for gaming) turned out to be perfect for neural-net math. Training that took months now took days. Then hours. Now minutes.</p>
+                </div>
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">🛠️ Algorithms &amp; Frameworks</h4>
+                    <p>Breakthroughs like ReLU, dropout, batch norm, attention. Plus open-source frameworks (TensorFlow, PyTorch) made DL accessible to anyone.</p>
+                </div>
+            </div>
+            <h3>The Milestone Moments</h3>
+            <table>
+                <tr>
+                    <th>Year</th>
+                    <th>Breakthrough</th>
+                    <th>Impact</th>
+                </tr>
+                <tr>
+                    <td>2012</td>
+                    <td>AlexNet wins ImageNet</td>
+                    <td>Computer vision goes deep — error rate drops dramatically</td>
+                </tr>
+                <tr>
+                    <td>2014</td>
+                    <td>GANs invented (Ian Goodfellow)</td>
+                    <td>Generative AI for images becomes possible</td>
+                </tr>
+                <tr>
+                    <td>2017</td>
+                    <td>"Attention Is All You Need" paper</td>
+                    <td>Transformer architecture — the foundation of all modern LLMs</td>
+                </tr>
+                <tr>
+                    <td>2018-2020</td>
+                    <td>BERT, GPT-2, GPT-3</td>
+                    <td>Language models become genuinely useful</td>
+                </tr>
+                <tr>
+                    <td>2022</td>
+                    <td>ChatGPT released</td>
+                    <td>GenAI enters mainstream consciousness</td>
+                </tr>
+                <tr>
+                    <td>2024-2026</td>
+                    <td>GPT-5, Claude 4.7, Gemini 3.1</td>
+                    <td>Multi-modal, agentic AI; 1M-token context windows</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 22: When to use DL / DL Limitations -->
+        <div class="slide">
+            <h2><span class="emoji">🎯</span>When to Use DL — and Its Limits</h2>
+            <h3>DL Shines When...</h3>
+            <div class="success-box">
+                <ul style="margin-left: 18px;">
+                    <li>Your data is <strong>unstructured</strong>: images, audio, text, video</li>
+                    <li>You have <strong>lots of training data</strong> (typically &gt;100K examples)</li>
+                    <li>You have access to <strong>GPUs</strong> or cloud GPU services</li>
+                    <li>The problem is <strong>too complex</strong> for hand-engineered features</li>
+                    <li>You can <strong>tolerate longer training times</strong> in exchange for higher accuracy</li>
+                </ul>
+            </div>
+            <h3>Stick With Classical ML When...</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li>Your data is <strong>tabular and small</strong> (&lt;10K rows)</li>
+                    <li>You need <strong>explainability</strong> for regulators</li>
+                    <li>You need <strong>fast inference</strong> (microseconds, like high-frequency trading)</li>
+                    <li>Domain expertise lets you <strong>engineer great features</strong> by hand</li>
+                </ul>
+            </div>
+            <h3>Limitations of Deep Learning</h3>
+            <div class="warning-box">
+                <ul style="margin-left: 18px;">
+                    <li><strong>Data-hungry:</strong> Often needs millions of examples to learn well</li>
+                    <li><strong>Compute-hungry:</strong> Training large models can cost thousands to millions of dollars</li>
+                    <li><strong>Black box:</strong> Why did it make that prediction? Often very hard to explain</li>
+                    <li><strong>Brittle to distribution shift:</strong> Performs poorly on data unlike training</li>
+                    <li><strong>Carbon footprint:</strong> Large training runs consume significant electricity</li>
+                    <li><strong>Adversarial vulnerability:</strong> Tiny perturbations can fool the model</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 23: Separator Part 5 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🔬</span>Part 5</h1>
+            <p>ML &amp; DL Applications — NLP and Computer Vision</p>
+        </div>
+
+        <!-- Slide 24: NLP Applications (non-generative) -->
+        <div class="slide">
+            <h2><span class="emoji">💬</span>ML/DL for NLP (Non-Generative Tasks)</h2>
+            <div class="highlight-box">
+                <p><strong>Natural Language Processing (NLP)</strong> teaches machines to understand human language. Long before ChatGPT, NLP was solving real enterprise problems — here are the classic predictive tasks.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>What It Does</th>
+                    <th>Real-World Examples</th>
+                </tr>
+                <tr>
+                    <td><strong>Sentiment Analysis</strong></td>
+                    <td>Classify text as positive/negative/neutral</td>
+                    <td>Brand monitoring, customer feedback analysis, market sentiment from news</td>
+                </tr>
+                <tr>
+                    <td><strong>Text Classification</strong></td>
+                    <td>Assign documents to predefined categories</td>
+                    <td>Email spam filters, news categorization, customer support ticket routing</td>
+                </tr>
+                <tr>
+                    <td><strong>Named Entity Recognition (NER)</strong></td>
+                    <td>Extract people, places, organizations, dates from text</td>
+                    <td>KYC document extraction, news entity tracking, contract data extraction</td>
+                </tr>
+                <tr>
+                    <td><strong>Topic Modeling</strong></td>
+                    <td>Discover themes across a collection of documents</td>
+                    <td>Customer complaint clustering, research-paper analysis, trend detection</td>
+                </tr>
+                <tr>
+                    <td><strong>Machine Translation</strong></td>
+                    <td>Translate text between languages</td>
+                    <td>Google Translate, DeepL, multilingual customer support</td>
+                </tr>
+                <tr>
+                    <td><strong>Speech Recognition (ASR)</strong></td>
+                    <td>Convert spoken audio to text</td>
+                    <td>Call-center transcription, voice assistants, dictation, captioning</td>
+                </tr>
+                <tr>
+                    <td><strong>Information Retrieval</strong></td>
+                    <td>Find relevant documents for a query</td>
+                    <td>Search engines, internal knowledge bases, semantic search over policies</td>
+                </tr>
+                <tr>
+                    <td><strong>Question Answering (extractive)</strong></td>
+                    <td>Find the answer span inside a given document</td>
+                    <td>Compliance Q&amp;A, contract review, customer FAQ bots</td>
+                </tr>
+                <tr>
+                    <td><strong>Text Summarization (extractive)</strong></td>
+                    <td>Pull the most important sentences from a doc</td>
+                    <td>News summarization, research abstracts, meeting notes</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <p><strong>Banking example:</strong> A retail bank uses sentiment analysis on 50,000 customer-survey responses + NER to extract complaint topics + topic modeling to find emerging issues — all without GenAI, using classical NLP techniques.</p>
+            </div>
+        </div>
+
+        <!-- Slide 25: CV Applications -->
+        <div class="slide">
+            <h2><span class="emoji">👁️</span>ML/DL for Computer Vision (Non-Generative)</h2>
+            <div class="highlight-box">
+                <p><strong>Computer Vision (CV)</strong> teaches machines to interpret visual information from images and video. DL revolutionized this field after 2012.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>What It Does</th>
+                    <th>Real-World Examples</th>
+                </tr>
+                <tr>
+                    <td><strong>Image Classification</strong></td>
+                    <td>Assign a label to a whole image</td>
+                    <td>Cat/dog classification, medical-scan diagnosis (X-rays, MRI), crop-disease detection</td>
+                </tr>
+                <tr>
+                    <td><strong>Object Detection</strong></td>
+                    <td>Locate and label objects with bounding boxes</td>
+                    <td>Self-driving cars (pedestrians, signs), retail-shelf monitoring, security cameras</td>
+                </tr>
+                <tr>
+                    <td><strong>Image Segmentation</strong></td>
+                    <td>Label every pixel of an image</td>
+                    <td>Medical tumor outlining, satellite land-use mapping, background removal</td>
+                </tr>
+                <tr>
+                    <td><strong>OCR (Optical Character Recognition)</strong></td>
+                    <td>Extract text from images / scans</td>
+                    <td>Cheque processing, invoice digitization, ID-card extraction for KYC</td>
+                </tr>
+                <tr>
+                    <td><strong>Facial Recognition</strong></td>
+                    <td>Identify or verify individuals from face images</td>
+                    <td>Bank login biometrics, airport security, attendance systems</td>
+                </tr>
+                <tr>
+                    <td><strong>Pose Estimation</strong></td>
+                    <td>Detect body keypoints (head, hands, joints)</td>
+                    <td>Fitness apps, sports analytics, gesture-based interfaces</td>
+                </tr>
+                <tr>
+                    <td><strong>Anomaly Detection (visual)</strong></td>
+                    <td>Find images that don't match the norm</td>
+                    <td>Manufacturing defect detection, quality control, medical anomalies</td>
+                </tr>
+                <tr>
+                    <td><strong>Video Action Recognition</strong></td>
+                    <td>Classify what is happening in a video clip</td>
+                    <td>Surveillance (intrusion, fighting), sports highlight detection, content moderation</td>
+                </tr>
+                <tr>
+                    <td><strong>Optical Flow / Tracking</strong></td>
+                    <td>Track objects across video frames</td>
+                    <td>Autonomous vehicles, traffic monitoring, robotics</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <p><strong>Insurance example:</strong> Photo claim processing — upload an image of car damage, CV models classify severity, estimate cost, detect fraud (re-used photos), all in seconds.</p>
+            </div>
+        </div>
+
+        <!-- Slide 26: Separator Part 6 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">✨</span>Part 6</h1>
+            <p>Generative AI — When Machines Create</p>
+        </div>
+
+        <!-- Slide 27: What is GenAI -->
+        <div class="slide">
+            <h2><span class="emoji">🎨</span>What Is Generative AI?</h2>
+            <div class="highlight-box">
+                <h3>The Big Shift</h3>
+                <p>For decades, AI <em>recognized</em> things — "is this fraud?", "what's in this image?". Around 2022, AI started <strong>creating</strong> things — essays, code, images, songs, videos. That's <strong>Generative AI (GenAI)</strong>.</p>
+            </div>
+            <h3>The Nesting Doll</h3>
+            <div class="stack-diagram">
+                <div class="stack-layer" style="background: #424242; color: white;">🤖 Artificial Intelligence (the umbrella)</div>
+                <div class="stack-layer" style="background: #1976d2; color: white;">📊 Machine Learning (learns from data)</div>
+                <div class="stack-layer" style="background: #7b1fa2; color: white;">🧠 Deep Learning (neural networks with many layers)</div>
+                <div class="stack-layer" style="background: #c2185b; color: white;">✨ Generative AI (DL models that create new content)</div>
+                <div class="stack-layer" style="background: #388e3c; color: white;">💬 LLMs / Foundation Models (the most prominent class of GenAI)</div>
+            </div>
+            <p>Every LLM is GenAI. Every GenAI model is Deep Learning. Every DL model is ML. Every ML model is AI. Inside-out subsets.</p>
+            <div class="success-box">
+                <h4>Defining Property</h4>
+                <p>A model is <strong>generative</strong> if it can produce <em>new outputs</em> that didn't exist in its training data — whether that's a new sentence, image, melody, or video. A model is <strong>predictive (discriminative)</strong> if it only classifies or scores existing inputs.</p>
+            </div>
+        </div>
+
+        <!-- Slide 28: Generative vs Predictive AI -->
+        <div class="slide">
+            <h2><span class="emoji">⚖️</span>Generative AI vs. Predictive AI</h2>
+            <svg viewBox="0 0 900 290" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 1000px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="gp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                </defs>
+                <!-- Predictive lane -->
+                <text x="40" y="30" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#1565c0">🔮 Predictive AI</text>
+                <text x="40" y="50" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#666">Input → category / number</text>
+                <rect x="40" y="65" width="200" height="55" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+                <text x="140" y="92" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#1565c0">Input: customer data,</text>
+                <text x="140" y="108" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#1565c0">transaction, image</text>
+                <line x1="240" y1="93" x2="295" y2="93" stroke="#667eea" stroke-width="2.5" marker-end="url(#gp-arrow)"/>
+                <rect x="300" y="65" width="180" height="55" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                <text x="390" y="92" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">Predictive Model</text>
+                <text x="390" y="108" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#e65100">XGBoost, ResNet, BERT-cls</text>
+                <line x1="480" y1="93" x2="535" y2="93" stroke="#667eea" stroke-width="2.5" marker-end="url(#gp-arrow)"/>
+                <rect x="540" y="65" width="320" height="55" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2.5"/>
+                <text x="700" y="86" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#2e7d32">Output: a label or number</text>
+                <text x="700" y="105" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#2e7d32">"fraud" / "$847" / "cat" / 87% churn risk</text>
+                <line x1="20" y1="145" x2="880" y2="145" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+                <!-- Generative lane -->
+                <text x="40" y="175" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#6a1b9a">✨ Generative AI</text>
+                <text x="40" y="195" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#666">Prompt → brand-new content</text>
+                <rect x="40" y="210" width="200" height="55" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+                <text x="140" y="237" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#6a1b9a">Prompt: "Write a poem</text>
+                <text x="140" y="253" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#6a1b9a">about Mumbai monsoons"</text>
+                <line x1="240" y1="238" x2="295" y2="238" stroke="#667eea" stroke-width="2.5" marker-end="url(#gp-arrow)"/>
+                <rect x="300" y="210" width="180" height="55" rx="8" fill="url(#brainGradient)" stroke="#667eea" stroke-width="2"/>
+                <text x="390" y="237" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="white">Generative Model</text>
+                <text x="390" y="253" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="white">GPT, Claude, DALL-E, Sora</text>
+                <line x1="480" y1="238" x2="535" y2="238" stroke="#667eea" stroke-width="2.5" marker-end="url(#gp-arrow)"/>
+                <rect x="540" y="210" width="320" height="55" rx="8" fill="#fce4ec" stroke="#ec407a" stroke-width="2.5"/>
+                <text x="700" y="231" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#ad1457">Output: brand-new content</text>
+                <text x="700" y="250" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#ad1457">a poem, an image, a song, video, code</text>
+            </svg>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Predictive AI</th>
+                    <th>Generative AI</th>
+                </tr>
+                <tr>
+                    <td><strong>Output</strong></td>
+                    <td>Label, score, number</td>
+                    <td>Text, image, audio, video, code</td>
+                </tr>
+                <tr>
+                    <td><strong>Deterministic?</strong></td>
+                    <td>Usually yes (same input → same output)</td>
+                    <td>Probabilistic (each call may differ)</td>
+                </tr>
+                <tr>
+                    <td><strong>Training</strong></td>
+                    <td>Labelled data, supervised</td>
+                    <td>Self-supervised on massive unlabelled corpora</td>
+                </tr>
+                <tr>
+                    <td><strong>Example</strong></td>
+                    <td>"Is this email spam?"</td>
+                    <td>"Draft a reply to this email"</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 29: GenAI Modalities -->
+        <div class="slide">
+            <h2><span class="emoji">🎭</span>GenAI Capabilities Across Modalities</h2>
+            <div class="highlight-box">
+                <p>GenAI isn't just text. Today's models can generate content across <strong>every major modality</strong> — and increasingly, across modalities simultaneously (text-to-video, image-to-3D, etc.).</p>
+            </div>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+                    <h4 style="color: #1565c0;">📝 Text Generation</h4>
+                    <ul style="margin-left: 18px;">
+                        <li>Conversational chatbots, virtual assistants</li>
+                        <li>Code generation &amp; completion</li>
+                        <li>Document drafting (emails, reports, contracts)</li>
+                        <li>Translation, summarization, rewriting</li>
+                        <li>Q&amp;A over private documents (RAG)</li>
+                    </ul>
+                </div>
+                <div class="comparison-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+                    <h4 style="color: #6a1b9a;">🎨 Image Generation</h4>
+                    <ul style="margin-left: 18px;">
+                        <li>Marketing creatives &amp; ad campaigns</li>
+                        <li>Product mockups &amp; concept art</li>
+                        <li>Stock photography replacement</li>
+                        <li>Logo design, brand assets</li>
+                        <li>Architectural &amp; interior renders</li>
+                    </ul>
+                </div>
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">🎵 Audio / Voice</h4>
+                    <ul style="margin-left: 18px;">
+                        <li>Text-to-speech with natural voices</li>
+                        <li>Voice cloning &amp; dubbing</li>
+                        <li>Music composition &amp; sound design</li>
+                        <li>Podcast generation from text</li>
+                        <li>Multilingual voice agents</li>
+                    </ul>
+                </div>
+                <div class="comparison-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
+                    <h4 style="color: #e65100;">🎬 Video Generation</h4>
+                    <ul style="margin-left: 18px;">
+                        <li>Marketing video creation from prompts</li>
+                        <li>Training video synthesis</li>
+                        <li>Animated explainers</li>
+                        <li>Avatar-based corporate communications</li>
+                        <li>Game cinematics &amp; storyboards</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 30: Industry use cases -->
+        <div class="slide">
+            <h2><span class="emoji">🏢</span>GenAI Use Cases by Industry</h2>
+            <table>
+                <tr>
+                    <th>Industry</th>
+                    <th>High-Impact GenAI Applications</th>
+                </tr>
+                <tr>
+                    <td><strong>Banking &amp; Finance</strong></td>
+                    <td>Chatbots for customer service, contract analysis, RFP/RFI responses, AML narrative generation, compliance Q&amp;A, market-research summarization, personalized advisor copy</td>
+                </tr>
+                <tr>
+                    <td><strong>Insurance</strong></td>
+                    <td>Claim narrative drafting, policy summarization, customer correspondence, underwriting assistant, fraud-pattern explanation, training simulations</td>
+                </tr>
+                <tr>
+                    <td><strong>Healthcare</strong></td>
+                    <td>Clinical note summarization, patient discharge instructions, medical Q&amp;A, drug-discovery (protein generation), radiology report drafting</td>
+                </tr>
+                <tr>
+                    <td><strong>Retail &amp; E-commerce</strong></td>
+                    <td>Product descriptions at scale, personalized marketing, visual try-on, customer-support chatbots, product image variations</td>
+                </tr>
+                <tr>
+                    <td><strong>Software Engineering</strong></td>
+                    <td>Code completion (Copilot, Cursor), test generation, code review, documentation, bug-fix suggestions, agentic coding (Claude Code)</td>
+                </tr>
+                <tr>
+                    <td><strong>Marketing &amp; Media</strong></td>
+                    <td>Ad copy, image &amp; video creatives, social posts, blog articles, SEO content, video dubbing</td>
+                </tr>
+                <tr>
+                    <td><strong>Education</strong></td>
+                    <td>Personalized tutoring, content creation, lesson summarization, automated grading, multi-language course translation</td>
+                </tr>
+                <tr>
+                    <td><strong>Legal</strong></td>
+                    <td>Contract review &amp; redlining, legal research, brief drafting, due-diligence summarization, e-discovery</td>
+                </tr>
+                <tr>
+                    <td><strong>HR &amp; Recruitment</strong></td>
+                    <td>JD writing, candidate screening, interview prep, onboarding chatbots, employee Q&amp;A on policies</td>
+                </tr>
+                <tr>
+                    <td><strong>Manufacturing</strong></td>
+                    <td>Equipment manual Q&amp;A, defect-image generation for training, work-order summarization, predictive maintenance reports</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 31: Separator Part 7 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🤖</span>Part 7</h1>
+            <p>The Model Zoo — LLMs, Image, Audio, Video Models</p>
+        </div>
+
+        <!-- Slide 32: Parameters Analogy -->
+        <div class="slide">
+            <h2><span class="emoji">🎛️</span>What Are "Parameters" in an AI Model?</h2>
+            <div class="highlight-box">
+                <h3>The #1 Number You'll See Quoted</h3>
+                <p>You'll hear "GPT-5 has 1.8 trillion parameters" or "Llama 3 has 70 billion". <strong>What does that even mean?</strong></p>
+            </div>
+            <h3>The Mixing-Console Analogy 🎚️</h3>
+            <div class="success-box">
+                <p>Imagine a giant audio mixing console with thousands of knobs. Each knob controls one tiny aspect of how the model behaves — how strongly it associates "Mumbai" with "rain", how confident it gets about answers, how it weighs each word in a sentence.</p>
+                <p>The <strong>parameters are those knobs</strong>. Training the model = adjusting all the knobs until the output sounds right. Each parameter is just a number (a weight) that the model learned during training.</p>
+                <p><strong>More parameters → more knobs → more nuanced behaviour</strong> — but also more compute, more memory, more cost.</p>
+            </div>
+            <h3>The Rough Scale</h3>
+            <table>
+                <tr>
+                    <th>Parameter Count</th>
+                    <th>Model Class</th>
+                    <th>Examples</th>
+                    <th>Run Where?</th>
+                </tr>
+                <tr>
+                    <td>~1 Million</td>
+                    <td>Tiny (research toys)</td>
+                    <td>GPT-2 small, classroom demos</td>
+                    <td>Laptop CPU</td>
+                </tr>
+                <tr>
+                    <td>~100 Million - 1 Billion</td>
+                    <td>Small specialized models</td>
+                    <td>BERT-base, DistilBERT</td>
+                    <td>Laptop GPU / Edge devices</td>
+                </tr>
+                <tr>
+                    <td>~7-13 Billion</td>
+                    <td>"Small" modern LLMs</td>
+                    <td>Llama 3.1 8B, Mistral 7B</td>
+                    <td>Single consumer GPU (24 GB)</td>
+                </tr>
+                <tr>
+                    <td>~70 Billion</td>
+                    <td>Mid-size open LLMs</td>
+                    <td>Llama 3.3 70B, Qwen 72B</td>
+                    <td>Multi-GPU server</td>
+                </tr>
+                <tr>
+                    <td>~200 Billion - 2 Trillion</td>
+                    <td>Frontier proprietary LLMs</td>
+                    <td>GPT-5, Claude 4.7, Gemini 3.1</td>
+                    <td>Massive data-center clusters</td>
+                </tr>
+            </table>
+            <p style="font-style: italic; color: #888; font-size: 0.9em;">Note: exact parameter counts for closed-source models like GPT-5/Claude 4.7 are not officially published. Numbers above are commonly-cited estimates.</p>
+        </div>
+
+        <!-- Slide 33: Top LLMs Proprietary -->
+        <div class="slide">
+            <h2><span class="emoji">💼</span>Top Proprietary LLMs (Closed Source)</h2>
+            <table>
+                <tr>
+                    <th>Company</th>
+                    <th>Latest Model</th>
+                    <th>Approx. Params*</th>
+                    <th>Known For</th>
+                </tr>
+                <tr>
+                    <td><strong>OpenAI</strong></td>
+                    <td>GPT-5.5, GPT-5.4, GPT-4.1, o3 (reasoning)</td>
+                    <td>~1.8T (est., MoE)</td>
+                    <td>Pioneered the modern LLM era; most familiar brand (ChatGPT)</td>
+                </tr>
+                <tr>
+                    <td><strong>Anthropic</strong></td>
+                    <td>Claude Opus 4.7, Sonnet 4.6, Haiku 4.5</td>
+                    <td>Undisclosed</td>
+                    <td>Best-in-class coding, agentic workflows, safety focus, long context (1M tokens)</td>
+                </tr>
+                <tr>
+                    <td><strong>Google</strong></td>
+                    <td>Gemini 3.1 Pro, 3.5 Flash, 2.5 Flash-Lite</td>
+                    <td>Undisclosed (MoE)</td>
+                    <td>Largest context window (2M tokens), strong multimodal, deep Google integration</td>
+                </tr>
+                <tr>
+                    <td><strong>xAI</strong></td>
+                    <td>Grok 3, Grok 4</td>
+                    <td>~1T (est.)</td>
+                    <td>Real-time X (Twitter) data, "edgier" personality</td>
+                </tr>
+                <tr>
+                    <td><strong>Cohere</strong></td>
+                    <td>Command R+, Aya</td>
+                    <td>~104B</td>
+                    <td>Enterprise focus, strong multilingual, RAG-native</td>
+                </tr>
+                <tr>
+                    <td><strong>Amazon</strong></td>
+                    <td>Nova Pro, Nova Premier</td>
+                    <td>Undisclosed</td>
+                    <td>Native AWS integration, agentic capabilities</td>
+                </tr>
+                <tr>
+                    <td><strong>Microsoft</strong></td>
+                    <td>Phi-4 (small), Copilot models</td>
+                    <td>~14B (Phi-4)</td>
+                    <td>Lightweight, on-device, integrated into Office/Windows</td>
+                </tr>
+            </table>
+            <p style="font-style: italic; color: #888; font-size: 0.9em;">*Parameter counts for proprietary models are unofficial estimates from researchers and leaks. None is officially published.</p>
+            <div class="warning-box">
+                <p><strong>For BFSI procurement:</strong> All major providers offer enterprise tiers with private deployments, data-residency guarantees, no-training-on-your-data, and SOC 2 / HIPAA compliance. Check the specific tier — public/consumer APIs may NOT have these guarantees.</p>
+            </div>
+        </div>
+
+        <!-- Slide 34: Top LLMs Open Source -->
+        <div class="slide">
+            <h2><span class="emoji">🌐</span>Top Open-Source LLMs</h2>
+            <div class="highlight-box">
+                <p><strong>Open-source LLMs</strong> are models whose weights are downloadable, runnable on your own infrastructure, and (often) commercially licensable. They've become competitive with closed models on many benchmarks.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Model Family</th>
+                    <th>By</th>
+                    <th>Params Range</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>Llama 3 / 4</strong></td>
+                    <td>Meta</td>
+                    <td>8B, 70B, 405B</td>
+                    <td>The most widely adopted open LLM family; permissive license</td>
+                </tr>
+                <tr>
+                    <td><strong>Qwen 2.5 / Qwen 3</strong></td>
+                    <td>Alibaba</td>
+                    <td>0.5B - 110B</td>
+                    <td>Strong multilingual (esp. Chinese, English); top open benchmarks</td>
+                </tr>
+                <tr>
+                    <td><strong>DeepSeek V3 / R1</strong></td>
+                    <td>DeepSeek (China)</td>
+                    <td>671B (MoE, 37B active)</td>
+                    <td>Shockingly cheap; rivaled GPT-4 at fraction of cost; R1 = reasoning model</td>
+                </tr>
+                <tr>
+                    <td><strong>Mistral / Mixtral</strong></td>
+                    <td>Mistral AI (France)</td>
+                    <td>7B - 8x22B</td>
+                    <td>European open-weight champion; MoE variants</td>
+                </tr>
+                <tr>
+                    <td><strong>Gemma 2 / 3</strong></td>
+                    <td>Google</td>
+                    <td>2B, 9B, 27B</td>
+                    <td>Google's open-weight family, distilled from Gemini</td>
+                </tr>
+                <tr>
+                    <td><strong>Phi-3 / Phi-4</strong></td>
+                    <td>Microsoft</td>
+                    <td>3.8B - 14B</td>
+                    <td>Small but capable; great on-device</td>
+                </tr>
+                <tr>
+                    <td><strong>Falcon</strong></td>
+                    <td>TII (UAE)</td>
+                    <td>7B, 40B, 180B</td>
+                    <td>Early open-source frontier model</td>
+                </tr>
+                <tr>
+                    <td><strong>Yi</strong></td>
+                    <td>01.AI (China)</td>
+                    <td>6B, 34B</td>
+                    <td>Strong bilingual (English + Chinese)</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <h4>When to Choose Open-Source?</h4>
+                <ul style="margin-left: 18px;">
+                    <li><strong>Data privacy:</strong> Run on-prem; data never leaves your network</li>
+                    <li><strong>Cost:</strong> No per-token charges once self-hosted</li>
+                    <li><strong>Customization:</strong> Fine-tune on proprietary data</li>
+                    <li><strong>Compliance:</strong> Easier in regulated industries (BFSI, healthcare)</li>
+                    <li><strong>Latency:</strong> No network round-trip to a cloud API</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 35: Image Generation Models -->
+        <div class="slide">
+            <h2><span class="emoji">🎨</span>Image Generation Models</h2>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>By</th>
+                    <th>Type</th>
+                    <th>Known For</th>
+                </tr>
+                <tr>
+                    <td><strong>DALL-E 3</strong></td>
+                    <td>OpenAI</td>
+                    <td>Proprietary</td>
+                    <td>Integrated into ChatGPT; great text rendering, prompt adherence</td>
+                </tr>
+                <tr>
+                    <td><strong>GPT-Image-1</strong></td>
+                    <td>OpenAI</td>
+                    <td>Proprietary</td>
+                    <td>Next-gen native image generation inside GPT models</td>
+                </tr>
+                <tr>
+                    <td><strong>Midjourney v7</strong></td>
+                    <td>Midjourney</td>
+                    <td>Proprietary</td>
+                    <td>Photorealistic, artistic style; favorite among creatives</td>
+                </tr>
+                <tr>
+                    <td><strong>Stable Diffusion 3.5 / SDXL</strong></td>
+                    <td>Stability AI</td>
+                    <td>Open Source</td>
+                    <td>Most popular self-hostable image model; huge ecosystem</td>
+                </tr>
+                <tr>
+                    <td><strong>Flux 1.1 Pro</strong></td>
+                    <td>Black Forest Labs</td>
+                    <td>Proprietary + open variants</td>
+                    <td>State-of-the-art quality; strong prompt adherence; created by former SD team</td>
+                </tr>
+                <tr>
+                    <td><strong>Imagen 3 / 4</strong></td>
+                    <td>Google</td>
+                    <td>Proprietary</td>
+                    <td>Inside Gemini &amp; Google Cloud; excellent photorealism</td>
+                </tr>
+                <tr>
+                    <td><strong>Ideogram 2.0</strong></td>
+                    <td>Ideogram</td>
+                    <td>Proprietary</td>
+                    <td>Best-in-class text-in-image (logos, posters, signs)</td>
+                </tr>
+                <tr>
+                    <td><strong>Adobe Firefly 3</strong></td>
+                    <td>Adobe</td>
+                    <td>Proprietary</td>
+                    <td>Trained only on licensed/owned content — commercially safe</td>
+                </tr>
+                <tr>
+                    <td><strong>Recraft V3</strong></td>
+                    <td>Recraft</td>
+                    <td>Proprietary</td>
+                    <td>Vector graphics, brand-consistent assets</td>
+                </tr>
+            </table>
+            <div class="warning-box">
+                <p><strong>Copyright caveat:</strong> Many image models were trained on web-scraped images of unclear provenance. For enterprise/commercial use, prefer models with transparent training data (Adobe Firefly) or get clear licensing terms.</p>
+            </div>
+        </div>
+
+        <!-- Slide 36: Audio & Video Generation Models -->
+        <div class="slide">
+            <h2><span class="emoji">🎬</span>Audio &amp; Video Generation Models</h2>
+            <h3>🎵 Audio Generation</h3>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>By</th>
+                    <th>Capability</th>
+                </tr>
+                <tr>
+                    <td><strong>ElevenLabs (v3)</strong></td>
+                    <td>ElevenLabs</td>
+                    <td>Most realistic text-to-speech; voice cloning in seconds; 70+ languages</td>
+                </tr>
+                <tr>
+                    <td><strong>OpenAI Voice / Whisper</strong></td>
+                    <td>OpenAI</td>
+                    <td>Whisper for speech-to-text; new GPT voice models for TTS</td>
+                </tr>
+                <tr>
+                    <td><strong>Sarvam AI</strong></td>
+                    <td>Sarvam (India)</td>
+                    <td>Indic languages (Hindi, Tamil, Telugu, etc.) TTS &amp; STT</td>
+                </tr>
+                <tr>
+                    <td><strong>Suno v4 / Udio</strong></td>
+                    <td>Suno / Udio</td>
+                    <td>Full-song generation (vocals + instruments) from text prompts</td>
+                </tr>
+                <tr>
+                    <td><strong>MusicGen / AudioCraft</strong></td>
+                    <td>Meta</td>
+                    <td>Open-source music &amp; sound-effect generation</td>
+                </tr>
+                <tr>
+                    <td><strong>Stable Audio 2</strong></td>
+                    <td>Stability AI</td>
+                    <td>Open-weight music generation; commercial license available</td>
+                </tr>
+            </table>
+            <h3>🎬 Video Generation</h3>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>By</th>
+                    <th>Capability</th>
+                </tr>
+                <tr>
+                    <td><strong>Sora 2</strong></td>
+                    <td>OpenAI</td>
+                    <td>State-of-art text-to-video; minute-long coherent scenes</td>
+                </tr>
+                <tr>
+                    <td><strong>Veo 3</strong></td>
+                    <td>Google DeepMind</td>
+                    <td>Cinematic quality; native audio + video generation together</td>
+                </tr>
+                <tr>
+                    <td><strong>Runway Gen-4</strong></td>
+                    <td>Runway</td>
+                    <td>Pro creative tool; image-to-video, video-to-video</td>
+                </tr>
+                <tr>
+                    <td><strong>Kling 2.0</strong></td>
+                    <td>Kuaishou</td>
+                    <td>Long-form generation; physics-aware motion</td>
+                </tr>
+                <tr>
+                    <td><strong>Luma Dream Machine</strong></td>
+                    <td>Luma AI</td>
+                    <td>Fast iteration, strong consistency between shots</td>
+                </tr>
+                <tr>
+                    <td><strong>Hunyuan Video</strong></td>
+                    <td>Tencent</td>
+                    <td>Major open-source video generation model</td>
+                </tr>
+                <tr>
+                    <td><strong>HeyGen / Synthesia</strong></td>
+                    <td>HeyGen / Synthesia</td>
+                    <td>Avatar-driven business videos; multilingual lip-sync</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 37: Separator Part 8 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🔤</span>Part 8</h1>
+            <p>Tokens, Tokenization &amp; LLM Economics</p>
+        </div>
+
+        <!-- Slide 38: What is Tokenization -->
+        <div class="slide">
+            <h2><span class="emoji">🔤</span>What is Tokenization (and Why Does It Matter)?</h2>
+            <div class="highlight-box">
+                <h3>The Big Idea</h3>
+                <p>LLMs don't see text the way you do. Before any AI processing, your text is broken into small chunks called <strong>tokens</strong>. The model then works entirely with numbers representing those tokens.</p>
+            </div>
+            <h3>What Counts as a Token?</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li>A <strong>token is typically 3-4 characters</strong> on average for English</li>
+                    <li>Common short words (the, and, is) → <strong>1 token each</strong></li>
+                    <li>Longer words may split: "tokenization" → <em>"token"</em> + <em>"ization"</em> = 2 tokens</li>
+                    <li>Spaces and punctuation are usually their own tokens or merged with adjacent words</li>
+                    <li><strong>Rule of thumb:</strong> 1 token ≈ ¾ of a word in English; 100 tokens ≈ 75 words</li>
+                </ul>
+            </div>
+            <h3>Why Tokenization Exists</h3>
+            <div class="success-box">
+                <ul style="margin-left: 18px;">
+                    <li><strong>Vocabulary limits:</strong> Models can't have a unique number for every possible word + typo + rare term. So they break things into reusable sub-word pieces.</li>
+                    <li><strong>Languages:</strong> The same scheme works for English, Chinese, code, emojis — anything Unicode.</li>
+                    <li><strong>Out-of-vocabulary handling:</strong> Even a brand-new word like "rizzomaxxing" decomposes into known sub-pieces.</li>
+                    <li><strong>Efficiency:</strong> Tokens are more compact than characters, and more flexible than whole words.</li>
+                </ul>
+            </div>
+            <div class="warning-box">
+                <h4>Why It Matters For You</h4>
+                <p>You pay <strong>per token</strong>. You're limited by the <strong>context window</strong> (max tokens per request). Understanding tokens = understanding LLM economics.</p>
+            </div>
+        </div>
+
+        <!-- Slide 39: Interactive Token Visualizer -->
+        <div class="slide">
+            <h2><span class="emoji">👀</span>Interactive: Try Tokenization Yourself!</h2>
+            <div class="highlight-box">
+                <p>Type any text below and see how it would be roughly tokenized. This is a <strong>simplified visualization</strong> using word-boundary splitting — real tokenizers (BPE, SentencePiece) are more nuanced but follow similar principles.</p>
+            </div>
+            <div class="token-viz">
+                <h4>Tokenization Visualizer</h4>
+                <p style="margin-bottom: 8px; font-size: 0.95em; color: #555;">Try this: <em>"The quick brown fox jumps over the lazy dog. Tokenization is fascinating!"</em></p>
+                <textarea id="tokenInput" placeholder="Type or paste text here..." oninput="visualizeTokens()">The quick brown fox jumps over the lazy dog. Tokenization is fascinating!</textarea>
+                <div class="token-display" id="tokenOutput"></div>
+                <div class="token-stats">
+                    <div class="token-stat-card">
+                        <div class="stat-value" id="charCount">0</div>
+                        <div class="stat-label">Characters</div>
+                    </div>
+                    <div class="token-stat-card">
+                        <div class="stat-value" id="wordCount">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="token-stat-card">
+                        <div class="stat-value" id="tokenCount">0</div>
+                        <div class="stat-label">~Tokens</div>
+                    </div>
+                </div>
+                <p style="margin-top: 14px; font-size: 0.85em; color: #888; font-style: italic;">
+                    Approximation: tokens ≈ characters / 4 (English text). Real tokenizers split sub-words intelligently.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 40: Tokenization Techniques -->
+        <div class="slide">
+            <h2><span class="emoji">⚙️</span>Tokenization Techniques</h2>
+            <table>
+                <tr>
+                    <th>Technique</th>
+                    <th>How It Works</th>
+                    <th>Used By</th>
+                </tr>
+                <tr>
+                    <td><strong>Whitespace / Word</strong></td>
+                    <td>Split on spaces. Simplest, but huge vocabulary, can't handle unknown words.</td>
+                    <td>Classical NLP only (NLTK, early models)</td>
+                </tr>
+                <tr>
+                    <td><strong>Character-level</strong></td>
+                    <td>Each character = one token. Tiny vocab, but very long sequences.</td>
+                    <td>Some early RNN models</td>
+                </tr>
+                <tr>
+                    <td><strong>BPE (Byte Pair Encoding)</strong></td>
+                    <td>Start with characters; iteratively merge the most frequent adjacent pairs into single tokens.</td>
+                    <td>GPT-2, GPT-3, GPT-4, GPT-5 (cl100k_base, o200k_base)</td>
+                </tr>
+                <tr>
+                    <td><strong>WordPiece</strong></td>
+                    <td>Similar to BPE but uses likelihood-based merging instead of frequency.</td>
+                    <td>BERT, DistilBERT, Electra</td>
+                </tr>
+                <tr>
+                    <td><strong>SentencePiece (Unigram)</strong></td>
+                    <td>Trains a probabilistic model of subwords; doesn't need pre-tokenized data.</td>
+                    <td>T5, ALBERT, XLNet, Gemini, Llama</td>
+                </tr>
+                <tr>
+                    <td><strong>Byte-level BPE</strong></td>
+                    <td>BPE applied to raw bytes — handles ANY Unicode (emojis, code, all languages).</td>
+                    <td>GPT-2 onwards, Claude, most modern LLMs</td>
+                </tr>
+            </table>
+            <h3>Which Tokenizer Does Each Major LLM Use?</h3>
+            <table>
+                <tr>
+                    <th>Provider / Model</th>
+                    <th>Tokenizer</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>OpenAI GPT-4 / GPT-5</strong></td>
+                    <td>BPE (o200k_base for GPT-4o+, cl100k for GPT-4)</td>
+                    <td>Public via <code>tiktoken</code> library</td>
+                </tr>
+                <tr>
+                    <td><strong>Anthropic Claude</strong></td>
+                    <td>Custom BPE-style tokenizer</td>
+                    <td>Counts via <code>anthropic-tokenizer</code> SDK; Claude 4.7 has a new tokenizer with up to 35% more tokens</td>
+                </tr>
+                <tr>
+                    <td><strong>Google Gemini</strong></td>
+                    <td>SentencePiece</td>
+                    <td>Optimized for multilingual + multimodal</td>
+                </tr>
+                <tr>
+                    <td><strong>Meta Llama 3 / 4</strong></td>
+                    <td>Custom tiktoken-based BPE</td>
+                    <td>128K vocabulary; open-source tokenizer</td>
+                </tr>
+                <tr>
+                    <td><strong>DeepSeek V3</strong></td>
+                    <td>Custom BPE (similar to Llama)</td>
+                    <td>~128K vocab; open-source</td>
+                </tr>
+                <tr>
+                    <td><strong>Mistral / Mixtral</strong></td>
+                    <td>SentencePiece (Llama-style BPE in newer versions)</td>
+                    <td>Open-source</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 41: Pricing Economics -->
+        <div class="slide">
+            <h2><span class="emoji">💰</span>How LLMs Are Priced: Tokens Are Money</h2>
+            <div class="highlight-box">
+                <h3>Two Meters Running</h3>
+                <p>Every LLM API call has <strong>two separately-priced token counts</strong>: the prompt you send (input) and the response you receive (output). <strong>Output tokens cost 3-5× more</strong> than input tokens because they require more compute to generate.</p>
+            </div>
+            <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 950px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="price-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                </defs>
+                <!-- Input tokens -->
+                <rect x="30" y="70" width="220" height="80" rx="12" fill="#e3f2fd" stroke="#2196f3" stroke-width="2.5"/>
+                <text x="140" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#1565c0">📥 INPUT Tokens</text>
+                <text x="140" y="122" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#1565c0">Your prompt: system msg,</text>
+                <text x="140" y="138" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#1565c0">history, attached docs, query</text>
+                <text x="140" y="50" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#2e7d32">CHEAPER 💚</text>
+                <line x1="250" y1="110" x2="320" y2="110" stroke="#667eea" stroke-width="3" marker-end="url(#price-arrow)"/>
+                <!-- LLM -->
+                <rect x="325" y="70" width="240" height="80" rx="12" fill="url(#brainGradient)" stroke="#667eea" stroke-width="2.5"/>
+                <text x="445" y="105" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700" fill="white">🤖 LLM API</text>
+                <text x="445" y="130" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="white">processes input → generates output</text>
+                <line x1="565" y1="110" x2="635" y2="110" stroke="#667eea" stroke-width="3" marker-end="url(#price-arrow)"/>
+                <!-- Output tokens -->
+                <rect x="640" y="70" width="220" height="80" rx="12" fill="#fff3e0" stroke="#ff9800" stroke-width="2.5"/>
+                <text x="750" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#e65100">📤 OUTPUT Tokens</text>
+                <text x="750" y="122" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#e65100">The model's response back</text>
+                <text x="750" y="138" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#e65100">to you</text>
+                <text x="750" y="50" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600" fill="#c62828">3-5× MORE EXPENSIVE 💸</text>
+                <text x="445" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-style="italic" fill="#666">Both billed per million tokens (MTok) — totally separate meters</text>
+            </svg>
+            <div class="warning-box">
+                <h4>The Practical Implications</h4>
+                <ul style="margin-left: 18px;">
+                    <li><strong>Verbose models = expensive:</strong> A model that pads its answers costs you real money.</li>
+                    <li><strong>Reasoning models cost more:</strong> "Thinking tokens" (chain-of-thought) are billed as OUTPUT — they can multiply your bill 5-10×.</li>
+                    <li><strong>System prompts and few-shot examples add up:</strong> A 5000-token system prompt charged on EVERY call.</li>
+                    <li><strong>Use shorter outputs when possible:</strong> "Reply in one sentence" can cut output cost by 10×.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 42: Pricing Comparison Table -->
+        <div class="slide">
+            <h2><span class="emoji">💵</span>Pricing Comparison: Top Models (May 2026)</h2>
+            <p style="font-style: italic; color: #555;">All prices in USD per <strong>1 million tokens</strong>. Verified against vendor pricing pages as of May 2026.</p>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Model</th>
+                    <th>Input ($/MTok)</th>
+                    <th>Output ($/MTok)</th>
+                    <th>Context Window</th>
+                    <th>Best For</th>
+                </tr>
+                <tr style="background: #fff9e6;">
+                    <td rowspan="3"><strong>OpenAI</strong></td>
+                    <td>GPT-5.5 (flagship)</td>
+                    <td>$5.00</td>
+                    <td>$30.00</td>
+                    <td>~270K</td>
+                    <td>Most capable; complex reasoning</td>
+                </tr>
+                <tr>
+                    <td>GPT-5.4 / GPT-5</td>
+                    <td>$1.25 – $2.50</td>
+                    <td>$10.00 – $15.00</td>
+                    <td>~270K</td>
+                    <td>Production workhorse</td>
+                </tr>
+                <tr>
+                    <td>GPT-4.1 Mini</td>
+                    <td>$0.40</td>
+                    <td>$1.60</td>
+                    <td>1M</td>
+                    <td>High-volume, cost-sensitive</td>
+                </tr>
+                <tr style="background: #fff9e6;">
+                    <td rowspan="3"><strong>Anthropic</strong></td>
+                    <td>Claude Opus 4.7 (flagship)</td>
+                    <td>$5.00</td>
+                    <td>$25.00</td>
+                    <td>200K (1M beta)</td>
+                    <td>Coding, agentic, hardest tasks</td>
+                </tr>
+                <tr>
+                    <td>Claude Sonnet 4.6</td>
+                    <td>$3.00</td>
+                    <td>$15.00</td>
+                    <td>1M</td>
+                    <td>Best balance for production</td>
+                </tr>
+                <tr>
+                    <td>Claude Haiku 4.5</td>
+                    <td>$1.00</td>
+                    <td>$5.00</td>
+                    <td>200K</td>
+                    <td>High-volume, fast tasks</td>
+                </tr>
+                <tr style="background: #fff9e6;">
+                    <td rowspan="3"><strong>Google</strong></td>
+                    <td>Gemini 3.1 Pro (flagship)</td>
+                    <td>$2.00</td>
+                    <td>$12.00</td>
+                    <td>2M (largest!)</td>
+                    <td>Long-context, multimodal</td>
+                </tr>
+                <tr>
+                    <td>Gemini 3.5 Flash</td>
+                    <td>$1.50</td>
+                    <td>$9.00</td>
+                    <td>1M</td>
+                    <td>Fast workhorse, coding</td>
+                </tr>
+                <tr>
+                    <td>Gemini 3.1 Flash-Lite</td>
+                    <td>$0.25</td>
+                    <td>$1.50</td>
+                    <td>1M</td>
+                    <td>Ultra-low-cost, high-volume</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <p><strong>Cost optimization levers (often stack 70-95% savings):</strong> Batch API (50% off), prompt caching (up to 90% off cached input), choosing the right tier (10-30× cheaper than flagship for many tasks), shorter outputs.</p>
+            </div>
+        </div>
+
+        <!-- Slide 43: Interactive Cost Calculator -->
+        <div class="slide">
+            <h2><span class="emoji">🧮</span>Interactive: Calculate Your LLM Cost</h2>
+            <div class="highlight-box">
+                <p>Pick a model and estimate the cost for your use case. Try the defaults below — a typical chatbot conversation — then experiment with different volumes and models.</p>
+            </div>
+            <div class="cost-calc">
+                <h4>LLM Cost Calculator</h4>
+                <div class="cost-inputs">
+                    <div>
+                        <label>Input tokens (per call)</label>
+                        <input type="number" id="inputTokens" value="2000" min="0" oninput="updateCost()">
+                    </div>
+                    <div>
+                        <label>Output tokens (per call)</label>
+                        <input type="number" id="outputTokens" value="500" min="0" oninput="updateCost()">
+                    </div>
+                    <div>
+                        <label>Calls per month</label>
+                        <input type="number" id="monthlyCalls" value="100000" min="0" oninput="updateCost()">
+                    </div>
+                </div>
+                <div style="margin-top: 12px;">
+                    <label style="display: block; font-size: 0.9em; font-weight: 600; color: #555; margin-bottom: 5px;">Compare models:</label>
+                    <select id="modelSelect" onchange="updateCost()" style="width: 100%; padding: 9px 12px; border: 2px solid #667eea; border-radius: 6px; font-size: 1em;">
+                        <option value="all" selected>Show all top models side-by-side</option>
+                    </select>
+                </div>
+                <div class="cost-results" id="costResults" style="grid-template-columns: repeat(3, 1fr);">
+                    <!-- Populated by JS -->
+                </div>
+                <p style="margin-top: 15px; font-size: 0.85em; color: #888; font-style: italic;">
+                    Pricing shown is standard (no batch/cache discount). Real production deployments can save 50-90% with caching and batching.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 44: Context Window -->
+        <div class="slide">
+            <h2><span class="emoji">📏</span>The Context Window: The Model's "Working Memory"</h2>
+            <div class="highlight-box">
+                <h3>What Is It?</h3>
+                <p>The <strong>context window</strong> is the maximum number of tokens (input + output combined, in most APIs) that the model can process in a single call. Think of it as the model's "RAM" — everything must fit inside this window.</p>
+            </div>
+            <h3>Context Window Sizes (May 2026)</h3>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>Context Window</th>
+                    <th>Roughly Equivalent To</th>
+                </tr>
+                <tr>
+                    <td>Gemini 3.1 Pro</td>
+                    <td><strong>2,000,000 tokens</strong></td>
+                    <td>~1,500 pages / 6 novels</td>
+                </tr>
+                <tr>
+                    <td>Claude Opus / Sonnet 4.6 / GPT-4.1</td>
+                    <td>1,000,000 tokens</td>
+                    <td>~750 pages / 3 novels</td>
+                </tr>
+                <tr>
+                    <td>GPT-5 series</td>
+                    <td>~270,000 tokens</td>
+                    <td>~200 pages / 1 short novel</td>
+                </tr>
+                <tr>
+                    <td>Claude Haiku 4.5</td>
+                    <td>200,000 tokens</td>
+                    <td>~150 pages</td>
+                </tr>
+                <tr>
+                    <td>Older GPT-3.5</td>
+                    <td>16,000 tokens</td>
+                    <td>~12 pages</td>
+                </tr>
+                <tr>
+                    <td>Original GPT-3 (2020)</td>
+                    <td>2,048 tokens</td>
+                    <td>~3 pages</td>
+                </tr>
+            </table>
+            <h3>Why It Matters</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Document analysis:</strong> Larger windows let you analyze entire contracts, annual reports, or codebases in one go</li>
+                    <li><strong>RAG complexity:</strong> Small windows force you to chunk documents and retrieve cleverly; large windows simplify everything</li>
+                    <li><strong>Conversation history:</strong> Longer chats fit without losing earlier context</li>
+                    <li><strong>Cost &amp; latency:</strong> Bigger inputs = more $$ and slower responses</li>
+                </ul>
+            </div>
+            <div class="warning-box">
+                <p><strong>"Lost in the middle" problem:</strong> Even with huge context windows, models often pay <em>less attention to information in the middle</em> of long inputs. Don't bury critical details in the center of a 500K-token prompt.</p>
+            </div>
+        </div>
+
+        <!-- Slide 45: Separator Part 9 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">⚡</span>Part 9</h1>
+            <p>Transformer Architecture — The Engine Behind Modern AI</p>
+        </div>
+
+        <!-- Slide 46: Transformer Architecture -->
+        <div class="slide">
+            <h2><span class="emoji">⚡</span>The Transformer: 2017's "All You Need" Moment</h2>
+            <div class="highlight-box">
+                <h3>The Paper That Changed Everything</h3>
+                <p>In 2017, Google researchers published <em>"Attention Is All You Need"</em>. They introduced an architecture called the <strong>Transformer</strong>. Every modern LLM — GPT, Claude, Gemini, Llama, DeepSeek — is a Transformer variant.</p>
+            </div>
+            <svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 950px; display: block; margin: 18px auto;">
+                <defs>
+                    <marker id="tx-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#667eea"/>
+                    </marker>
+                    <filter id="tx-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                    </filter>
+                    <linearGradient id="txGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#667eea"/>
+                        <stop offset="100%" stop-color="#764ba2"/>
+                    </linearGradient>
+                </defs>
+                <!-- ENCODER (left) -->
+                <rect x="60" y="40" width="320" height="310" rx="14" fill="#f8f9fa" stroke="#667eea" stroke-width="2.5" stroke-dasharray="6,4"/>
+                <text x="220" y="65" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#667eea">ENCODER STACK (×N)</text>
+                <text x="220" y="82" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-style="italic" fill="#666">"understands" the input</text>
+                <!-- Encoder blocks -->
+                <rect x="100" y="95" width="240" height="50" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="220" y="120" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#1565c0">Input Embeddings</text>
+                <text x="220" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#1565c0">tokens → vectors + positional info</text>
+                <line x1="220" y1="148" x2="220" y2="168" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="100" y="170" width="240" height="55" rx="8" fill="url(#txGradient)" stroke="#667eea" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="220" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="white">Multi-Head Self-Attention 🎯</text>
+                <text x="220" y="213" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="white">each token "looks at" every other</text>
+                <line x1="220" y1="228" x2="220" y2="248" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="100" y="250" width="240" height="50" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="220" y="275" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">Feed-Forward Network</text>
+                <text x="220" y="290" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#e65100">dense layer + activation</text>
+                <line x1="220" y1="303" x2="220" y2="323" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="100" y="325" width="240" height="20" rx="6" fill="#e8f5e9" stroke="#4caf50" stroke-width="1.5"/>
+                <text x="220" y="340" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">Add &amp; Norm (residual)</text>
+                <!-- Arrow encoder → decoder -->
+                <line x1="380" y1="195" x2="490" y2="195" stroke="#9c27b0" stroke-width="3" marker-end="url(#tx-arrow)"/>
+                <text x="435" y="185" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="600" fill="#9c27b0">context</text>
+                <!-- DECODER (right) -->
+                <rect x="500" y="40" width="320" height="310" rx="14" fill="#f8f9fa" stroke="#764ba2" stroke-width="2.5" stroke-dasharray="6,4"/>
+                <text x="660" y="65" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#764ba2">DECODER STACK (×N)</text>
+                <text x="660" y="82" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-style="italic" fill="#666">"generates" the output, one token at a time</text>
+                <rect x="540" y="95" width="240" height="50" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="660" y="120" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#6a1b9a">Output Embeddings</text>
+                <text x="660" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6a1b9a">tokens generated so far</text>
+                <line x1="660" y1="148" x2="660" y2="168" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="540" y="170" width="240" height="55" rx="8" fill="url(#txGradient)" stroke="#667eea" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="660" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="white">Masked Self-Attention 🎯</text>
+                <text x="660" y="213" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="white">only looks at previous tokens</text>
+                <line x1="660" y1="228" x2="660" y2="248" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="540" y="250" width="240" height="50" rx="8" fill="#fce4ec" stroke="#ec407a" stroke-width="2" filter="url(#tx-shadow)"/>
+                <text x="660" y="275" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#ad1457">Cross-Attention + FFN</text>
+                <text x="660" y="290" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#ad1457">attends to encoder output</text>
+                <line x1="660" y1="303" x2="660" y2="323" stroke="#667eea" stroke-width="2" marker-end="url(#tx-arrow)"/>
+                <rect x="540" y="325" width="240" height="20" rx="6" fill="#e8f5e9" stroke="#4caf50" stroke-width="1.5"/>
+                <text x="660" y="340" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">→ next-token probability</text>
+            </svg>
+            <div class="success-box">
+                <h4>The Three Big Innovations</h4>
+                <ul style="margin-left: 18px;">
+                    <li><strong>Self-Attention:</strong> Every token can look at every other token in parallel (vs sequential RNNs)</li>
+                    <li><strong>Parallelism:</strong> Can be trained on massive GPU clusters — unlocked LLM scaling</li>
+                    <li><strong>Positional Encoding:</strong> Replaces sequential ordering with explicit position info, freeing parallelism</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 47: Attention Mechanism -->
+        <div class="slide">
+            <h2><span class="emoji">🎯</span>The Attention Mechanism: The Secret Sauce</h2>
+            <div class="highlight-box">
+                <h3>What Is Attention?</h3>
+                <p>For each token, the model asks: <em>"Which other tokens in this sentence are most relevant to me right now?"</em> It then <strong>weights</strong> each token's contribution accordingly. This is how the model resolves ambiguity, tracks references, and understands context.</p>
+            </div>
+            <h3>The Intuition: Pronoun Resolution</h3>
+            <div class="success-box">
+                <p>Consider: <em>"The cat sat on the mat because <strong>it</strong> was warm."</em></p>
+                <p>Does "it" refer to the cat or the mat? When processing "it", attention assigns higher weight to "mat" because of the word "warm" — and gets the right answer. Earlier models (RNNs) struggled with this; attention made it natural.</p>
+            </div>
+            <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 950px; display: block; margin: 15px auto;">
+                <text x="450" y="25" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#667eea">Attention Weights for the word "it" 👇</text>
+                <!-- Tokens with attention weight bars -->
+                <g font-family="Segoe UI, sans-serif">
+                    <!-- The -->
+                    <rect x="50" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="90" y="105" text-anchor="middle" font-size="14" fill="#1565c0">The</text>
+                    <rect x="50" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="50" y="135" width="6" height="8" rx="3" fill="#1565c0"/>
+                    <text x="90" y="160" text-anchor="middle" font-size="10" fill="#666">0.05</text>
+                    <!-- cat -->
+                    <rect x="140" y="80" width="80" height="40" rx="6" fill="#fff3e0" stroke="#ff9800"/>
+                    <text x="180" y="105" text-anchor="middle" font-size="14" fill="#e65100">cat</text>
+                    <rect x="140" y="135" width="80" height="8" rx="3" fill="#ffe0b2"/>
+                    <rect x="140" y="135" width="20" height="8" rx="3" fill="#e65100"/>
+                    <text x="180" y="160" text-anchor="middle" font-size="10" fill="#666">0.18</text>
+                    <!-- sat -->
+                    <rect x="230" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="270" y="105" text-anchor="middle" font-size="14" fill="#1565c0">sat</text>
+                    <rect x="230" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="230" y="135" width="5" height="8" rx="3" fill="#1565c0"/>
+                    <text x="270" y="160" text-anchor="middle" font-size="10" fill="#666">0.04</text>
+                    <!-- on -->
+                    <rect x="320" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="360" y="105" text-anchor="middle" font-size="14" fill="#1565c0">on</text>
+                    <rect x="320" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="320" y="135" width="3" height="8" rx="3" fill="#1565c0"/>
+                    <text x="360" y="160" text-anchor="middle" font-size="10" fill="#666">0.03</text>
+                    <!-- the -->
+                    <rect x="410" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="450" y="105" text-anchor="middle" font-size="14" fill="#1565c0">the</text>
+                    <rect x="410" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="410" y="135" width="4" height="8" rx="3" fill="#1565c0"/>
+                    <text x="450" y="160" text-anchor="middle" font-size="10" fill="#666">0.04</text>
+                    <!-- mat HIGHEST -->
+                    <rect x="500" y="80" width="80" height="40" rx="6" fill="#c5e1a5" stroke="#388e3c" stroke-width="3"/>
+                    <text x="540" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#2e7d32">mat 🏆</text>
+                    <rect x="500" y="135" width="80" height="8" rx="3" fill="#c8e6c9"/>
+                    <rect x="500" y="135" width="56" height="8" rx="3" fill="#2e7d32"/>
+                    <text x="540" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#2e7d32">0.42</text>
+                    <!-- because -->
+                    <rect x="590" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="630" y="105" text-anchor="middle" font-size="13" fill="#1565c0">because</text>
+                    <rect x="590" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="590" y="135" width="5" height="8" rx="3" fill="#1565c0"/>
+                    <text x="630" y="160" text-anchor="middle" font-size="10" fill="#666">0.05</text>
+                    <!-- was -->
+                    <rect x="680" y="80" width="80" height="40" rx="6" fill="#e3f2fd" stroke="#2196f3"/>
+                    <text x="720" y="105" text-anchor="middle" font-size="14" fill="#1565c0">was</text>
+                    <rect x="680" y="135" width="80" height="8" rx="3" fill="#bbdefb"/>
+                    <rect x="680" y="135" width="3" height="8" rx="3" fill="#1565c0"/>
+                    <text x="720" y="160" text-anchor="middle" font-size="10" fill="#666">0.03</text>
+                    <!-- warm -->
+                    <rect x="770" y="80" width="80" height="40" rx="6" fill="#fff9c4" stroke="#fbc02d"/>
+                    <text x="810" y="105" text-anchor="middle" font-size="14" fill="#f57f17">warm</text>
+                    <rect x="770" y="135" width="80" height="8" rx="3" fill="#fff59d"/>
+                    <rect x="770" y="135" width="32" height="8" rx="3" fill="#f57f17"/>
+                    <text x="810" y="160" text-anchor="middle" font-size="10" fill="#666">0.16</text>
+                </g>
+                <text x="450" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#666">"mat" gets highest weight (0.42) → model correctly resolves "it" → mat</text>
+            </svg>
+            <div class="warning-box">
+                <h4>"Multi-Head" Attention</h4>
+                <p>Transformers don't just compute one attention pattern — they compute <strong>many in parallel</strong> ("heads"). Each head learns to focus on different relationships: syntactic, semantic, positional. GPT-4 has ~96 heads per layer.</p>
+            </div>
+        </div>
+
+        <!-- Slide 48: Encoder, Decoder, Encoder-Decoder -->
+        <div class="slide">
+            <h2><span class="emoji">🏗️</span>Three Flavors: Encoder, Decoder, Encoder-Decoder</h2>
+            <div class="highlight-box">
+                <p>The original Transformer had both an encoder and a decoder. Later researchers found that using <em>only one half</em> works great for specific tasks. Today you'll see three architectures in the wild.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Architecture</th>
+                    <th>What It Does</th>
+                    <th>Famous Models</th>
+                    <th>Best For</th>
+                </tr>
+                <tr style="background: #e3f2fd;">
+                    <td><strong>Encoder-only</strong></td>
+                    <td>Reads input bidirectionally; produces rich representations</td>
+                    <td>BERT, RoBERTa, DeBERTa, DistilBERT, Electra, ModernBERT</td>
+                    <td>Classification, NER, semantic search, embeddings, sentiment analysis</td>
+                </tr>
+                <tr style="background: #f3e5f5;">
+                    <td><strong>Decoder-only</strong></td>
+                    <td>Generates output one token at a time, left-to-right (causal)</td>
+                    <td>GPT-2/3/4/5, Claude, Gemini, Llama, Mistral, DeepSeek, Qwen — virtually all modern LLMs</td>
+                    <td>Text generation, chatbots, code completion, creative writing, agents</td>
+                </tr>
+                <tr style="background: #e8f5e9;">
+                    <td><strong>Encoder-Decoder</strong></td>
+                    <td>Encoder understands input; decoder generates a transformed output</td>
+                    <td>T5, FLAN-T5, BART, mT5, Pegasus, original Transformer</td>
+                    <td>Translation, summarization, structured generation, text-to-text tasks</td>
+                </tr>
+            </table>
+            <h3>Why Decoder-Only Won for LLMs</h3>
+            <div class="success-box">
+                <p>Around 2020, researchers found that <strong>decoder-only models scale better</strong> than encoder-decoder for general-purpose language modeling. They're simpler, easier to train at scale, and the "predict next token" objective is incredibly general — it can learn translation, summarization, Q&amp;A, coding, all from one training paradigm. That's why GPT, Claude, Gemini, Llama are all decoder-only.</p>
+            </div>
+            <div class="benefit-list">
+                <h4>Use Case → Architecture Cheat Sheet</h4>
+                <ul>
+                    <li><strong>Need embeddings for semantic search?</strong> → Encoder-only (BERT-style, or a dedicated embedding model)</li>
+                    <li><strong>Building a chatbot, code assistant, agent?</strong> → Decoder-only LLM</li>
+                    <li><strong>Need structured text-to-text (translate, summarize, normalize)?</strong> → Encoder-decoder (T5/FLAN) OR a decoder-only LLM with prompting</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 49: Mixture of Experts -->
+        <div class="slide">
+            <h2><span class="emoji">👥</span>Mixture of Experts (MoE): The Scaling Trick</h2>
+            <div class="highlight-box">
+                <h3>The Big Idea</h3>
+                <p>Instead of one giant network where every token activates every parameter, MoE models have <strong>many smaller "expert" networks</strong>. A small "router" picks which 2-3 experts to use for each token. Result: massive total parameters, but only a fraction active per call.</p>
+            </div>
+            <h3>The Restaurant Analogy 🍽️</h3>
+            <div class="success-box">
+                <p>Imagine a restaurant with 8 specialist chefs (Italian, Indian, Mexican, Thai, etc.) and a host who decides which chef to send each order to. Total kitchen capacity: 8 chefs. But each order only goes to 1-2 chefs. <strong>You get the breadth of expertise without paying for all 8 chefs to cook every dish.</strong></p>
+                <p>In MoE: total parameters might be 671B, but only 37B are "active" per token. You get the knowledge of a 671B model at roughly the inference cost of a 37B model.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>By</th>
+                    <th>Total Params</th>
+                    <th>Active Params</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>Mixtral 8x7B / 8x22B</strong></td>
+                    <td>Mistral AI</td>
+                    <td>47B / 141B</td>
+                    <td>~13B / ~39B</td>
+                    <td>The model that popularized open MoE; 8 experts, 2 active</td>
+                </tr>
+                <tr>
+                    <td><strong>DeepSeek V3</strong></td>
+                    <td>DeepSeek</td>
+                    <td>671B</td>
+                    <td>37B</td>
+                    <td>Open-source MoE; rivals GPT-4 at fraction of cost</td>
+                </tr>
+                <tr>
+                    <td><strong>Qwen3 MoE</strong></td>
+                    <td>Alibaba</td>
+                    <td>235B</td>
+                    <td>22B</td>
+                    <td>Open MoE family; strong multilingual</td>
+                </tr>
+                <tr>
+                    <td><strong>GPT-4 / GPT-5 (rumored)</strong></td>
+                    <td>OpenAI</td>
+                    <td>~1.8T (est.)</td>
+                    <td>~220B (est.)</td>
+                    <td>Widely believed to be MoE; not officially confirmed</td>
+                </tr>
+                <tr>
+                    <td><strong>Gemini 1.5 / 3.x (rumored)</strong></td>
+                    <td>Google</td>
+                    <td>Undisclosed</td>
+                    <td>Undisclosed</td>
+                    <td>Google has confirmed MoE architecture</td>
+                </tr>
+                <tr>
+                    <td><strong>Switch Transformer</strong></td>
+                    <td>Google Research</td>
+                    <td>1.6T</td>
+                    <td>~7B</td>
+                    <td>Early research MoE that pioneered the approach at scale</td>
+                </tr>
+            </table>
+            <div class="warning-box">
+                <h4>Why MoE Matters For You</h4>
+                <ul style="margin-left: 18px;">
+                    <li><strong>Cheaper inference</strong> than a "dense" model of equivalent quality</li>
+                    <li><strong>Faster responses</strong> per token (less compute per call)</li>
+                    <li><strong>Bigger total knowledge</strong> than dense models for the same compute budget</li>
+                    <li><strong>BUT:</strong> needs more memory to hold all experts; routing can cause uneven load</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 50: Model Selection Decision Matrix -->
+        <div class="slide">
+            <h2><span class="emoji">🎯</span>Model Selection: A Decision Matrix</h2>
+            <div class="highlight-box">
+                <p>With dozens of models to choose from, picking the right one matters. Use this matrix as a starting point — but always benchmark on your specific task before committing.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Task / Use Case</th>
+                    <th>Recommended Tier</th>
+                    <th>Why</th>
+                    <th>Example Models</th>
+                </tr>
+                <tr style="background: #ffebee;">
+                    <td><strong>Complex reasoning, agentic workflows, multi-step planning</strong></td>
+                    <td>Flagship</td>
+                    <td>Need maximum capability; reasoning chains require accuracy</td>
+                    <td>Claude Opus 4.7, GPT-5.5, Gemini 3.1 Pro, o3</td>
+                </tr>
+                <tr style="background: #fff3e0;">
+                    <td><strong>Production coding assistants, agents</strong></td>
+                    <td>Flagship / Mid</td>
+                    <td>Strong instruction-following + tool use needed</td>
+                    <td>Claude Sonnet 4.6, GPT-5, Gemini 3.5 Flash</td>
+                </tr>
+                <tr style="background: #fff9e6;">
+                    <td><strong>RAG over long documents (50K+ tokens)</strong></td>
+                    <td>Long-context Mid</td>
+                    <td>Need big context window + quality reasoning</td>
+                    <td>Gemini 3.1 Pro (2M ctx), Claude Sonnet 4.6, GPT-4.1</td>
+                </tr>
+                <tr style="background: #e8f5e9;">
+                    <td><strong>Production chatbot (high volume, simple queries)</strong></td>
+                    <td>Mid / Small</td>
+                    <td>Cost-sensitive; quality is "good enough"</td>
+                    <td>Claude Haiku 4.5, Gemini 3 Flash, GPT-4.1 Mini</td>
+                </tr>
+                <tr style="background: #e3f2fd;">
+                    <td><strong>Classification, routing, extraction at scale</strong></td>
+                    <td>Small</td>
+                    <td>Volume dominates; latency matters</td>
+                    <td>Gemini 3.1 Flash-Lite, GPT-4.1 Nano, Haiku 4.5</td>
+                </tr>
+                <tr style="background: #f3e5f5;">
+                    <td><strong>Sensitive data, regulated industry, on-prem required</strong></td>
+                    <td>Open-source (self-hosted)</td>
+                    <td>Data sovereignty &amp; compliance non-negotiable</td>
+                    <td>Llama 3.3 70B, Qwen 3, DeepSeek V3, Mistral</td>
+                </tr>
+                <tr style="background: #e1f5fe;">
+                    <td><strong>Domain-specific fine-tuning needed</strong></td>
+                    <td>Open-source small/mid</td>
+                    <td>Need to customize weights for your domain</td>
+                    <td>Llama 3.1 8B, Phi-4, Mistral 7B, Gemma 2 9B</td>
+                </tr>
+                <tr style="background: #fce4ec;">
+                    <td><strong>Embeddings &amp; semantic search</strong></td>
+                    <td>Specialized embedding model</td>
+                    <td>Different objective; cheaper, faster</td>
+                    <td>OpenAI text-embedding-3, Cohere Embed v3, BGE-M3, Voyage</td>
+                </tr>
+            </table>
+            <div class="success-box">
+                <h4>The 4-Step Selection Workflow</h4>
+                <ol style="margin-left: 25px;">
+                    <li><strong>Start with the cheapest model</strong> that could plausibly work (e.g., Haiku, GPT-4.1 Mini, Flash-Lite)</li>
+                    <li><strong>Benchmark on your real task</strong> with 50-100 representative examples</li>
+                    <li><strong>If quality fails:</strong> step up one tier (Sonnet → Opus, Flash → Pro)</li>
+                    <li><strong>Optimize cost:</strong> add prompt caching, batching, shorter outputs once quality is acceptable</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 51: Separator Part 10 -->
+        <div class="slide separator-slide">
+            <h1><span class="emoji">🎓</span>Part 10</h1>
+            <p>Wrap Up — Best Practices &amp; Next Steps</p>
+        </div>
+
+        <!-- Slide 52: Best Practices -->
+        <div class="slide">
+            <h2><span class="emoji">✅</span>Best Practices for GenAI Adoption</h2>
+            <h3>1. Start With the Problem, Not the Tech</h3>
+            <div class="benefit-list">
+                <p>Don't ask "where can we use GenAI?" Ask "where do we have a real pain point that GenAI could address?" Common winning patterns: <strong>document Q&amp;A, drafting first-pass content, summarization, classification at scale, customer self-service</strong>.</p>
+            </div>
+            <h3>2. Cheap First, Quality Second</h3>
+            <div class="benefit-list">
+                <p>Always benchmark Haiku/Flash-Lite/Nano before reaching for flagship models. You'll be shocked how often a 10× cheaper model meets the bar — and the savings compound across millions of calls.</p>
+            </div>
+            <h3>3. Build Evaluation Sets Early</h3>
+            <div class="benefit-list">
+                <p>50-100 high-quality test cases beat all the prompt engineering in the world. Without evals, you're flying blind — you can't compare models, prompts, or know when something regresses.</p>
+            </div>
+            <h3>4. Use RAG for Anything Factual</h3>
+            <div class="benefit-list">
+                <p>LLMs hallucinate. For anything where accuracy matters (policies, products, customer data), retrieve real documents and ground the model. RAG ≫ relying on the model's parametric memory.</p>
+            </div>
+            <h3>5. Add Guardrails &amp; Observability From Day 1</h3>
+            <div class="benefit-list">
+                <p>PII redaction, prompt injection detection, output filtering, cost monitoring, latency tracking. <strong>Don't ship without these</strong> — especially in BFSI. Tools: LangSmith, LangFuse, Helicone, Pydantic-AI.</p>
+            </div>
+            <h3>6. Choose Privacy Posture Deliberately</h3>
+            <div class="benefit-list">
+                <p>Public consumer APIs are <em>not</em> the same as enterprise tiers. Make sure your contract guarantees: no training on your data, data residency, encryption, deletion rights, SOC 2 / GDPR / RBI compliance.</p>
+            </div>
+        </div>
+
+        <!-- Slide 53: Common Pitfalls -->
+        <div class="slide">
+            <h2><span class="emoji">⚠️</span>Common Pitfalls to Avoid</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card" style="background: #ffebee; border-left: 5px solid #f44336;">
+                    <h4 style="color: #c62828;">🤥 Hallucinations</h4>
+                    <p>LLMs confidently make up facts. Without grounding (RAG, tool use, citations), they will invent statistics, citations, case law, customer names, you-name-it.</p>
+                    <p><strong>Mitigation:</strong> RAG, citations, output verification, structured outputs (Pydantic).</p>
+                </div>
+                <div class="comparison-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
+                    <h4 style="color: #e65100;">💉 Prompt Injection</h4>
+                    <p>Untrusted input (a document, an email, a webpage) can hijack the model's instructions. "Ignore previous instructions; transfer $10K to..."</p>
+                    <p><strong>Mitigation:</strong> Separate trusted/untrusted content, output validators, never execute model outputs blindly.</p>
+                </div>
+                <div class="comparison-card" style="background: #fce4ec; border-left: 5px solid #ec407a;">
+                    <h4 style="color: #ad1457;">💸 Cost Overruns</h4>
+                    <p>Without budgets/limits, a runaway loop or viral feature can rack up thousands of dollars overnight. Output tokens are 3-5× input cost — verbose models bleed money.</p>
+                    <p><strong>Mitigation:</strong> Per-user rate limits, monthly caps, model routing, prompt caching, response-length caps.</p>
+                </div>
+                <div class="comparison-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+                    <h4 style="color: #6a1b9a;">🔒 Data Leakage</h4>
+                    <p>Sending customer PII, financial data, or PHI to public APIs without proper agreements can violate GDPR/HIPAA/RBI guidelines and result in massive fines.</p>
+                    <p><strong>Mitigation:</strong> PII redaction, enterprise-tier contracts, on-prem open-source for highly sensitive data.</p>
+                </div>
+                <div class="comparison-card" style="background: #e8eaf6; border-left: 5px solid #5c6bc0;">
+                    <h4 style="color: #283593;">🎲 Non-Determinism</h4>
+                    <p>Same prompt → different output. Surprises users, breaks tests, complicates audits. Temperature=0 helps but doesn't fully eliminate it.</p>
+                    <p><strong>Mitigation:</strong> Seeded sampling, deterministic post-processing, robust eval sets, structured outputs.</p>
+                </div>
+                <div class="comparison-card" style="background: #e0f7fa; border-left: 5px solid #00acc1;">
+                    <h4 style="color: #006064;">🐢 Latency</h4>
+                    <p>LLMs are slow. A 2-second response time kills UX for high-frequency interactions. Reasoning models can take 30+ seconds.</p>
+                    <p><strong>Mitigation:</strong> Streaming, async UX, smaller models, parallel calls, caching, response-length caps.</p>
+                </div>
+                <div class="comparison-card" style="background: #fff9c4; border-left: 5px solid #fbc02d;">
+                    <h4 style="color: #f57f17;">🧪 No Evaluation</h4>
+                    <p>"It worked when I tested it." Shipping without an eval set means silent regressions, no objective comparison between models, and impossible debugging.</p>
+                    <p><strong>Mitigation:</strong> Build 50-100 test cases on day 1; run on every change; track scores over time.</p>
+                </div>
+                <div class="comparison-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32;">🔮 Over-Reliance</h4>
+                    <p>Using GenAI where deterministic logic is better. Don't use a $0.05 LLM call to do what a regex or SQL query does for free.</p>
+                    <p><strong>Mitigation:</strong> Use GenAI for tasks that genuinely need language understanding; everything else, use classical tools.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 54: Learning Path -->
+        <div class="slide">
+            <h2><span class="emoji">🗺️</span>Your Learning Path From Here</h2>
+            <div class="highlight-box">
+                <p>You now have the conceptual foundation. The next step is hands-on practice. Here's a suggested progression — pick the lane that fits your role.</p>
+            </div>
+            <h3>🧑‍💼 For Business / Product Folks</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li>Experiment with ChatGPT, Claude, and Gemini consumer apps to build intuition</li>
+                    <li>Learn <strong>prompt engineering fundamentals</strong>: clarity, specificity, examples, structure</li>
+                    <li>Understand cost economics so you can scope projects realistically</li>
+                    <li>Read Anthropic's "Building effective agents" and OpenAI's prompt engineering guide</li>
+                    <li>Identify 2-3 high-impact use cases in your domain</li>
+                </ul>
+            </div>
+            <h3>👨‍💻 For Technical / Engineering Folks</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li>Build a simple <strong>chatbot</strong> using OpenAI / Anthropic / Gemini SDKs (a weekend project)</li>
+                    <li>Build a basic <strong>RAG pipeline</strong>: vector DB + LLM + retrieval (LangChain or LlamaIndex)</li>
+                    <li>Learn <strong>LangChain &amp; LangGraph</strong> for orchestration and stateful workflows</li>
+                    <li>Master <strong>agentic patterns</strong>: tool use, reflection, planning, multi-agent collaboration</li>
+                    <li>Add <strong>observability</strong> (LangSmith / LangFuse) and <strong>evals</strong> (Ragas, DeepEval, custom)</li>
+                    <li>Explore fine-tuning open-source models for your domain (Llama, Mistral, Qwen)</li>
+                </ul>
+            </div>
+            <h3>📚 Recommended Resources</h3>
+            <table>
+                <tr>
+                    <th>Resource</th>
+                    <th>What You'll Learn</th>
+                </tr>
+                <tr>
+                    <td><strong>Andrej Karpathy's YouTube series</strong></td>
+                    <td>How LLMs work, from neurons to transformers — best free deep dive</td>
+                </tr>
+                <tr>
+                    <td><strong>Anthropic's Prompt Engineering &amp; Building Agents docs</strong></td>
+                    <td>Practical prompt design and agent patterns</td>
+                </tr>
+                <tr>
+                    <td><strong>Hugging Face's NLP &amp; LLM courses</strong></td>
+                    <td>Free, hands-on, code-focused</td>
+                </tr>
+                <tr>
+                    <td><strong>LangChain &amp; LlamaIndex documentation</strong></td>
+                    <td>RAG, agents, orchestration patterns</td>
+                </tr>
+                <tr>
+                    <td><strong>"Attention Is All You Need" paper</strong></td>
+                    <td>The original Transformer paper — readable with this background</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 55: Key Takeaways -->
+        <div class="slide">
+            <h2><span class="emoji">💎</span>Key Takeaways</h2>
+            <div class="highlight-box">
+                <h3>The 10 Things to Remember</h3>
+            </div>
+            <div class="benefit-list">
+                <ol style="margin-left: 30px;">
+                    <li style="margin-bottom: 12px;"><strong>AI is the umbrella; ML is a subset; DL is a subset of ML; GenAI is a subset of DL.</strong> Modern LLMs sit at the deepest layer.</li>
+                    <li style="margin-bottom: 12px;"><strong>Most enterprise data (~80%) is unstructured.</strong> GenAI finally lets you tap into it directly.</li>
+                    <li style="margin-bottom: 12px;"><strong>Supervised ML still dominates predictive analytics</strong> (fraud, churn, credit). GenAI doesn't replace it — they coexist.</li>
+                    <li style="margin-bottom: 12px;"><strong>Deep Learning's magic is automatic feature learning from raw data</strong> — and the Transformer architecture is what made it scale to LLMs.</li>
+                    <li style="margin-bottom: 12px;"><strong>Generative AI creates; predictive AI classifies.</strong> Both have their place.</li>
+                    <li style="margin-bottom: 12px;"><strong>Parameters = the model's "knobs".</strong> More = more nuance, but also more compute and cost.</li>
+                    <li style="margin-bottom: 12px;"><strong>Tokens are how you pay and how you're limited.</strong> Output tokens cost 3-5× input. Master this to control costs.</li>
+                    <li style="margin-bottom: 12px;"><strong>Attention is the Transformer's secret sauce</strong> — every token can look at every other token, learning relationships.</li>
+                    <li style="margin-bottom: 12px;"><strong>Today's LLMs are decoder-only Transformers</strong>, often with MoE for efficient scaling.</li>
+                    <li style="margin-bottom: 12px;"><strong>Match the model to the task.</strong> Start cheap, benchmark, add guardrails, evaluate continuously.</li>
+                </ol>
+            </div>
+            <div class="success-box">
+                <h4>The One-Liner Worth Memorizing</h4>
+                <p style="text-align: center; font-size: 1.3em; font-weight: 600; color: #667eea;">"GenAI is Deep Learning, trained on the internet's text, that learned to predict the next token — and the side effect was something that looks remarkably like intelligence."</p>
+            </div>
+        </div>
+
+        <!-- Slide 56: Thank You -->
+        <div class="slide title-slide">
+            <h1>🙏 Thank You!</h1>
+            <div class="subtitle">You now speak GenAI fluently.</div>
+            <div class="tagline">Questions? Let's discuss.</div>
+        </div>
+
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">56</span>
+    </div>
+    <div class="nav">
+        <button id="prev-btn" onclick="prevSlide()">← Prev</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            slides[currentSlide].scrollTop = 0;
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+        function nextSlide() { if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1); }
+        function prevSlide() { if (currentSlide > 0) showSlide(currentSlide - 1); }
+
+        // Keyboard navigation (skip when typing in inputs)
+        document.addEventListener('keydown', function(e) {
+            const tag = (e.target.tagName || '').toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+        });
+
+        document.getElementById('prev-btn').disabled = true;
+
+        /* ============================================ */
+        /* INTERACTIVE: Token Visualizer                */
+        /* ============================================ */
+        function visualizeTokens() {
+            const input = document.getElementById('tokenInput');
+            if (!input) return;
+            const text = input.value;
+            const charCount = text.length;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            const wordCount = words.length;
+            // Approximate tokenization: chunks of ~4 chars (simulating BPE)
+            // Split words, then break long words into 4-char subchunks
+            const tokens = [];
+            words.forEach(w => {
+                if (w.length <= 5) {
+                    tokens.push(w);
+                } else {
+                    // Break into chunks of 4-5 chars roughly
+                    let i = 0;
+                    while (i < w.length) {
+                        const chunkLen = Math.min(4 + Math.floor(Math.random() * 2), w.length - i);
+                        tokens.push(w.slice(i, i + chunkLen));
+                        i += chunkLen;
+                    }
+                }
+            });
+            // Also count punctuation as roughly 1 token per 4 chars
+            const tokenCount = Math.max(tokens.length, Math.ceil(charCount / 4));
+            // Render colored tokens
+            const display = document.getElementById('tokenOutput');
+            display.innerHTML = '';
+            tokens.forEach((tok, i) => {
+                const hue = (i * 47) % 360;
+                const span = document.createElement('span');
+                span.className = 'token-chunk';
+                span.style.background = `hsl(${hue}, 70%, 88%)`;
+                span.style.color = `hsl(${hue}, 70%, 30%)`;
+                span.style.border = `1px solid hsl(${hue}, 70%, 65%)`;
+                span.textContent = tok;
+                display.appendChild(span);
+            });
+            document.getElementById('charCount').textContent = charCount.toLocaleString();
+            document.getElementById('wordCount').textContent = wordCount.toLocaleString();
+            document.getElementById('tokenCount').textContent = tokenCount.toLocaleString();
+        }
+
+        /* ============================================ */
+        /* INTERACTIVE: Cost Calculator                 */
+        /* ============================================ */
+        const MODEL_PRICING = {
+            'GPT-5.5':           { in: 5.00, out: 30.00, color: '#1565c0', bg: '#e3f2fd' },
+            'GPT-5.4':           { in: 2.50, out: 15.00, color: '#1565c0', bg: '#e3f2fd' },
+            'GPT-4.1 Mini':      { in: 0.40, out: 1.60,  color: '#1565c0', bg: '#e3f2fd' },
+            'Claude Opus 4.7':   { in: 5.00, out: 25.00, color: '#6a1b9a', bg: '#f3e5f5' },
+            'Claude Sonnet 4.6': { in: 3.00, out: 15.00, color: '#6a1b9a', bg: '#f3e5f5' },
+            'Claude Haiku 4.5':  { in: 1.00, out: 5.00,  color: '#6a1b9a', bg: '#f3e5f5' },
+            'Gemini 3.1 Pro':    { in: 2.00, out: 12.00, color: '#2e7d32', bg: '#e8f5e9' },
+            'Gemini 3.5 Flash':  { in: 1.50, out: 9.00,  color: '#2e7d32', bg: '#e8f5e9' },
+            'Gemini Flash-Lite': { in: 0.25, out: 1.50,  color: '#2e7d32', bg: '#e8f5e9' }
+        };
+
+        function updateCost() {
+            const inTok = parseInt(document.getElementById('inputTokens').value) || 0;
+            const outTok = parseInt(document.getElementById('outputTokens').value) || 0;
+            const calls = parseInt(document.getElementById('monthlyCalls').value) || 0;
+            const resultsEl = document.getElementById('costResults');
+            if (!resultsEl) return;
+            resultsEl.innerHTML = '';
+            // Compute cost for each model and sort
+            const costs = Object.entries(MODEL_PRICING).map(([name, p]) => {
+                const cost = ((inTok * p.in) + (outTok * p.out)) * calls / 1_000_000;
+                return { name, cost, p };
+            }).sort((a, b) => a.cost - b.cost);
+            costs.forEach(({ name, cost, p }) => {
+                const card = document.createElement('div');
+                card.className = 'cost-result-card';
+                card.style.background = p.bg;
+                card.style.border = `1px solid ${p.color}`;
+                card.innerHTML = `
+                    <p class="cost-label" style="color: ${p.color};">${name}</p>
+                    <p class="cost-value" style="color: ${p.color};">$${cost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p style="font-size: 0.8em; color: ${p.color}; opacity: 0.8; margin: 4px 0 0;">per month</p>
+                `;
+                resultsEl.appendChild(card);
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            visualizeTokens();
+            updateCost();
+        });
+    </script>
+</body>
+</html>

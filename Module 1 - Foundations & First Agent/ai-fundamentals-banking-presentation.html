@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fundamentals & Applications in Banking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 50px 70px 80px 70px;
+            background: white;
+            animation: slideIn 0.5s ease-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Title Slide */
+        .slide.title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .slide.title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide.title-slide .subtitle {
+            font-size: 1.8em;
+            opacity: 0.95;
+            margin-bottom: 50px;
+        }
+
+        .slide.title-slide .tagline {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 20px 40px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 60px;
+        }
+
+        .author-info {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .author-info h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .author-info a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3em;
+            border-bottom: 2px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .author-info a:hover {
+            border-bottom-color: white;
+            opacity: 0.8;
+        }
+
+        /* Separator Slide */
+        .slide.separator-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide.separator-slide h1 {
+            font-size: 4em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide.separator-slide p {
+            font-size: 1.8em;
+            color: white;
+            opacity: 0.95;
+        }
+
+        /* Footer for all slides except title */
+        .slide-footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 0.85em;
+            color: #888;
+            z-index: 999;
+        }
+
+        .slide-footer a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .slide-footer a:hover {
+            border-bottom-color: #667eea;
+        }
+
+        /* Regular Slides */
+        h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 12px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.6em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.15em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        ul {
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+
+        ol {
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            color: #444;
+        }
+
+        strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #e8f0fe 0%, #f3e8ff 100%);
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .highlight-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 15px 18px;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:nth-of-type(even) {
+            background: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background: #e8f0fe;
+        }
+
+        /* Architecture Diagram Styles */
+        .architecture-diagram {
+            margin: 25px 0;
+        }
+
+        .arch-layer {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .arch-layer:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .arch-layer h4 {
+            margin-top: 0;
+        }
+
+        /* Benefit List */
+        .benefit-list {
+            margin: 20px 0;
+        }
+
+        .benefit-list ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .benefit-list li {
+            padding-left: 35px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .benefit-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .comparison-item {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .comparison-item h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        /* Key Point Box */
+        .key-point {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe6a1 100%);
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        /* Navigation Styles */
+        .nav {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .nav button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .nav button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .nav button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 70px;
+            right: 30px;
+            background: rgba(255,255,255,0.95);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            color: #667eea;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        /* Nested Lists */
+        ul ul, ol ul {
+            margin-top: 8px;
+        }
+
+        /* Definition List */
+        .definition-item {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid #667eea;
+        }
+
+        .definition-item h4 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        /* Visual Diagram */
+        .visual-diagram {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .diagram-circles {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .circle {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .circle-large {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 1.3em;
+        }
+
+        .circle-medium {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+            font-size: 1.1em;
+            margin-left: -60px;
+        }
+
+        .circle-small {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 0.95em;
+            margin-left: -40px;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .example-box h4 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box h4 {
+            color: #c62828;
+            margin-top: 0;
+        }
+
+        /* TOC Styles */
+        .toc-section {
+            margin-bottom: 25px;
+        }
+
+        .toc-section h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.5em;
+        }
+
+        .toc-list {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .toc-list li {
+            font-size: 1.15em;
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .toc-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #764ba2;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        
+        <!-- Slide 1: Title Slide -->
+        <div class="slide title-slide active">
+            <h1>🤖 AI Fundamentals & Applications</h1>
+            <div class="subtitle">From Core Concepts to Banking Use Cases</div>
+            <div class="tagline">Unlocking the Power of Artificial Intelligence in Finance</div>
+            
+            <div class="author-info" style="margin-top: 80px;">
+                
+                <p style="margin-top: 40px; font-size: 1.2em; color: white;">
+                    A Comprehensive Guide for Banking & Finance Professionals 💼
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents -->
+        <div class="slide">
+            <h2><span class="emoji">📋</span>Agenda</h2>
+            
+            <div class="toc-section">
+                <h3>Part 1: AI Fundamentals</h3>
+                <ul class="toc-list">
+                    <li>Basic AI Terminology</li>
+                    <li>AI vs. Machine Learning vs. Deep Learning</li>
+                    <li>Types of Inferencing (Batch & Real-Time)</li>
+                    <li>Types of Data in AI Models</li>
+                    <li>Types of Machine Learning (Supervised, Unsupervised, Reinforcement)</li>
+                </ul>
+            </div>
+
+            <div class="toc-section">
+                <h3>Part 2: Banking Applications</h3>
+                <ul class="toc-list">
+                    <li>Where AI/ML Provides Value in Banking</li>
+                    <li>When AI/ML Is NOT the Right Tool</li>
+                    <li>Matching ML Techniques to Banking Use Cases</li>
+                    <li>Real-World Applications Across Banking Domains</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 25px;">
+                <p style="margin: 0;"><strong>Objective:</strong> Build foundational AI knowledge and understand practical applications in banking and finance</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 3: Separator - Part 1 -->
+        <div class="slide separator-slide">
+            <h1>Part 1: AI Fundamentals</h1>
+            <p>Understanding the Core Concepts</p>
+        </div>
+
+        <!-- Slide 4: Basic AI Terminology - Part 1 -->
+        <div class="slide">
+            <h2><span class="emoji">🤖</span>Basic AI Terminology (1/3)</h2>
+            
+            <h3>Core AI Concepts</h3>
+            
+            <div class="definition-item">
+                <h4><strong>Artificial Intelligence (AI)</strong></h4>
+                <p>The broad, overarching field of computer science focused on creating systems that can simulate human intelligence to perform tasks like problem-solving, decision-making, and understanding language.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Machine Learning (ML)</strong></h4>
+                <p>A <strong>subset of AI</strong>. Instead of being explicitly programmed with rules, an ML system "learns" directly from data. It uses algorithms to find patterns and make predictions.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Deep Learning (DL)</strong></h4>
+                <p>A more advanced <strong>subset of Machine Learning</strong>. Deep learning uses complex, multi-layered "neural networks" to solve highly intricate problems, such as image recognition or human-level language generation.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Neural Networks (NN)</strong></h4>
+                <p>The "engine" behind deep learning. NNs are inspired by the structure of the human brain, using interconnected layers of nodes (or "neurons") to process information and find patterns.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 5: Basic AI Terminology - Part 2 -->
+        <div class="slide">
+            <h2><span class="emoji">🤖</span>Basic AI Terminology (2/3)</h2>
+            
+            <h3>AI Application Domains</h3>
+            
+            <div class="definition-item">
+                <h4><strong>Computer Vision (CV)</strong></h4>
+                <p>A field of AI that trains computers to "see" and interpret visual information from the world, such as images and videos. Examples include facial recognition and self-driving car navigation.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Natural Language Processing (NLP)</strong></h4>
+                <p>A field of AI that gives computers the ability to understand, interpret, and generate human language (both text and speech). Examples include translation apps, chatbots, and spam filters.</p>
+            </div>
+
+            <h3>Training & Deployment Concepts</h3>
+
+            <div class="definition-item">
+                <h4><strong>Algorithm</strong></h4>
+                <p>The "recipe" or set of mathematical rules and steps that a machine learning system uses to learn from data.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Model</strong></h4>
+                <p>The <em>output</em> of the training process. Once an algorithm has "learned" from the data, the resulting "brain" or set of learned patterns is the model. It's what you use to make predictions.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 6: Basic AI Terminology - Part 3 -->
+        <div class="slide">
+            <h2><span class="emoji">🤖</span>Basic AI Terminology (3/3)</h2>
+            
+            <h3>Model Lifecycle & Quality</h3>
+            
+            <div class="definition-item">
+                <h4><strong>Training</strong></h4>
+                <p>The process of "teaching" the model. This involves feeding a machine learning algorithm large amounts of data so it can learn to identify the desired patterns.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Inferencing (or Prediction)</strong></h4>
+                <p>The process of <em>using</em> a trained model to make a prediction or decision on new, unseen data.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Bias</strong></h4>
+                <p>A systematic error or prejudice in an AI model's outputs. Bias often originates from incomplete, flawed, or unrepresentative training data, leading to unfair or inaccurate results for certain groups.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Fairness</strong></h4>
+                <p>The effort and set of techniques used to identify and mitigate bias in AI models, ensuring their predictions are equitable and don't systematically disadvantage any group.</p>
+            </div>
+
+            <div class="definition-item">
+                <h4><strong>Fit (Overfitting/Underfitting)</strong></h4>
+                <p>This describes how well a model has learned from its training data:</p>
+                <ul style="margin-top: 10px;">
+                    <li><strong>Underfitting:</strong> The model is too simple and failed to learn the underlying patterns (poor results on both training and new data)</li>
+                    <li><strong>Overfitting:</strong> The model learned the training data too well, including its noise. It "memorized" answers instead of learning general concepts, so it fails to generalize to new data</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Slide 7: Large Language Models -->
+        <div class="slide">
+            <h2><span class="emoji">🤖</span>Large Language Models (LLMs)</h2>
+            
+            <div class="highlight-box">
+                <h3>What is an LLM?</h3>
+                <p>A massive deep learning model (a type of neural network) trained on enormous quantities of text data. LLMs excel at NLP tasks like writing, summarizing, and answering questions.</p>
+            </div>
+
+            <h3>Key Characteristics of LLMs</h3>
+            
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Massive Scale</h4>
+                    <p>Trained on billions or trillions of text tokens from books, websites, articles, and more. Parameters can range from millions to hundreds of billions.</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">Versatile Capabilities</h4>
+                    <p>Can perform multiple NLP tasks: translation, summarization, question-answering, code generation, creative writing, and more—often without task-specific training.</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Contextual Understanding</h4>
+                    <p>Can understand context, nuance, and maintain coherent conversations across multiple exchanges, making them ideal for complex interactions.</p>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h4>Banking Examples</h4>
+                <ul>
+                    <li><strong>Customer Service:</strong> Intelligent chatbots that understand complex queries and provide personalized responses</li>
+                    <li><strong>Document Analysis:</strong> Extracting insights from financial reports, loan applications, and compliance documents</li>
+                    <li><strong>Fraud Detection:</strong> Analyzing transaction narratives to identify suspicious patterns</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Slide 8: AI vs ML vs DL -->
+        <div class="slide">
+            <h2><span class="emoji">🔬</span>AI vs. ML vs. Deep Learning</h2>
+            
+            <h3>The Relationship: Concentric Circles</h3>
+            
+            <div class="visual-diagram">
+                <div class="diagram-circles">
+                    <div class="circle circle-large">
+                        <span>Artificial<br>Intelligence<br>(AI)</span>
+                    </div>
+                    <div class="circle circle-medium">
+                        <span>Machine<br>Learning<br>(ML)</span>
+                    </div>
+                    <div class="circle circle-small">
+                        <span>Deep<br>Learning</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <ul style="margin: 0;">
+                    <li><strong>AI</strong> is the <strong>broadest concept</strong>, first coined in the 1950s. It refers to any technique that enables a computer to mimic human intelligence</li>
+                    <li><strong>ML</strong> is a <strong>subset of AI</strong>. It's the primary method for achieving AI today by learning from data</li>
+                    <li><strong>Deep Learning</strong> is a <strong>subset of ML</strong> using complex neural networks. Powers most modern AI breakthroughs</li>
+                </ul>
+            </div>
+
+            <h3>Comparison Table</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>AI</th>
+                        <th>Machine Learning</th>
+                        <th>Deep Learning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Scope</strong></td>
+                        <td>Broad concept of "smart" machines</td>
+                        <td>Subset of AI that learns from data</td>
+                        <td>Subset of ML using neural networks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Method</strong></td>
+                        <td>Can be rule-based or data-driven</td>
+                        <td>Data-driven using algorithms</td>
+                        <td>Data-driven using deep neural networks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Example</strong></td>
+                        <td>Simple "if-then" chatbot</td>
+                        <td>Spam filter learning from examples</td>
+                        <td>Self-driving car identifying pedestrians</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Need</strong></td>
+                        <td>Varies (rule-based needs none)</td>
+                        <td>Significant data required</td>
+                        <td>Massive amounts of data</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- Slide 9: Types of Inferencing -->
+        <div class="slide">
+            <h2><span class="emoji">⏱️</span>Types of Inferencing</h2>
+            
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Inferencing:</strong> Simply using your trained model. How you use it depends on your application's needs.</p>
+            </div>
+
+            <h3>Two Primary Approaches</h3>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h4>🗂️ Batch Inferencing (Offline)</h4>
+                    <p><strong>What it is:</strong> The model processes large volumes ("batches") of data at once.</p>
+                    <p><strong>When to use:</strong> When you don't need an instant answer. Focus is on high throughput (processing lots of data) rather than speed.</p>
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Example</h4>
+                        <p>A bank running a fraud detection model once per night to check <strong>all</strong> of the day's transactions for suspicious patterns. Processes millions of transactions in bulk.</p>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <h4>⚡ Real-Time Inferencing (Online)</h4>
+                    <p><strong>What it is:</strong> The model processes data as it arrives, typically one item at a time, providing immediate response.</p>
+                    <p><strong>When to use:</strong> When a "right-now" answer is critical. Focus is on low latency (speed).</p>
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Example</h4>
+                        <p>A credit card transaction being approved or denied <strong>at the moment</strong> you swipe your card. The model must score that one transaction instantly (milliseconds).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <p style="margin: 0;"><strong>Key Distinction:</strong> Batch = High Throughput, Scheduled Processing | Real-Time = Low Latency, Immediate Response</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 10: Types of Data in AI Models -->
+        <div class="slide">
+            <h2><span class="emoji">📊</span>Types of Data in AI Models</h2>
+            
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Data is the "food" for machine learning models.</strong> Its format and type determine what kind of model you can build.</p>
+            </div>
+
+            <div class="two-column">
+                <div>
+                    <h3>By Structure</h3>
+                    
+                    <div class="info-box">
+                        <h4>Structured Data</h4>
+                        <p>Highly organized data that fits neatly into rows and columns:</p>
+                        <ul style="margin-top: 10px;">
+                            <li><strong>Tabular Data:</strong> Excel spreadsheets, database tables (e.g., customer accounts with columns for name, age, balance)</li>
+                            <li><strong>Time-Series Data:</strong> Sequential data indexed by time (e.g., stock market charts, heart rate monitors)</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Unstructured Data</h4>
+                        <p>No predefined format or organization. Harder to process but contains vast information:</p>
+                        <ul style="margin-top: 10px;">
+                            <li><strong>Text:</strong> Emails, social media posts, articles, contracts</li>
+                            <li><strong>Images:</strong> Photos, X-rays, satellite imagery, scanned documents</li>
+                            <li><strong>Audio/Video:</strong> Phone calls, music, surveillance footage</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>By Labeling (for Training)</h3>
+                    
+                    <div class="info-box">
+                        <h4>Labeled Data</h4>
+                        <p>Data "tagged" with correct answers—the "answer key" for supervised learning:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>10,000 images each labeled "cat" or "dog"</li>
+                            <li>Emails labeled "spam" or "not spam"</li>
+                            <li>Loan applications labeled "approved" or "denied"</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Unlabeled Data</h4>
+                        <p>Raw data with no predefined answers—used for unsupervised learning:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>10,000 animal images with no labels</li>
+                            <li>Customer transaction history without categories</li>
+                            <li>Social media posts without sentiment tags</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h4>Banking Data Examples</h4>
+                <ul>
+                    <li><strong>Structured:</strong> Customer account balances, transaction amounts, credit scores</li>
+                    <li><strong>Unstructured:</strong> Scanned loan documents, customer service call recordings, social media mentions</li>
+                    <li><strong>Labeled:</strong> Historical fraud cases marked as "fraudulent" or "legitimate"</li>
+                    <li><strong>Unlabeled:</strong> New transaction data that needs to be analyzed for patterns</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Slide 11: Types of ML - Overview -->
+        <div class="slide">
+            <h2><span class="emoji">🧠</span>Types of Machine Learning</h2>
+            
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>This describes the way a model learns from data.</strong> There are three main types, each suited for different problems.</p>
+            </div>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">1️⃣ Supervised Learning</h4>
+                    <p><strong>Learning with an "answer key"</strong> — The model learns from labeled data where each example has its correct answer.</p>
+                    <p><strong>Analogy:</strong> A student learning with flashcards (question on front, answer on back)</p>
+                    <p><strong>Common Tasks:</strong> Classification (categories) and Regression (numbers)</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">2️⃣ Unsupervised Learning</h4>
+                    <p><strong>Finding hidden patterns</strong> — The model works with unlabeled data to discover structures on its own.</p>
+                    <p><strong>Analogy:</strong> Sorting mixed LEGOs into piles based on shape/color without instructions</p>
+                    <p><strong>Common Tasks:</strong> Clustering (grouping) and Anomaly Detection (finding outliers)</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">3️⃣ Reinforcement Learning</h4>
+                    <p><strong>Learning through trial and error</strong> — An agent learns by interacting with an environment, receiving rewards for good actions and penalties for bad ones.</p>
+                    <p><strong>Analogy:</strong> Training a dog (sit = treat, jump = "no")</p>
+                    <p><strong>Common Tasks:</strong> Game playing, robotics, dynamic optimization</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <p style="margin: 0;"><strong>Choosing the Right Type:</strong> Select based on your data availability and problem objective. Do you have labels? Need to find groups? Optimize sequential decisions?</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 12: Supervised Learning -->
+        <div class="slide">
+            <h2><span class="emoji">📚</span>Supervised Learning in Detail</h2>
+            
+            <h3>How It Works</h3>
+            <p>The model learns from <strong>labeled data</strong>. You show it thousands of examples, each with its correct answer. The model's job is to learn the mapping between the input (the data) and the output (the label).</p>
+
+            <div class="info-box">
+                <h4>Goal</h4>
+                <p>To make accurate predictions on new, unseen data.</p>
+            </div>
+
+            <h3>Two Main Tasks</h3>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h4>Classification</h4>
+                    <p><strong>Predicting a category</strong></p>
+                    <p>The output is a discrete class or label.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Examples</h4>
+                        <ul>
+                            <li><strong>Fraud Detection:</strong> Is this transaction "fraudulent" or "legitimate"?</li>
+                            <li><strong>Loan Default:</strong> Will this customer "default" or "repay"?</li>
+                            <li><strong>Customer Churn:</strong> Will this customer "leave" or "stay"?</li>
+                            <li><strong>Email Filtering:</strong> Is this email "spam" or "not spam"?</li>
+                            <li><strong>KYC Verification:</strong> Is this document "authentic" or "fake"?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <h4>Regression</h4>
+                    <p><strong>Predicting a continuous number</strong></p>
+                    <p>The output is a numerical value.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Examples</h4>
+                        <ul>
+                            <li><strong>Credit Scoring:</strong> What is the default probability (0-1)?</li>
+                            <li><strong>Credit Limit:</strong> How much credit ($) should we offer?</li>
+                            <li><strong>House Price Prediction:</strong> What's the property value for mortgage?</li>
+                            <li><strong>Loan Amount:</strong> What loan size is appropriate?</li>
+                            <li><strong>Customer Lifetime Value:</strong> What's the predicted revenue per customer?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Key Requirement:</strong> Supervised learning requires large amounts of high-quality labeled data, which can be expensive and time-consuming to create.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 13: Unsupervised Learning -->
+        <div class="slide">
+            <h2><span class="emoji">🔍</span>Unsupervised Learning in Detail</h2>
+            
+            <h3>How It Works</h3>
+            <p>The model is given <strong>unlabeled data</strong> and must find hidden patterns or structures on its own, with no "answer key."</p>
+
+            <div class="info-box">
+                <h4>Goal</h4>
+                <p>To discover the underlying structure of the data without prior knowledge of what to look for.</p>
+            </div>
+
+            <h3>Two Main Tasks</h3>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h4>Clustering</h4>
+                    <p><strong>Grouping similar data points together</strong></p>
+                    <p>Finds natural groupings in data without predefined categories.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Examples</h4>
+                        <ul>
+                            <li><strong>Customer Segmentation:</strong> Group customers into "High-Value Savers," "Young Borrowers," "At-Risk of Churn"</li>
+                            <li><strong>Transaction Patterns:</strong> Identify spending behavior groups</li>
+                            <li><strong>Branch Performance:</strong> Cluster branches by similar characteristics</li>
+                            <li><strong>Product Affinity:</strong> Group products frequently used together</li>
+                            <li><strong>Market Segmentation:</strong> Identify distinct market niches</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <h4>Anomaly Detection</h4>
+                    <p><strong>Finding data points that are unusual</strong></p>
+                    <p>Identifies outliers that don't fit normal patterns.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Examples</h4>
+                        <ul>
+                            <li><strong>Fraud Detection:</strong> Is this transaction weird compared to customer's normal spending?</li>
+                            <li><strong>Money Laundering:</strong> Unusual transaction patterns that deviate from typical behavior</li>
+                            <li><strong>System Intrusion:</strong> Abnormal login patterns or access attempts</li>
+                            <li><strong>ATM Failures:</strong> Detecting machines with unusual error patterns</li>
+                            <li><strong>Market Manipulation:</strong> Identifying suspicious trading patterns</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Advantage:</strong> Unsupervised learning doesn't require labeled data, making it more practical when labels are expensive or unavailable. However, results can be harder to interpret and validate.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 14: Reinforcement Learning -->
+        <div class="slide">
+            <h2><span class="emoji">🎮</span>Reinforcement Learning in Detail</h2>
+            
+            <h3>How It Works</h3>
+            <p>This is a completely different approach. The model (an "agent") learns by <strong>interacting with an environment</strong>. It learns through <strong>trial and error</strong> by receiving <strong>rewards</strong> for good actions and <strong>penalties</strong> for bad ones.</p>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Key Components</h4>
+                    <ul style="margin-top: 10px;">
+                        <li><strong>Agent:</strong> The learner or decision maker</li>
+                        <li><strong>Environment:</strong> The world the agent interacts with</li>
+                        <li><strong>Actions:</strong> Choices the agent can make</li>
+                        <li><strong>Rewards:</strong> Feedback signal (positive or negative)</li>
+                        <li><strong>Policy:</strong> The strategy the agent learns (action → reward)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>Goal</h4>
+                <p>To learn the best "policy," or sequence of actions, to maximize cumulative reward over time.</p>
+            </div>
+
+            <h3>Common Applications</h3>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h4>Game Playing</h4>
+                    <p>AI learns to play chess, Go, or video games by trying different moves and learning which lead to wins.</p>
+                    <div class="example-box" style="margin-top: 10px;">
+                        <p><strong>Example:</strong> AlphaGo learning to beat world champions</p>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <h4>Robotics</h4>
+                    <p>Robots learn to walk, pick up objects, or navigate by trial and error.</p>
+                    <div class="example-box" style="margin-top: 10px;">
+                        <p><strong>Example:</strong> Robot learning optimal grasping techniques</p>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <h4>Dynamic Optimization</h4>
+                    <p>Systems that continuously adapt and optimize based on changing conditions.</p>
+                    <div class="example-box" style="margin-top: 10px;">
+                        <p><strong>Example:</strong> Data center cooling optimization</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h4>Banking Applications</h4>
+                <ul>
+                    <li><strong>Algorithmic Trading:</strong> An agent learns optimal trading strategies (buy/sell/hold) to maximize profit while managing risk</li>
+                    <li><strong>Portfolio Management:</strong> Dynamic asset allocation that adapts to market conditions</li>
+                    <li><strong>Customer Engagement:</strong> Learning the best times and channels to contact customers for maximum response</li>
+                    <li><strong>Loan Pricing:</strong> Dynamic interest rate optimization based on risk and market conditions</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Slide 15: Separator - Part 2 -->
+        <div class="slide separator-slide">
+            <h1>Part 2: Banking Applications</h1>
+            <p>From Theory to Practice in Finance</p>
+        </div>
+
+        <!-- Slide 16: Where AI/ML Provides Value -->
+        <div class="slide">
+            <h2><span class="emoji">💡</span>Where AI/ML Provides Value in Banking</h2>
+            
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>AI and Machine Learning are not just technologies—they are powerful tools for solving business problems.</strong> Their value typically appears in three main areas:</p>
+            </div>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">1. Automation of Repetitive Tasks</h4>
+                    <p><strong>The Value:</strong> AI handles high-volume, repetitive, rule-based tasks with superhuman speed and accuracy. This frees up human workers to focus on complex, creative, and strategic problems.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Example: Automated KYC Document Processing</h4>
+                        <p>Instead of humans manually reviewing thousands of driver's licenses and utility bills, an AI model (using Computer Vision and NLP) can instantly extract data, verify authenticity, and flag documents for approval.</p>
+                        <p style="margin-top: 10px;"><strong>Impact:</strong> Process 10,000 documents in hours instead of weeks, with higher accuracy and lower cost.</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">2. Augmenting Human Decision-Making</h4>
+                    <p><strong>The Value:</strong> AI excels at finding complex patterns in vast amounts of data that no human could analyze. Models act as "assistants" to professionals, providing insights, predictions, and recommendations.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Example: Intelligent Loan Underwriting</h4>
+                        <p>An AI model analyzes thousands of data points (credit history, income, debt-to-income ratio, spending habits, employment stability) to generate a comprehensive "risk score."</p>
+                        <p style="margin-top: 10px;"><strong>Impact:</strong> Human underwriters use this score plus their judgment to make faster, more informed decisions. Reduces default rates by 15-30%.</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">3. Solution Scalability and 24/7 Availability</h4>
+                    <p><strong>The Value:</strong> Once trained, an AI model operates 24/7 and handles millions of requests simultaneously. This allows solutions to scale globally in ways impossible with human labor alone.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px;">
+                        <h4>Banking Example: Real-Time Fraud Detection</h4>
+                        <p>A bank's fraud model must analyze <em>every single</em> credit card transaction—millions per minute globally—and provide a go/no-go decision in milliseconds.</p>
+                        <p style="margin-top: 10px;"><strong>Impact:</strong> Prevent $10M+ in fraud annually per major bank. Impossible to scale with human analysts alone.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 17: When AI/ML Is NOT the Right Tool -->
+        <div class="slide">
+            <h2><span class="emoji">🛑</span>When AI/ML Is NOT the Right Tool</h2>
+            
+            <div class="warning-box">
+                <h4>Critical Understanding</h4>
+                <p>AI is powerful, but it's not a magic wand. In many cases, an AI/ML solution is inappropriate, inefficient, or even dangerous—especially in highly regulated fields like banking.</p>
+            </div>
+
+            <h3>Four Critical Scenarios to Avoid AI/ML</h3>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #ffebee; border-color: #f44336;">
+                    <h4 style="color: #c62828;">1. When You Need 100% Correct, Deterministic Answers</h4>
+                    <p><strong>The Problem:</strong> AI/ML is <strong>probabilistic</strong>—it makes predictions, not calculations. For core banking functions, you must use traditional, rule-based software.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px; background: #fff;">
+                        <h4 style="color: #c62828;">❌ Bad Use Cases</h4>
+                        <ul>
+                            <li><strong>Calculating Account Balances:</strong> Never use AI to "predict" balances. This must be perfect math (deposits - withdrawals)</li>
+                            <li><strong>Interest Calculations:</strong> APR/APY calculations are fixed formulas, not AI problems</li>
+                            <li><strong>Compliance Rule Checking:</strong> Regulatory thresholds must be exact, not probabilistic</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">2. When Cost Outweighs Benefit (Poor ROI)</h4>
+                    <p><strong>The Problem:</strong> AI projects are expensive—requiring massive clean data, specialized talent, and significant computing power.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px; background: #fff;">
+                        <h4 style="color: #e65100;">❌ Bad Use Case</h4>
+                        <p><strong>Small Credit Union Marketing:</strong> A local credit union with 100 members doesn't need a complex AI recommendation engine. A simple email newsletter is far more cost-effective.</p>
+                        <p style="margin-top: 10px;"><em>Cost of AI: $50K-500K | Cost of Email: $100/month</em></p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">3. When You Don't Have Enough Quality Data</h4>
+                    <p><strong>The Problem:</strong> Data is the "food" for machine learning. No data or bad data = useless model.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px; background: #fff;">
+                        <h4 style="color: #1565c0;">❌ Bad Use Case</h4>
+                        <p><strong>New Financial Product Prediction:</strong> Trying to build an AI model to predict success of a brand-new green bond product when you have zero historical performance data.</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="background: #f3e5f5; border-color: #9c27b0;">
+                    <h4 style="color: #6a1b9a;">4. When High-Stakes Decisions Can't Be Explained</h4>
+                    <p><strong>The Problem:</strong> Many advanced models are "black boxes"—hard to explain why they made specific decisions. In banking, this is often illegal.</p>
+                    
+                    <div class="example-box" style="margin-top: 15px; background: #fff;">
+                        <h4 style="color: #6a1b9a;">❌ Legal Compliance Issue</h4>
+                        <p><strong>Credit Denial:</strong> In many countries, if you deny someone a loan, you must provide specific reasons (e.g., "high debt-to-income ratio," "short credit history").</p>
+                        <p style="margin-top: 10px;"><strong>Problem:</strong> If your "black box" AI denies the loan and you can't explain why, your bank is non-compliant and faces regulatory penalties.</p>
+                        <p style="margin-top: 10px;"><strong>Solution:</strong> Use explainable AI (XAI) models or simpler interpretable models for regulated decisions.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 18: Matching Techniques to Use Cases -->
+        <div class="slide">
+            <h2><span class="emoji">🛠️</span>Matching ML Techniques to Banking Use Cases</h2>
+            
+            <div class="highlight-box">
+                <p style="margin: 0;"><strong>Choosing the right ML technique starts with asking the right question.</strong> The technique is directly tied to the question you're trying to answer.</p>
+            </div>
+
+            <h3>Decision Framework</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technique</th>
+                        <th>ML Type</th>
+                        <th>Core Question</th>
+                        <th>Banking Use Case Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Classification</strong></td>
+                        <td>Supervised</td>
+                        <td>"Which <strong>category</strong> does this belong to?"</td>
+                        <td>
+                            <strong>Loan Default:</strong> Will this customer default (Yes/No)?<br>
+                            <strong>Fraud Detection:</strong> Is this transaction fraudulent (Yes/No)?<br>
+                            <strong>Customer Churn:</strong> Will this customer leave (Yes/No)?
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Regression</strong></td>
+                        <td>Supervised</td>
+                        <td>"How <strong>much</strong> or <strong>many</strong>?" (Predicting a number)</td>
+                        <td>
+                            <strong>Default Probability:</strong> What's the probability (0-1) of default?<br>
+                            <strong>Credit Limit:</strong> How much credit ($) should we offer?<br>
+                            <strong>Customer Lifetime Value:</strong> What's the predicted revenue?
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Clustering</strong></td>
+                        <td>Unsupervised</td>
+                        <td>"What are the <strong>natural groups</strong> in my data?"</td>
+                        <td>
+                            <strong>Customer Segmentation:</strong> Group customers into "High-Value Savers," "Young Borrowers," "At-Risk Churners"<br>
+                            <strong>Product Bundling:</strong> Find products frequently used together
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Anomaly Detection</strong></td>
+                        <td>Unsupervised</td>
+                        <td>"Is this <strong>weird</strong>?" (Finding outliers)</td>
+                        <td>
+                            <strong>Transaction Fraud:</strong> Does this transaction look different from normal spending?<br>
+                            <strong>Money Laundering:</strong> Unusual transaction patterns?<br>
+                            <strong>System Intrusion:</strong> Abnormal login patterns?
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reinforcement Learning</strong></td>
+                        <td>Reinforcement</td>
+                        <td>"What is the <strong>best next action</strong> to take?"</td>
+                        <td>
+                            <strong>Algorithmic Trading:</strong> What's the optimal strategy (buy/sell/hold)?<br>
+                            <strong>Portfolio Management:</strong> How to dynamically rebalance assets?<br>
+                            <strong>Customer Engagement:</strong> When/how to contact customers?
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-point">
+                <p style="margin: 0;"><strong>Pro Tip:</strong> Start with the business question, not the technology. The right question naturally leads to the right ML technique.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 19: Real-World Applications - Computer Vision & NLP -->
+        <div class="slide">
+            <h2><span class="emoji">🌍</span>Real-World AI Applications: Vision & Language</h2>
+            
+            <h3><span class="emoji">👁️</span>Computer Vision (CV) Applications</h3>
+            
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Mobile Check Deposits</h4>
+                    <p>The bank's app uses CV to "see" checks from phone cameras, read account numbers (OCR), and verify signatures automatically.</p>
+                    <p><strong>Technology:</strong> Optical Character Recognition (OCR) + Signature Verification</p>
+                    <p><strong>Impact:</strong> Billions of checks processed annually without branch visits</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">KYC/Identity Verification</h4>
+                    <p>Matching selfie photos to driver's license photos during account opening. Detects fake IDs and prevents identity theft.</p>
+                    <p><strong>Technology:</strong> Face Recognition + Document Authentication</p>
+                    <p><strong>Impact:</strong> Open accounts in minutes instead of days, 95%+ fraud prevention</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Branch Security & ATM Monitoring</h4>
+                    <p>Real-time video analysis to detect suspicious behavior, unauthorized access, ATM tampering, or security threats.</p>
+                    <p><strong>Technology:</strong> Object Detection + Behavior Analysis</p>
+                    <p><strong>Impact:</strong> Prevent theft, enhance customer safety</p>
+                </div>
+            </div>
+
+            <h3><span class="emoji">💬</span>Natural Language Processing (NLP) Applications</h3>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #f3e5f5; border-color: #9c27b0;">
+                    <h4 style="color: #6a1b9a;">Customer Service Chatbots</h4>
+                    <p>AI chatbots understand text queries ("What's my balance?" "How do I pay my bill?") and provide instant, accurate responses 24/7.</p>
+                    <p><strong>Technology:</strong> Intent Classification + Entity Extraction + LLMs</p>
+                    <p><strong>Impact:</strong> Handle 80% of routine queries, reduce call center costs by 40-60%</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Sentiment Analysis</h4>
+                    <p>Analyze social media posts, reviews, and support emails to understand if customers are happy or frustrated with products/services.</p>
+                    <p><strong>Technology:</strong> Text Classification + Sentiment Scoring</p>
+                    <p><strong>Impact:</strong> Early detection of product issues, improved customer satisfaction</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Document Analysis & Extraction</h4>
+                    <p>Extract key information (names, addresses, income) from unstructured PDF loan applications, contracts, and financial statements.</p>
+                    <p><strong>Technology:</strong> Named Entity Recognition + Information Extraction</p>
+                    <p><strong>Impact:</strong> Process applications 10x faster, reduce human error</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 20: Real-World Applications - Speech & Recommendations -->
+        <div class="slide">
+            <h2><span class="emoji">🌍</span>Real-World AI Applications: Speech & Recommendations</h2>
+            
+            <h3><span class="emoji">🎤</span>Speech Recognition Applications</h3>
+            
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Voice Banking</h4>
+                    <p>Speak to automated phone systems: "I'd like to transfer money" or "Check my balance." The system understands and executes commands.</p>
+                    <p><strong>Technology:</strong> Speech-to-Text + Intent Recognition + Voice User Interface</p>
+                    <p><strong>Impact:</strong> Convenient, hands-free banking for millions of customers</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">Voice Biometrics</h4>
+                    <p>Use your unique voiceprint as a password to authenticate: "My voice is my password." More secure than traditional passwords.</p>
+                    <p><strong>Technology:</strong> Voice Recognition + Speaker Verification</p>
+                    <p><strong>Impact:</strong> Reduce fraud, eliminate forgotten passwords</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Call Center Transcription & Analysis</h4>
+                    <p>Automatically transcribe customer calls, analyze sentiment, detect compliance issues, and identify training opportunities.</p>
+                    <p><strong>Technology:</strong> Speech-to-Text + Sentiment Analysis + Keyword Detection</p>
+                    <p><strong>Impact:</strong> Improve service quality, ensure regulatory compliance</p>
+                </div>
+            </div>
+
+            <h3><span class="emoji">🎯</span>Recommendation Systems</h3>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #f3e5f5; border-color: #9c27b0;">
+                    <h4 style="color: #6a1b9a;">Personalized Product Marketing</h4>
+                    <p>Analyze transaction history to suggest relevant products: "We see you travel often. You may be eligible for our travel rewards credit card."</p>
+                    <p><strong>Technology:</strong> Collaborative Filtering + Content-Based Filtering</p>
+                    <p><strong>Impact:</strong> Increase product adoption by 30-50%, improve customer lifetime value</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Investment Product Recommendations</h4>
+                    <p>Suggest suitable investment products based on risk profile, financial goals, investment history, and market conditions.</p>
+                    <p><strong>Technology:</strong> Hybrid Recommendation + Risk Modeling</p>
+                    <p><strong>Impact:</strong> Better portfolio diversification, improved customer returns</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">Next Best Action (NBA)</h4>
+                    <p>Predict the optimal next action for each customer: which product to offer, when to contact, through which channel.</p>
+                    <p><strong>Technology:</strong> Predictive Analytics + Reinforcement Learning</p>
+                    <p><strong>Impact:</strong> Increase conversion rates, reduce customer churn</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 21: Real-World Applications - Fraud & Forecasting -->
+        <div class="slide">
+            <h2><span class="emoji">🌍</span>Real-World AI Applications: Fraud & Forecasting</h2>
+            
+            <h3><span class="emoji">🛡️</span>Fraud Detection & Prevention</h3>
+            
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #ffebee; border-color: #f44336;">
+                    <h4 style="color: #c62828;">Real-Time Transaction Monitoring</h4>
+                    <p>The classic fraud detection use case. Models flag transactions as "suspicious" if they're unusual: large amounts, new locations, odd times, or deviate from spending patterns.</p>
+                    <p><strong>Technology:</strong> Anomaly Detection + Classification + Real-Time Streaming</p>
+                    <p><strong>Process:</strong> Score every transaction in milliseconds → Auto-block high-risk → SMS/Email alert → Customer verification</p>
+                    <p><strong>Impact:</strong> Prevent $10M+ fraud annually per major bank, 99.9% of transactions processed without false positives</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Money Laundering Detection (AML)</h4>
+                    <p>Identify complex patterns of transactions designed to hide illegal fund origins. Detect structuring, layering, and integration techniques.</p>
+                    <p><strong>Technology:</strong> Graph Analytics + Pattern Recognition + Network Analysis</p>
+                    <p><strong>Impact:</strong> Meet regulatory requirements, avoid multi-million dollar fines</p>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4 style="color: #1565c0;">Account Takeover Prevention</h4>
+                    <p>Detect when legitimate accounts are compromised. Monitor login patterns, device fingerprints, behavioral biometrics, and transaction anomalies.</p>
+                    <p><strong>Technology:</strong> Behavioral Analytics + Device Intelligence + Risk Scoring</p>
+                    <p><strong>Impact:</strong> Protect customer assets, maintain trust and reputation</p>
+                </div>
+            </div>
+
+            <h3><span class="emoji">📈</span>Forecasting & Risk Management</h3>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4 style="color: #2e7d32;">Cash Flow & ATM Management</h4>
+                    <p>Use time-series forecasting to predict how much cash each ATM will need next week, preventing shortages and optimizing cash distribution.</p>
+                    <p><strong>Technology:</strong> Time-Series Regression + ARIMA/Prophet Models</p>
+                    <p><strong>Impact:</strong> Reduce ATM downtime by 40%, optimize cash transport costs</p>
+                </div>
+
+                <div class="arch-layer" style="background: #f3e5f5; border-color: #9c27b0;">
+                    <h4 style="color: #6a1b9a;">Portfolio Risk & Default Rate Forecasting</h4>
+                    <p>Forecast the bank's overall loan default rate for next quarter based on economic trends, unemployment, interest rates, and historical data.</p>
+                    <p><strong>Technology:</strong> Econometric Models + Regression + Scenario Analysis</p>
+                    <p><strong>Impact:</strong> Better capital planning, regulatory stress test compliance</p>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Credit Risk Modeling</h4>
+                    <p>Predict probability of default (PD), loss given default (LGD), and exposure at default (EAD) for accurate risk assessment and pricing.</p>
+                    <p><strong>Technology:</strong> Statistical Models + Machine Learning + Economic Indicators</p>
+                    <p><strong>Impact:</strong> Optimize lending decisions, meet Basel III capital requirements</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 22: Summary - Key Takeaways -->
+        <div class="slide">
+            <h2><span class="emoji">📌</span>Summary: Key Takeaways</h2>
+            
+            <div class="highlight-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h3 style="color: white; margin-top: 0;">What We Covered</h3>
+                <p style="color: white; font-size: 1.2em; margin: 0;">A comprehensive journey from AI fundamentals to real-world banking applications</p>
+            </div>
+
+            <h3>Part 1: Foundations</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>AI Terminology:</strong> From basic concepts (AI, ML, DL, Neural Networks) to LLMs and their applications</li>
+                    <li><strong>AI Hierarchy:</strong> AI ⊃ Machine Learning ⊃ Deep Learning (nested relationship)</li>
+                    <li><strong>Inferencing Types:</strong> Batch (high throughput, scheduled) vs Real-Time (low latency, immediate)</li>
+                    <li><strong>Data Types:</strong> Structured vs Unstructured, Labeled vs Unlabeled</li>
+                    <li><strong>ML Types:</strong> Supervised (with labels), Unsupervised (find patterns), Reinforcement (learn by rewards)</li>
+                    <li><strong>Key Tasks:</strong> Classification & Regression (Supervised), Clustering & Anomaly Detection (Unsupervised)</li>
+                </ul>
+            </div>
+
+            <h3>Part 2: Banking Applications</h3>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Value Drivers:</strong> Automation, Decision Augmentation, Scalability & 24/7 Availability</li>
+                    <li><strong>When NOT to use AI:</strong> Deterministic calculations, poor ROI, insufficient data, unexplainable high-stakes decisions</li>
+                    <li><strong>Technique Matching:</strong> Right ML technique for right business question</li>
+                    <li><strong>Real Applications:</strong> Computer Vision (checks, KYC), NLP (chatbots, document analysis), Speech (voice banking), Recommendations (product marketing), Fraud Detection (transaction monitoring), Forecasting (cash flow, risk)</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4 style="margin-top: 0;">The Big Picture</h4>
+                <p><strong>AI/ML is transforming banking from reactive to proactive, from manual to automated, and from one-size-fits-all to personalized.</strong> Success requires: understanding fundamentals, choosing the right technique for the problem, having quality data, and maintaining ethical/regulatory compliance.</p>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 25px;">
+                <p style="margin: 0; text-align: center; font-size: 1.2em;"><strong>Next Step:</strong> Apply these concepts to identify AI opportunities in your organization 🚀</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 23: Thank You / Closing -->
+        <div class="slide title-slide">
+            <h1>🙏 Thank You!</h1>
+            <div class="subtitle">AI Fundamentals & Applications in Banking</div>
+            <div class="tagline">From Theory to Practice</div>
+            
+            <div class="author-info" style="margin-top: 80px;">
+                
+                <div style="margin-top: 50px;">
+                    <p style="font-size: 1.2em; color: white;">
+                        🎯 <strong>Key Takeaway:</strong>
+                    </p>
+                    <p style="font-size: 1.15em; color: white; margin-top: 15px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        AI/ML is not about replacing humans—it's about augmenting human capabilities to make better decisions, operate more efficiently, and deliver superior customer experiences in banking.
+                    </p>
+                </div>
+                
+                <p style="margin-top: 40px; font-size: 1.2em; color: white;">
+                    Questions? Let's connect! 🤝
+                </p>
+
+                <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <p style="font-size: 1em; color: white; margin: 0;">
+                        📧 Available for discussions on AI/ML implementation strategies in banking
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">23</span>
+    </div>
+    <div class="nav">
+        <button id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Scroll to top of new slide
+            slides[currentSlide].scrollTop = 0;
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        document.getElementById('prev-btn').disabled = true;
+    </script>
+</body>
+</html>
