@@ -8,7 +8,7 @@ to this repository before its sessions.
 
 | Module | What it covers |
 |---|---|
-| **1 · Foundations & First Agent** | Calling LLMs from four providers with validated, structured outputs; prompt engineering from zero-shot to Tree-of-Thought; making calls robust (retries, fallbacks, hallucination signals); Chain-of-Verification; prompt caching; and retrieval-augmented generation — loading and chunking documents, a complete RAG pipeline with citations, and advanced retrieval. **Available now — see the labs below.** |
+| **1 · Foundations & First Agent** | Calling LLMs from four providers with validated, structured outputs; prompt engineering from zero-shot to Tree-of-Thought and Chain-of-Verification; prompt caching; making calls robust (retries, fallbacks, hallucination signals); and retrieval-augmented generation — loading and chunking documents, a complete RAG pipeline with citations, and advanced retrieval. **Available now — see the labs below.** |
 | **2 · LangGraph Core Workflow Patterns** | Your first agents — tool calling and the ReAct loop, then **Project 1**, a financial-analyst agent that combines SQL, document RAG and web search. Then LangGraph's workflow patterns: routing, prompt chaining with quality gates, parallel fan-out / fan-in, and human-in-the-loop with memory and checkpointing. |
 | **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. |
 | **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. |
@@ -22,9 +22,9 @@ to this repository before its sessions.
 |---|---|---|
 | 1.1 | Multi-Provider LLM Setup & Structured Outputs | Call OpenAI, Anthropic, Gemini and Groq; get validated Pydantic objects back from each; compare cost and latency; build a fallback chain. |
 | 1.2 | Prompting Techniques & Structured Outputs | Messages and prompt templates, zero-shot and few-shot prompting, Chain-of-Thought, Tree-of-Thought, personas, and structured output inside a LangChain chain. |
-| 1.3 | LLM Robustness: Retries, Fallback & Hallucination Signals | Make LLM calls survive failure — retries with exponential backoff and jitter, a fallback provider, timeouts — and spot signs of hallucination; trace it all in LangSmith. |
-| 1.4 | Chain-of-Verification (CoVe): Reducing Hallucinations | Have the model draft an answer, plan verification questions, check its own claims and write a corrected final answer. |
-| 1.5 | Prompt Caching Across Providers (OpenAI · Anthropic · Gemini) | Structure prompts so long, stable prefixes are cached, and measure the token and cost savings on each provider. |
+| 1.3 | Chain-of-Verification (CoVe): Reducing Hallucinations | Have the model draft an answer, plan verification questions, check its own claims and write a corrected final answer. |
+| 1.4 | Prompt Caching Across Providers (OpenAI · Anthropic · Gemini) | Structure prompts so long, stable prefixes are cached, and measure the token and cost savings on each provider. |
+| 1.5 | LLM Robustness: Retries, Fallback & Hallucination Signals | Make LLM calls survive failure — retries with exponential backoff and jitter, a fallback provider, timeouts — and spot signs of hallucination; trace it all in LangSmith. |
 | 1.6 | Document Loaders & Chunking | Load text, Markdown, CSV, JSON and PDF files with LangChain loaders, then split them with the main chunking strategies and see how chunk size changes what you get. |
 | 1.7 | Complete RAG Pipeline with LCEL & Citations | Load, chunk, embed and index a banking-policy corpus in FAISS and Chroma; compare similarity and MMR retrieval; build an LCEL chain that answers with citations. |
 | 1.8 | Advanced RAG Retrieval: Hybrid Search, HyDE, Re-Ranking & Contextual Chunks | Combine BM25 and vector search, generate hypothetical documents to search with, re-rank with a cross-encoder, and add context to chunks — then compare the strategies. |
@@ -103,10 +103,10 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 | Key | Used by |
 |---|---|
 | `OPENAI_API_KEY` | every lab |
-| `ANTHROPIC_API_KEY` | Labs 1.1, 1.5 and 1.8 |
-| `GEMINI_API_KEY` | Labs 1.1 and 1.5 |
-| `GROQ_API_KEY` | Labs 1.1 and 1.3 |
-| `LANGSMITH_API_KEY` | Lab 1.3 |
+| `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8 |
+| `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
+| `GROQ_API_KEY` | Labs 1.1 and 1.5 |
+| `LANGSMITH_API_KEY` | Lab 1.5 |
 
 Later modules need a few more keys; your instructor will give them to you with those modules.
 
