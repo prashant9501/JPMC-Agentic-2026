@@ -1,15 +1,15 @@
 # Agentic AI Mastery — Hands-On Labs
 
 Design, build, evaluate, deploy and secure AI agents. This repository holds the hands-on labs, the data
-files they read and the slide decks for the program. **Module 1 is here now**; each later module is added
-to this repository before its sessions.
+files they read and the slide decks for the program. **Modules 1 and 2 are here now**; each later module is
+added to this repository before its sessions.
 
 ## The program, module by module
 
 | Module | What it covers |
 |---|---|
 | **1 · Foundations & First Agent** | Calling LLMs from four providers with validated, structured outputs; prompt engineering from zero-shot to Tree-of-Thought and Chain-of-Verification; prompt caching; making calls robust (retries, fallbacks, hallucination signals); and retrieval-augmented generation — loading and chunking documents, a complete RAG pipeline with citations, and advanced retrieval. **Available now — see the labs below.** |
-| **2 · LangGraph Core Workflow Patterns** | Your first agents — tool calling and the ReAct loop, then **Project 1**, a financial-analyst agent that combines SQL, document RAG and web search. Then LangGraph's workflow patterns: routing, prompt chaining with quality gates, parallel fan-out / fan-in, and human-in-the-loop with memory and checkpointing. |
+| **2 · LangGraph Core Workflow Patterns** | Your first agents — tool calling and the ReAct loop, then **Project 1**, a financial-analyst agent that combines SQL, document RAG and web search. Then LangGraph's workflow patterns: routing, prompt chaining with quality gates, parallel fan-out / fan-in, and human-in-the-loop with memory and checkpointing. **Available now — see the labs below.** |
 | **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. |
 | **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. |
 | **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. |
@@ -49,6 +49,26 @@ Data files sit **beside the notebooks that read them**. Leave them where they ar
 - `langchain_readme_sample.md`, `layoutparser_paper.pdf` and `Vision Transformers.pdf`, at the top of the
   module folder — the sample files Lab 1.6 loads.
 
+## Module 2 labs
+
+| Lab | Title | What you do |
+|---|---|---|
+| 2.1 | Agent Fundamentals: Tool Calling & the ReAct Loop | Use a built-in search tool and build your own with `@tool` and `StructuredTool`; bind tools to a model and read its `tool_calls`; build a ReAct agent with `create_agent` and debug it when it picks the wrong tool or a tool fails. |
+| 2.2 | ⭐ **Project 1:** Financial Analyst Agentic RAG | A wealth-management agent with five tools — SQL lookups on a client-portfolio database, RAG over five policy PDFs, and live web search — that prepares client briefings, with its ReAct trace to debug. |
+| 2.3 | LangGraph Routing | A customer-support router in LangGraph: classify each query with structured output and send it down a conditional edge to the right handler. |
+| 2.4 | Prompt Chaining & Quality Gates | A healthcare-triage pipeline of chained nodes with quality gates and bounded retries, which hands genuinely ambiguous cases to a human. |
+| 2.5 | Parallelization: Fan-Out / Fan-In with the Send API | Run independent compliance checks in parallel and merge their results; fan out dynamically with `Send`; measure what parallelism buys you. |
+| 2.6 | Human-in-the-Loop, Memory & Checkpointing | A loan-approval graph that pauses with `interrupt()` for a human decision and resumes with `Command`; conversation memory with checkpointers and cross-session memory with `InMemoryStore`. |
+
+### Slide deck
+
+*Agentic AI: From Workflows to Autonomous Agents* (`1. agentic-ai-presentation.html`).
+
+### Data files
+
+- `docs/` — five investment-policy PDFs (Lab 2.2).
+- `database/` — the wealth-management SQLite database (Lab 2.2).
+
 ## Getting the labs onto your VM
 
 Your training VM is already set up: a course folder on the Desktop holds the Python environment (`.venv`).
@@ -74,7 +94,7 @@ This creates the `JPMC-Agentic-2026` folder.
 
 ### 2. Make your working copy
 
-Create a folder named **`My Working Labs`** in the course folder, next to `JPMC-Agentic-2026`. Copy the
+Create a folder named **`My Working Labs`** in the course folder, next to `JPMC-Agentic-2026`. Copy each
 module folder (for example `Module 1 - Foundations & First Agent`) from `JPMC-Agentic-2026` into
 `My Working Labs` — with File Explorer, or from the terminal:
 
@@ -95,6 +115,8 @@ ANTHROPIC_API_KEY=...
 GEMINI_API_KEY=...
 GROQ_API_KEY=...
 LANGSMITH_API_KEY=...
+TAVILY_API_KEY=...
+WEATHER_API_KEY=...
 ```
 
 Every lab finds this file from its module folder. Because it sits outside `JPMC-Agentic-2026`, git never
@@ -105,8 +127,10 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 | `OPENAI_API_KEY` | every lab |
 | `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8 |
 | `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
-| `GROQ_API_KEY` | Labs 1.1 and 1.5 |
+| `GROQ_API_KEY` | Labs 1.1, 1.5 and 2.1 |
 | `LANGSMITH_API_KEY` | Lab 1.5 |
+| `TAVILY_API_KEY` | Labs 2.1 and 2.2 |
+| `WEATHER_API_KEY` | Lab 2.1 |
 
 Later modules need a few more keys; your instructor will give them to you with those modules.
 
@@ -141,12 +165,14 @@ Open each notebook from its own module folder: the labs read their data with pat
 
 **Good to know**
 
-- Some labs write working files as they run: `data.csv` and `chat_data.json` in Lab 1.6, and the
-  `chroma_banking/` and `banking_faiss_index/` vector stores in Lab 1.7. They are recreated on every run, so
-  deleting them is always safe.
+- Some labs write working files as they run: `data.csv` and `chat_data.json` in Lab 1.6, the
+  `chroma_banking/` and `banking_faiss_index/` vector stores in Lab 1.7, and the `quickloan_checkpoints.sqlite`
+  checkpoint database in Lab 2.6. They are recreated on every run, so deleting them is always safe.
+- The LangGraph labs (2.2–2.6) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
+  service — the VM needs internet access for those cells.
 - Lab 1.8 downloads a small re-ranking model from Hugging Face the first time it runs.
 - Lab 1.6's optional high-resolution PDF cell needs Tesseract OCR and Poppler installed on the machine; every
   other cell runs without them.
-- **One expected warning.** Labs 1.6, 1.7 and 1.8 import from `langchain-community`, which LangChain stopped
+- **One expected warning.** Labs 1.6, 1.7, 1.8 and 2.2 import from `langchain-community`, which LangChain stopped
   maintaining in May 2026. The loaders and vector stores used from it have no maintained replacement yet, so
   the first import prints a `DeprecationWarning`, and the code works as shown.
