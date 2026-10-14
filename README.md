@@ -1,8 +1,8 @@
 # Agentic AI Mastery — Hands-On Labs
 
 Design, build, evaluate, deploy and secure AI agents. This repository holds the hands-on labs, the data
-files they read and the slide decks for the program. **Modules 1 and 2 are here now**; each later module is
-added to this repository before its sessions.
+files they read and the slide decks for the program. **Modules 1, 2 and 3 are here now**; each later module
+is added to this repository before its sessions.
 
 ## The program, module by module
 
@@ -10,7 +10,7 @@ added to this repository before its sessions.
 |---|---|
 | **1 · Foundations & First Agent** | Calling LLMs from four providers with validated, structured outputs; prompt engineering from zero-shot to Tree-of-Thought and Chain-of-Verification; prompt caching; making calls robust (retries, fallbacks, hallucination signals); and retrieval-augmented generation — loading and chunking documents, a complete RAG pipeline with citations, and advanced retrieval. **Available now — see the labs below.** |
 | **2 · LangGraph Core Workflow Patterns** | Your first agents — tool calling and the ReAct loop, then **Project 1**, a financial-analyst agent that combines SQL, document RAG and web search. Then LangGraph's workflow patterns: routing, prompt chaining with quality gates, parallel fan-out / fan-in, and human-in-the-loop with memory and checkpointing. **Available now — see the labs below.** |
-| **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. |
+| **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. **Available now — see the labs below.** |
 | **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. |
 | **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. |
 | **6 · Guardrails, Security, Observability & MCP/A2A** | A four-layer guardrail stack (prompt injection, PII redaction, output safety, human review), tracing with LangSmith and Langfuse, the Model Context Protocol and Agent-to-Agent protocol — **Project 5**, secure insurance-claims processing. |
@@ -68,6 +68,26 @@ Data files sit **beside the notebooks that read them**. Leave them where they ar
 
 - `docs/` — five investment-policy PDFs (Lab 2.2).
 - `database/` — the wealth-management SQLite database (Lab 2.2).
+
+## Module 3 labs
+
+| Lab | Title | What you do |
+|---|---|---|
+| 3.1 | ⭐ **Project 2:** Customer Support Multi-Agent System | The ShopSmart support system, built with the Supervisor pattern: PII redaction, a supervisor that classifies and routes each ticket, a deterministic quick-answer path, four specialist agents with their own tools, policy RAG over FAISS, human escalation with `interrupt()` and thread memory — then routing accuracy measured across a batch of real tickets. |
+| 3.2 | ⭐ **Project 3:** Compliance Report Generator | One orchestrator-worker graph writes regulatory reports for FinCEN, the OCC and a state banking department: sections planned from each regulator's template and drafted in parallel with `Send`, every figure grounded in the bank's data, an evaluator-optimizer loop that checks numbers, terminology and cross-references, a compliance officer's sign-off through human-in-the-loop, and checkpoint history as the audit trail. |
+| 3.3 | Swarm Pattern: E-Commerce Order Lifecycle | Six agents pass an order between them peer to peer, with no supervisor, through handoff tools built on `Command`; test seven lifecycle scenarios (fraud, returns, stock-outs, payment failure); then rebuild it with the prebuilt `create_swarm` and decide when a swarm beats a supervisor. |
+| 3.4 | Reflection: Content Quality Pipeline | A generate → critique → revise loop for fintech marketing copy: deterministic hard checks plus an LLM critic, best-so-far tracking and early stopping, and a multi-trial comparison of single-shot against reflective generation. |
+
+### Data files
+
+From this module on, each lab's data files sit in a **`Lab_3.N Files`** folder beside its notebook. Keep the
+folder next to the notebook and keep its name.
+
+- `Lab_3.1 Files/` — ShopSmart's customers, orders, products and support tickets (JSON) and its policies
+  (Markdown).
+- `Lab_3.2 Files/` — MidwestBank's customers, transactions, SAR filings and prior examination findings (CSV),
+  its regulatory thresholds (JSON) and the three regulators' report templates (Markdown).
+- Labs 3.3 and 3.4 build their data inside the notebook.
 
 ## Getting the labs onto your VM
 
@@ -128,7 +148,7 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 | `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8 |
 | `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
 | `GROQ_API_KEY` | Labs 1.1, 1.5 and 2.1 |
-| `LANGSMITH_API_KEY` | Lab 1.5 |
+| `LANGSMITH_API_KEY` | Lab 1.5 (optional tracing in Lab 3.2) |
 | `TAVILY_API_KEY` | Labs 2.1 and 2.2 |
 | `WEATHER_API_KEY` | Lab 2.1 |
 
@@ -168,11 +188,11 @@ Open each notebook from its own module folder: the labs read their data with pat
 - Some labs write working files as they run: `data.csv` and `chat_data.json` in Lab 1.6, the
   `chroma_banking/` and `banking_faiss_index/` vector stores in Lab 1.7, and the `quickloan_checkpoints.sqlite`
   checkpoint database in Lab 2.6. They are recreated on every run, so deleting them is always safe.
-- The LangGraph labs (2.2–2.6) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
+- The LangGraph labs (2.2–2.6 and 3.1–3.4) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
   service — the VM needs internet access for those cells.
 - Lab 1.8 downloads a small re-ranking model from Hugging Face the first time it runs.
 - Lab 1.6's optional high-resolution PDF cell needs Tesseract OCR and Poppler installed on the machine; every
   other cell runs without them.
-- **One expected warning.** Labs 1.6, 1.7, 1.8 and 2.2 import from `langchain-community`, which LangChain stopped
+- **One expected warning.** Labs 1.6, 1.7, 1.8, 2.2 and 3.1 import from `langchain-community`, which LangChain stopped
   maintaining in May 2026. The loaders and vector stores used from it have no maintained replacement yet, so
   the first import prints a `DeprecationWarning`, and the code works as shown.
