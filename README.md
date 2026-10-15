@@ -1,8 +1,8 @@
 # Agentic AI Mastery — Hands-On Labs
 
 Design, build, evaluate, deploy and secure AI agents. This repository holds the hands-on labs, the data
-files they read and the slide decks for the program. **Modules 1, 2 and 3 are here now**; each later module
-is added to this repository before its sessions.
+files they read and the slide decks for the program. **Modules 1 to 5 are here now**; each later module is
+added to this repository before its sessions.
 
 ## The program, module by module
 
@@ -11,8 +11,8 @@ is added to this repository before its sessions.
 | **1 · Foundations & First Agent** | Calling LLMs from four providers with validated, structured outputs; prompt engineering from zero-shot to Tree-of-Thought and Chain-of-Verification; prompt caching; making calls robust (retries, fallbacks, hallucination signals); and retrieval-augmented generation — loading and chunking documents, a complete RAG pipeline with citations, and advanced retrieval. **Available now — see the labs below.** |
 | **2 · LangGraph Core Workflow Patterns** | Your first agents — tool calling and the ReAct loop, then **Project 1**, a financial-analyst agent that combines SQL, document RAG and web search. Then LangGraph's workflow patterns: routing, prompt chaining with quality gates, parallel fan-out / fan-in, and human-in-the-loop with memory and checkpointing. **Available now — see the labs below.** |
 | **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. **Available now — see the labs below.** |
-| **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. |
-| **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. |
+| **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. **Available now — see the labs below.** |
+| **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. **Available now — see the labs below.** |
 | **6 · Guardrails, Security, Observability & MCP/A2A** | A four-layer guardrail stack (prompt injection, PII redaction, output safety, human review), tracing with LangSmith and Langfuse, the Model Context Protocol and Agent-to-Agent protocol — **Project 5**, secure insurance-claims processing. |
 | **7 · Production Deployment & Advanced Agents** | From notebook to service: FastAPI, Chainlit, Docker, nginx and AWS; managed models on AWS Bedrock; Google's Agent Development Kit (**Project 6**); multimodal agents. |
 
@@ -89,6 +89,37 @@ folder next to the notebook and keep its name.
   its regulatory thresholds (JSON) and the three regulators' report templates (Markdown).
 - Labs 3.3 and 3.4 build their data inside the notebook.
 
+## Module 4 labs
+
+| Lab | Title | What you do |
+|---|---|---|
+| 4.1 | OpenAI Agents SDK: Banking Concierge with Guardrails | A banking concierge built with the OpenAI Agents SDK: `@function_tool` tools, specialist agents connected by handoffs and as agents-as-tools, input and output guardrails, `SQLiteSession` memory and built-in tracing — then how the SDK compares with LangGraph. |
+| 4.2 | Realtime Voice Agent: A Banking IVR You Can Talk To | Lab 4.1's concierge as a voice IVR: prompts written for the ear (pronunciation, preambles, confirmation before any action), a live speech-to-speech call with `RealtimeAgent`, semantic turn detection and barge-in, the Realtime API over a raw WebSocket, and an out-of-band compliance transcript. |
+| 4.3 | ⭐ **Project 4:** CrewAI FinTech Content Pipeline | A crew of role-playing agents — researcher, writer, editor and compliance reviewer — with custom `@tool`s, run first as a sequential pipeline and then under a manager agent; then LangGraph, the OpenAI Agents SDK and CrewAI side by side, with a rule for choosing between them. |
+
+The Module 4 labs need no data files.
+
+## Module 5 labs
+
+| Lab | Title | What you do |
+|---|---|---|
+| 5.1 | Context Window Management & Compaction | Run the ShopSmart support agent through a 30-turn conversation and watch its context window and its bill grow; then apply three fixes — history compaction, tool-result clearing and just-in-time retrieval — and measure what each one saves and what it costs. |
+| 5.2 | Reusable Skills & Prompt Optimization | Package instructions as reusable skills an agent loads only when it needs them (progressive disclosure, `SKILL.md` files), score them with an LLM judge from a different model family, and improve the weakest skill with an evaluation-driven optimization loop. |
+| 5.3 | Agent Eval Suite | Evaluate Project 2's multi-agent system on a 24-case labelled dataset with three grader types — rule-based routing checks, an LLM judge and tool-trajectory checks — then pass@k, judge calibration and a pytest gate for CI. |
+| 5.4 | RAG Evaluation: Own Your Metrics | Evaluate Project 1's retrieval and answers over its 174-page policy corpus with metrics you implement yourself — recall@k, precision@k, MRR, nDCG, faithfulness and answer relevancy — choose `k` with evidence, and check the LLM judge against human labels. |
+
+### Data files
+
+As in Module 3, each lab's data files sit in a **`Lab_5.N Files`** folder beside its notebook. Keep the
+folder next to the notebook and keep its name.
+
+- `Lab_5.1 Files/` — ShopSmart's customers, orders, products and support tickets (JSON) and its policies
+  (Markdown).
+- `Lab_5.3 Files/` — the same ShopSmart data, plus `shopsmart_agent.py`: Project 2's system as a Python module,
+  which the lab imports and evaluates. Open it — it is ordinary Python.
+- `Lab_5.4 Files/docs/` — Project 1's five investment-policy PDFs.
+- Lab 5.2 needs no data files.
+
 ## Getting the labs onto your VM
 
 Your training VM is already set up: a course folder on the Desktop holds the Python environment (`.venv`).
@@ -145,7 +176,7 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 | Key | Used by |
 |---|---|
 | `OPENAI_API_KEY` | every lab |
-| `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8 |
+| `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8, and Labs 5.1–5.4 (their judge models) |
 | `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
 | `GROQ_API_KEY` | Labs 1.1, 1.5 and 2.1 |
 | `LANGSMITH_API_KEY` | Lab 1.5 (optional tracing in Lab 3.2) |
@@ -173,6 +204,13 @@ rename your copy first), or your version is replaced.
 > throws your work away. That is why your drafts live in `My Working Labs`. If you are happy to lose them on
 > every update, go ahead and work in the clone — your call 😛
 
+## Your learning journal
+
+`Learning Journal.md`, at the top of the repository, is a template for a five-minute reflection after each
+lab: what it covered, what you learned, what is still unclear, and where you could use it in your work. Copy
+it into `My Working Labs` and write in that copy, so `git pull` never overwrites it. Two example entries show
+what a good entry looks like.
+
 ## Running a lab
 
 1. In VS Code, open **`My Working Labs`** (**File → Open Folder**).
@@ -187,12 +225,18 @@ Open each notebook from its own module folder: the labs read their data with pat
 
 - Some labs write working files as they run: `data.csv` and `chat_data.json` in Lab 1.6, the
   `chroma_banking/` and `banking_faiss_index/` vector stores in Lab 1.7, and the `quickloan_checkpoints.sqlite`
-  checkpoint database in Lab 2.6. They are recreated on every run, so deleting them is always safe.
+  checkpoint database in Lab 2.6, the `skills/` folder of `SKILL.md` files in Lab 5.2, and in Lab 5.3 the
+  `test_shopsmart_evals.py` gate with its `.github/workflows/` CI template. They are recreated on every run,
+  so deleting them is always safe.
 - The LangGraph labs (2.2–2.6 and 3.1–3.4) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
   service — the VM needs internet access for those cells.
 - Lab 1.8 downloads a small re-ranking model from Hugging Face the first time it runs.
+- **Lab 4.2's live voice call (its Section 5) needs a microphone and headphones** on the machine that runs the
+  notebook. On the training VM it works only if your remote-desktop connection passes your microphone and
+  audio through; if it does not, follow your instructor's demonstration for that section. Every other section
+  of the lab is text-only and runs anywhere.
 - Lab 1.6's optional high-resolution PDF cell needs Tesseract OCR and Poppler installed on the machine; every
   other cell runs without them.
-- **One expected warning.** Labs 1.6, 1.7, 1.8, 2.2 and 3.1 import from `langchain-community`, which LangChain stopped
+- **One expected warning.** Labs 1.6, 1.7, 1.8, 2.2, 3.1, 5.3 and 5.4 import from `langchain-community`, which LangChain stopped
   maintaining in May 2026. The loaders and vector stores used from it have no maintained replacement yet, so
   the first import prints a `DeprecationWarning`, and the code works as shown.
