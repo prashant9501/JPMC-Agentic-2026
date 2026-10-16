@@ -1,0 +1,79 @@
+# -----------------------------------------------------------------------------------------------
+# What this repository publishes: README.md, the learning journal, the seven module folders, this
+# file and .env.example. Everything else in this folder — build tooling, the program curriculum and
+# instructor notes — stays local. Publish something new at the top level by adding a `!/<name>` line.
+# -----------------------------------------------------------------------------------------------
+/*
+!/README.md
+!/.gitignore
+!/.env.example
+!/Learning Journal.md
+!/Module 1 - Foundations & First Agent/
+!/Module 2 - LangGraph Core Workflow Patterns/
+!/Module 3 - Multi-Agent Architectures in LangGraph/
+!/Module 4 - Multi-Framework Agent Development/
+!/Module 5 - Context Engineering & Agent Evaluations/
+!/Module 6 - Guardrails, Security, Observability & MCP-A2A/
+!/Module 7 - Production Deployment & Advanced Agents/
+
+# -----------------------------------------------------------------------------------------------
+# Secrets and virtual environments
+# -----------------------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+
+# -----------------------------------------------------------------------------------------------
+# Python and Jupyter
+# -----------------------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.virtual_documents/
+
+# -----------------------------------------------------------------------------------------------
+# Editors, assistants and operating systems
+# -----------------------------------------------------------------------------------------------
+.vscode/
+.idea/
+.claude/
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# -----------------------------------------------------------------------------------------------
+# Files the labs write when they run. Every run recreates them, so they never belong in a commit.
+# -----------------------------------------------------------------------------------------------
+# Lab 1.6 — the CSV and JSON samples it writes before loading them
+/Module 1 - Foundations & First Agent/data.csv
+/Module 1 - Foundations & First Agent/chat_data.json
+# Lab 1.7 — the Chroma and FAISS vector stores
+chroma_banking/
+banking_faiss_index/
+# Lab 2.6 — the checkpoint database of the human-in-the-loop lab
+quickloan_checkpoints.sqlite
+# Lab 5.2 — the SKILL.md files it writes
+/Module 5 - Context Engineering & Agent Evaluations/skills/
+# Lab 5.3 — the pytest gate and the CI workflow template it generates
+test_shopsmart_evals.py
+.github/
+# Lab 6.3 — the MCP server script it writes, its logs and the agent-card site
+banking_mcp_server.py
+a2a_card_site/
+# Module 7 — what Chainlit creates when the app first runs
+.chainlit/
+.files/
+*.log
