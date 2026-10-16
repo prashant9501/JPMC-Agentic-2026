@@ -1,8 +1,8 @@
 # Agentic AI Mastery — Hands-On Labs
 
 Design, build, evaluate, deploy and secure AI agents. This repository holds the hands-on labs, the data
-files they read and the slide decks for the program. **Modules 1 to 6 are here now**; Module 7 is added
-to this repository before its sessions.
+files they read and the slide decks for the program. **All seven modules are here now**; updates are added to
+this repository before their sessions.
 
 ## The program, module by module
 
@@ -14,7 +14,7 @@ to this repository before its sessions.
 | **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent and CrewAI (**Project 4**, a content pipeline) — and how to choose between frameworks. **Available now — see the labs below.** |
 | **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. **Available now — see the labs below.** |
 | **6 · Guardrails, Security, Observability & MCP/A2A** | A four-layer guardrail stack (prompt injection, PII redaction, output safety, human review), tracing with LangSmith and Langfuse, the Model Context Protocol and Agent-to-Agent protocol — **Project 5**, secure insurance-claims processing. **Available now — see the labs below.** |
-| **7 · Production Deployment & Advanced Agents** | From notebook to service: FastAPI, Chainlit, Docker, nginx and AWS; managed models on AWS Bedrock; Google's Agent Development Kit (**Project 6**); multimodal agents. |
+| **7 · Production Deployment & Advanced Agents** | From notebook to service: FastAPI, Chainlit, Docker, nginx and AWS; managed models on AWS Bedrock; Google's Agent Development Kit (**Project 6**); multimodal agents. **Available now: the financial-analyst app — see below.** |
 
 ## Module 1 labs
 
@@ -144,6 +144,35 @@ As in Modules 3 and 5, each lab's data files sit in a **`Lab_6.N Files`** folder
 - `Lab_6.4 Files/` — `SecureLife_claims.db`, the insurance-claims SQLite database.
 - Lab 6.3 needs no data files.
 
+## Module 7: the financial-analyst app
+
+Module 7 takes an agent out of the notebook and turns it into an application. The first piece is
+**`meridian-financial-app/`**: the Project 1 agent from Lab 2.2 — client portfolios from the SQL database, the
+five investment-policy PDFs through RAG, and live web search — split into a small Python project with a
+**Chainlit** chat interface in front of it.
+
+| File | What it holds |
+|---|---|
+| `tools.py` | Key loading, the data paths, the FAISS index over the policy PDFs, the database helpers and the five tools — Lab 2.2's cells, in order |
+| `agent.py` | The system prompt and the ReAct agent built with `create_agent` |
+| `app.py` | The Chainlit interface: it sends each chat message to the agent and shows the answer |
+| `requirements.txt` | The package versions the agent was built with, plus Chainlit |
+| `data/` | `docs/` (the five policy PDFs) and `database/meridian_wealth.db` — the same files as Lab 2.2 |
+
+**Run it.** Copy the module folder into `My Working Labs` like the others. With `My Working Labs` open in VS Code,
+open a terminal (**Terminal → New Terminal**; it uses the `.venv` environment you selected) and run:
+
+```bash
+cd "Module 7 - Production Deployment & Advanced Agents\meridian-financial-app"
+chainlit run app.py -w
+```
+
+Chainlit serves the chat at **http://localhost:8000** and opens it in your browser; `-w` reloads the app when you
+save a file. The app reads `OPENAI_API_KEY` and `TAVILY_API_KEY` from your `.env` in `My Working Labs`. Each start
+embeds the policy PDFs again, so the app takes a minute to come up. If the terminal says `chainlit` is not found,
+install just that package with `pip install chainlit==2.12.0` — the agent's other packages are the ones Lab 2.2
+already uses.
+
 ## Getting the labs onto your VM
 
 Your training VM is already set up: a course folder on the Desktop holds the Python environment (`.venv`).
@@ -201,17 +230,17 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 
 | Key | Used by |
 |---|---|
-| `OPENAI_API_KEY` | every lab |
+| `OPENAI_API_KEY` | every lab, and the Module 7 app |
 | `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8, Labs 5.1–5.4 (their judge models) and Lab 6.2 |
 | `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
 | `GROQ_API_KEY` | Labs 1.1, 1.5 and 2.1 |
 | `LANGSMITH_API_KEY` | Labs 1.5 and 6.2 (optional tracing in Lab 3.2) |
-| `TAVILY_API_KEY` | Labs 2.1 and 2.2 |
+| `TAVILY_API_KEY` | Labs 2.1 and 2.2, and the Module 7 app |
 | `WEATHER_API_KEY` | Lab 2.1 |
 | `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` | Labs 6.2 and 6.4. They point at Langfuse's EU cloud; for a project in another region, add `LANGFUSE_HOST` (for example `https://us.cloud.langfuse.com`). |
 
 Lab 6.2 checks for all five of its keys (OpenAI, Anthropic, LangSmith and both Langfuse keys) before it
-starts. Module 7 may need a few more; your instructor will give them to you with that module.
+starts. The Module 7 app needs only `OPENAI_API_KEY` and `TAVILY_API_KEY`.
 
 ### 4. Get new modules and updates
 
