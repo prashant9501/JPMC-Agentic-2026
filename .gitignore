@@ -1,12 +1,11 @@
 # -----------------------------------------------------------------------------------------------
-# What this repository publishes: README.md, the learning journal, the seven module folders, this
-# file and .env.example. Everything else in this folder — build tooling, the program curriculum and
-# instructor notes — stays local. Publish something new at the top level by adding a `!/<name>` line.
+# What this repository publishes: README.md, the learning journal, the seven module folders and this
+# file. Everything else in this folder — build tooling, the program curriculum, instructor notes and the
+# course-wide .env.example — stays local. Publish something new at the top level with a `!/<name>` line.
 # -----------------------------------------------------------------------------------------------
 /*
 !/README.md
 !/.gitignore
-!/.env.example
 !/Learning Journal.md
 !/Module 1 - Foundations & First Agent/
 !/Module 2 - LangGraph Core Workflow Patterns/
@@ -21,7 +20,8 @@
 # -----------------------------------------------------------------------------------------------
 .env
 .env.*
-!.env.example
+# ...except the Module 7 app's key template
+!/Module 7 - Production Deployment & Advanced Agents/meridian-financial-app/.env.example
 .venv/
 venv/
 env/
