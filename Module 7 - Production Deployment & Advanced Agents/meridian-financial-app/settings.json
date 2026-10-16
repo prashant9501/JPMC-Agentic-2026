@@ -1,0 +1,20 @@
+{
+  "model_config": {
+    "chat_model": "gpt-5.6-luna",
+    "embedding_model": "text-embedding-3-small",
+    "temperature": 0.0
+  },
+  "paths": {
+    "database_path": "data/database/meridian_wealth.db",
+    "docs_path": "data/docs",
+    "vector_store_path": "vector_store"
+  },
+  "rag_config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 200,
+    "search_k": 4
+  },
+  "tool_config": {
+    "tavily_max_results": 5
+  }
+}
