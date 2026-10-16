@@ -1,0 +1,16 @@
+# Versions pinned to the ones recorded in the Lab 2.2 notebook's package-check cell (cell 3)
+faiss-cpu==1.13.2
+langchain==1.2.15
+langchain-community==0.4.1
+langchain-core==1.6.1
+langchain-openai==1.2.1
+langchain-tavily==0.2.18
+langchain-text-splitters==1.1.2
+langgraph==1.1.10
+openai==2.53.0
+pypdf==6.10.2
+python-dotenv==1.2.2
+tavily-python==0.8.5
+ 
+# Chainlit UI (not in the notebook — needed only for app.py)
+chainlit==2.12.0
