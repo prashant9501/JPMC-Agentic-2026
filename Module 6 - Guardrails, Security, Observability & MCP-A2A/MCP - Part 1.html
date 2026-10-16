@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Context Protocol (MCP) - Comprehensive Tutorial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 50px 70px 80px 70px;
+            background: white;
+            animation: slideIn 0.5s ease-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Title Slide */
+        .slide.title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .slide.title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide.title-slide .subtitle {
+            font-size: 1.8em;
+            opacity: 0.95;
+            margin-bottom: 50px;
+        }
+
+        .slide.title-slide .tagline {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 20px 40px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 60px;
+        }
+
+        .author-info {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .author-info h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .author-info a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3em;
+            border-bottom: 2px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .author-info a:hover {
+            border-bottom-color: white;
+            opacity: 0.8;
+        }
+
+        /* Footer for all slides except title */
+        .slide-footer {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 0.85em;
+            color: #888;
+            z-index: 999;
+        }
+
+        .slide-footer a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .slide-footer a:hover {
+            border-bottom-color: #667eea;
+        }
+
+        /* Regular Slides */
+        h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 12px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.6em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.15em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        ul {
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            color: #444;
+        }
+
+        strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 6px solid #667eea;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .comparison-box {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .comparison-box.before {
+            background: #ffebee;
+            border: 3px solid #ef5350;
+        }
+
+        .comparison-box.after {
+            background: #e8f5e9;
+            border: 3px solid #66bb6a;
+        }
+
+        .comparison-box h4 {
+            font-size: 1.4em;
+            margin-bottom: 12px;
+        }
+
+        .comparison-box .big-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .component-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .component-card h4 {
+            font-size: 1.3em;
+            margin: 12px 0;
+            color: white;
+        }
+
+        .component-card .icon {
+            font-size: 2.5em;
+        }
+
+        .component-card p {
+            color: white;
+            font-size: 1em;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 35px 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #667eea;
+            z-index: 0;
+        }
+
+        .timeline-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-date {
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            width: 75px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-weight: bold;
+            font-size: 1em;
+            color: #667eea;
+        }
+
+        .timeline-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 2px solid #667eea;
+        }
+
+        .arch-layer {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .arch-layer h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 10px;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 10px;
+        }
+
+        .example-box {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #66bb6a;
+            margin: 20px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .protocol-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .protocol-layer {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .benefit-list {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .benefit-list li {
+            margin-bottom: 15px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .nav button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .nav button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+
+        .nav button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 1em;
+            z-index: 1000;
+        }
+
+        /* Scrollbar styling */
+        .slide::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title with Author Info -->
+        <div class="slide title-slide active">
+            <h1>A Comprehensive Guide to the<br>Model Context Protocol (MCP)</h1>
+            <div class="subtitle">Part 1: The 'What' and 'Why'</div>
+            <div class="tagline">"USB for AI Integrations"</div>
+            
+        </div>
+
+        <!-- Slide 2: What is MCP -->
+        <div class="slide">
+            <h2>What is the Model Context Protocol?</h2>
+            <div class="highlight-box">
+                <p style="font-size: 1.4em; text-align: center; margin: 0;">
+                    <strong>"USB for AI Integrations"</strong>
+                </p>
+            </div>
+            <p>The simplest way to think of MCP is as <strong>USB for AI integrations.</strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 35px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 5em; margin-bottom: 20px;">🔌</div>
+                    <h3 style="margin-top: 0;">USB</h3>
+                    <p>Created a single, standard way for a computer to connect to any peripheral (keyboards, mice, printers)</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 5em; margin-bottom: 20px;">🤖</div>
+                    <h3 style="margin-top: 0;">MCP</h3>
+                    <p>Creates a single, standard way for an AI application to connect to any external tool, database, or data source</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 3: Who Created MCP & Why It Matters -->
+        <div class="slide">
+            <h2><span class="emoji">🏛️</span>Who Created MCP and Why It Matters</h2>
+            <p><strong>MCP was developed and released by Anthropic in November 2024</strong> as an open standard.</p>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.3em; margin: 0;">What makes MCP so significant isn't just its creator, but its <strong>rapid, industry-wide adoption.</strong></p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Nov<br>2024</div>
+                    <div class="timeline-label">Anthropic<br>Launches MCP</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Mar<br>2025</div>
+                    <div class="timeline-label">OpenAI<br>Adopts MCP</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Apr<br>2025</div>
+                    <div class="timeline-label">Google DeepMind<br>Adopts MCP</div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 40px;">
+                <h3 style="margin-top: 0; color: #667eea;">The Significance</h3>
+                <p>This unified support from the industry's largest players transformed MCP from a single company's project into a <strong>true industry standard</strong>, ensuring that tools built for it will work across the entire AI ecosystem.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 4: The Core Problem & Solution (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">🎯</span>The Core Problem MCP Solves: The 'M×N' Mess</h2>
+            
+            <h3>The Problem: Combinatorial Explosion</h3>
+            <p>Before MCP, the AI integration landscape was a classic <strong>"M×N problem"</strong>, also known as a <strong>"combinatorial explosion."</strong></p>
+
+            <div class="info-grid" style="margin-top: 25px;">
+                <div class="info-card">
+                    <h4>The Problem Variables</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>'M'</strong> different AI applications (custom agent, chatbot, RAG system)</li>
+                        <li><strong>'N'</strong> different tools or systems (GitHub, Slack, Postgres database, Stripe API)</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>The Result</h4>
+                    <p>To connect every app to every tool, you had to build <strong>M × N</strong> separate, custom integrations.</p>
+                    <p style="margin-top: 15px;"><strong>Example:</strong> 5 apps × 10 tools = <strong>50 custom connectors</strong> to build and maintain!</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>Why was this a problem?</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Wildly inefficient development process</li>
+                    <li>Led to duplicated effort across teams</li>
+                    <li>Locked developers into specific platforms</li>
+                    <li>Early solutions like OpenAI's function calling were vendor-specific</li>
+                    <li>A connector built for OpenAI wouldn't work with Claude or Gemini</li>
+                </ul>
+            </div>
+
+            <h3 style="margin-top: 40px;"><span class="emoji">✨</span>MCP's Elegant 'M+N' Solution</h3>
+            
+            <p>MCP elegantly solves the combinatorial explosion by creating a <strong>universal interface</strong>.</p>
+
+            <div class="comparison">
+                <div class="comparison-box before">
+                    <h4>❌ Before MCP</h4>
+                    <p><strong>M × N</strong> Integrations</p>
+                    <div class="big-number">50</div>
+                    <p>Custom connectors required for 5 apps and 10 tools</p>
+                </div>
+                <div class="comparison-box after">
+                    <h4>✅ With MCP</h4>
+                    <p><strong>M + N</strong> Components</p>
+                    <div class="big-number">15</div>
+                    <p>Standard components for 5 apps and 10 tools</p>
+                </div>
+            </div>
+
+            <div class="flow-container" style="margin-top: 30px;">
+                <div class="flow-box">
+                    <h4 style="color: white;">Tool Creators</h4>
+                    <p>Build <strong>'N'</strong> MCP Servers</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">(One for GitHub, one for Slack, etc.)</p>
+                </div>
+                <div class="flow-arrow">+</div>
+                <div class="flow-box">
+                    <h4 style="color: white;">AI App Developers</h4>
+                    <p>Build <strong>'M'</strong> MCP Clients</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">(One for each of their apps)</p>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 35px;">
+                <h3 style="margin-top: 0; color: #667eea;">The Result</h3>
+                <p style="font-size: 1.3em;">Now, <strong>any</strong> of the 'M' apps can instantly connect to and use <strong>any</strong> of the 'N' tools.</p>
+                <p style="margin-top: 20px;">The total work is reduced from <strong>M × N</strong> to <strong>M + N</strong>.</p>
+                <p style="margin-top: 15px; font-size: 1.2em; text-align: center; padding: 15px; background: rgba(102,126,234,0.1); border-radius: 8px;">
+                    <strong>Your 5 apps and 10 tools now require only 15 components, not 50!</strong><br>
+                    <span style="font-size: 1.1em; color: #66bb6a;">That's a 70% reduction in integration work! 🎉</span>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Slide 5: Why MCP is Important (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">💡</span>Why Is MCP So Important?</h2>
+            
+            <p style="font-size: 1.2em; margin-bottom: 30px;">MCP is more than just a convenience; it's a <strong>necessary evolutionary step for AI.</strong></p>
+
+            <h3>1. It Breaks Down Data Silos</h3>
+            <p>MCP allows AI models to securely access information trapped in:</p>
+            <ul>
+                <li><strong>Content repositories</strong> - Documentation, wikis, knowledge bases</li>
+                <li><strong>Business management tools</strong> - CRM, project management, analytics</li>
+                <li><strong>Development environments</strong> - Code repos, CI/CD, testing tools</li>
+                <li><strong>Legacy systems</strong> - Enterprise databases, mainframes, custom APIs</li>
+            </ul>
+            <p><strong>All without custom code for each one.</strong></p>
+
+            <h3 style="margin-top: 30px;">2. It's an AI-Native Design</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Older Standards</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>OpenAPI</li>
+                        <li>GraphQL</li>
+                        <li>SOAP</li>
+                    </ul>
+                    <p style="margin-top: 12px;">Designed for human-driven or server-to-server API calls</p>
+                </div>
+                <div class="info-card">
+                    <h4>MCP</h4>
+                    <p><strong>Purpose-built for AI agents</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 12px;">
+                        <li>Model-controlled actions</li>
+                        <li>Application-controlled context</li>
+                        <li>User-guided workflows</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">3. Built on Proven Foundations</h3>
+            <p>MCP is not a brand-new, untested idea. It deliberately reuses stable, battle-tested concepts:</p>
+            
+            <div class="protocol-stack">
+                <div class="protocol-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <strong>Message Flow from Language Server Protocol (LSP)</strong>
+                    <p style="font-size: 0.95em; margin-top: 8px;">Powers code completion in IDEs</p>
+                </div>
+                <div class="protocol-layer" style="background: #f3e5f5; border-color: #9c27b0;">
+                    <strong>JSON-RPC 2.0 for Transport</strong>
+                    <p style="font-size: 0.95em; margin-top: 8px;">Industry-standard remote procedure call protocol</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">4. Launched with a Strong Ecosystem</h3>
+            <p>Anthropic "dogfooded" the protocol extensively, launching it with:</p>
+            <div class="benefit-list">
+                <ul>
+                    <li>✅ <strong>Claude Desktop client</strong> - Ready-to-use reference implementation</li>
+                    <li>✅ <strong>Numerous reference servers</strong> - Real-world examples</li>
+                    <li>✅ <strong>SDKs for multiple languages</strong> - TypeScript, Python, and more</li>
+                    <li>✅ <strong>Testing tools</strong> - Inspector and debugging utilities</li>
+                </ul>
+            </div>
+            <p>This made MCP <strong>immediately useful</strong> and accelerated adoption across the industry.</p>
+
+        </div>
+
+        <!-- Slide 6: Three Core Components Overview -->
+        <div class="slide">
+            <h2><span class="emoji">🧱</span>The 3 Core Components of MCP</h2>
+            <p style="font-size: 1.3em; margin-bottom: 30px;">MCP standardizes communication around three distinct concepts. <strong>Understanding these is key to understanding how MCP works.</strong></p>
+            
+            <div class="components-grid">
+                <div class="component-card">
+                    <div class="icon">⚡</div>
+                    <h4>1. Tools</h4>
+                    <p style="margin-top: 15px;"><strong>Model-Controlled</strong></p>
+                    <p style="margin-top: 10px;">Verbs / Actions</p>
+                    <p style="font-size: 0.95em; margin-top: 12px;">Functions the AI can decide to execute</p>
+                </div>
+                <div class="component-card">
+                    <div class="icon">📚</div>
+                    <h4>2. Resources</h4>
+                    <p style="margin-top: 15px;"><strong>Application-Controlled</strong></p>
+                    <p style="margin-top: 10px;">Nouns / Data</p>
+                    <p style="font-size: 0.95em; margin-top: 12px;">Data sources the AI can read</p>
+                </div>
+                <div class="component-card">
+                    <div class="icon">📋</div>
+                    <h4>3. Prompts</h4>
+                    <p style="margin-top: 15px;"><strong>User-Controlled</strong></p>
+                    <p style="margin-top: 10px;">Recipes / Templates</p>
+                    <p style="font-size: 0.95em; margin-top: 12px;">Pre-defined workflow templates</p>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 35px;">
+                <p style="text-align: center; font-size: 1.2em;">These three components work together to enable powerful AI interactions with the real world.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 7: Component 1 - Tools Detail -->
+        <div class="slide">
+            <h2><span class="emoji">⚡</span>Component 1: Tools (Model-Controlled)</h2>
+            
+            <div class="highlight-box">
+                <h3 style="margin-top: 0; color: #667eea;">Definition</h3>
+                <p style="font-size: 1.3em;">Functions the AI can <strong>decide</strong> to execute to perform an action.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Simple Analogy</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>Verbs or Actions</strong></p>
+                </div>
+                <div class="info-card">
+                    <h4>Control</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>Model-Controlled</strong></p>
+                </div>
+            </div>
+
+            <h3>How They Work:</h3>
+            <p>The AI model, based on the user's request, determines it needs to take an action (e.g., "send an email," "query a database," "create a GitHub issue"). It then invokes the corresponding "Tool" exposed by the MCP server.</p>
+
+            <div class="example-box">
+                <h4 style="color: #333; margin-bottom: 15px;">💡 Example:</h4>
+                <p style="font-size: 1.2em;">User says: <em>"Send a welcome email to our new customer"</em></p>
+                <div class="flow-container" style="margin-top: 20px;">
+                    <div style="text-align: center; flex: 1;">
+                        <p>User Request</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div style="text-align: center; flex: 1;">
+                        <p><strong>AI Decides</strong><br>Action Needed</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div style="text-align: center; flex: 1;">
+                        <p><strong>AI Calls</strong><br><code>send_email</code> tool</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide 8: Component 2 - Resources Detail -->
+        <div class="slide">
+            <h2><span class="emoji">📚</span>Component 2: Resources (Application-Controlled)</h2>
+            
+            <div class="highlight-box">
+                <h3 style="margin-top: 0; color: #667eea;">Definition</h3>
+                <p style="font-size: 1.3em;">Data sources the AI can <strong>read</strong> to gain context.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Simple Analogy</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>Nouns or Data</strong></p>
+                </div>
+                <div class="info-card">
+                    <h4>Control</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>Application-Controlled</strong></p>
+                </div>
+            </div>
+
+            <h3>How They Work:</h3>
+            <p><strong>Unlike tools, resources don't "do" anything.</strong> They provide data without causing side effects. The application (e.g., your IDE or chatbot) provides these to the AI to ground its responses in reality.</p>
+
+            <h3>Key Distinction:</h3>
+            <div class="comparison">
+                <div class="comparison-box after" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4 style="color: #e65100;">Tools</h4>
+                    <p>Execute actions<br>Have side effects<br>Change state</p>
+                </div>
+                <div class="comparison-box after">
+                    <h4 style="color: #2e7d32;">Resources</h4>
+                    <p>Provide information<br>No side effects<br>Read-only</p>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h4 style="color: #333; margin-bottom: 15px;">💡 Example:</h4>
+                <p style="font-size: 1.2em;">User asks: <em>"Why is my code failing?"</em></p>
+                <p style="margin-top: 15px;">The IDE can provide as <strong>Resources:</strong></p>
+                <ul style="margin-left: 25px; margin-top: 10px;">
+                    <li>📄 Contents of project files</li>
+                    <li>🗄️ Database schema</li>
+                    <li>📋 Build logs</li>
+                </ul>
+                <p style="margin-top: 15px; color: #667eea;"><strong>→ AI has full context to diagnose the issue</strong></p>
+            </div>
+
+        </div>
+
+        <!-- Slide 9: Component 3 - Prompts Detail -->
+        <div class="slide">
+            <h2><span class="emoji">📋</span>Component 3: Prompts (User-Controlled)</h2>
+            
+            <div class="highlight-box">
+                <h3 style="margin-top: 0; color: #667eea;">Definition</h3>
+                <p style="font-size: 1.3em;">Pre-defined templates for common, optimal workflows.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Simple Analogy</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>Recipes or Templates</strong></p>
+                </div>
+                <div class="info-card">
+                    <h4>Control</h4>
+                    <p style="font-size: 1.2em; text-align: center; margin-top: 15px;"><strong>User-Controlled</strong></p>
+                </div>
+            </div>
+
+            <h3>How They Work:</h3>
+            <p>These are "shortcuts" that a <strong>user</strong> can select to guide the AI. They show the AI the best way to use a set of tools or resources for a common task.</p>
+
+            <h3>Purpose:</h3>
+            <ul>
+                <li>Provide optimal workflows for common tasks</li>
+                <li>Guide the AI on the best approach</li>
+                <li>Ensure consistency across interactions</li>
+                <li>Reduce user effort for repeated tasks</li>
+            </ul>
+
+            <div class="example-box" style="margin-top: 25px;">
+                <h4 style="color: #333; margin-bottom: 15px;">💡 Example:</h4>
+                <p style="font-size: 1.2em;">Prompt: <strong>"Summarize My Unread Slack Messages"</strong></p>
+                <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px;">
+                    <p><strong>When clicked, this prompt tells the AI:</strong></p>
+                    <ol style="margin-left: 25px; margin-top: 12px;">
+                        <li>Which <strong>tools</strong> to use (Slack API tools)</li>
+                        <li>Which <strong>resources</strong> to access (unread messages)</li>
+                        <li>What <strong>format</strong> to return the summary in</li>
+                        <li>Any <strong>filtering</strong> or <strong>prioritization</strong> logic</li>
+                    </ol>
+                </div>
+                <p style="margin-top: 15px; color: #667eea; text-align: center;"><strong>→ The AI executes the complete workflow automatically!</strong></p>
+            </div>
+
+        </div>
+
+        <!-- Slide 10: MCP Architecture & Transport (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">🏗️</span>MCP Architecture: Client-Host-Server</h2>
+            
+            <p>MCP follows a <strong>client-host-server architecture</strong> where each host can run multiple client instances.</p>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer">
+                    <h4>🖥️ Host (AI Application)</h4>
+                    <p>The user-facing application that coordinates the overall system</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Examples: Claude Desktop, Cursor IDE, VS Code, custom AI apps</li>
+                        <li>Manages LLM interactions</li>
+                        <li>Creates and manages multiple clients</li>
+                        <li>Maintains security boundaries between servers</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <div class="flow-arrow" style="font-size: 3em;">⬇️</div>
+                </div>
+
+                <div class="arch-layer">
+                    <h4>🔌 MCP Client</h4>
+                    <p>The protocol implementation that connects host to server</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Each client has a <strong>1:1 relationship</strong> with a particular server</li>
+                        <li>Handles protocol-level communication details</li>
+                        <li>Manages connection lifecycle</li>
+                        <li>Translates between host and server</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <div class="flow-arrow" style="font-size: 3em;">⬇️</div>
+                </div>
+
+                <div class="arch-layer">
+                    <h4>⚙️ MCP Server</h4>
+                    <p>Lightweight service providing specialized capabilities</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Exposes tools, resources, and prompts</li>
+                        <li>Operates independently with focused responsibilities</li>
+                        <li>Can run locally (stdio) or remotely (HTTP/SSE)</li>
+                        <li>Examples: GitHub server, Slack server, Database server</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 40px;"><span class="emoji">🚀</span>Transport Mechanisms</h3>
+            
+            <p>MCP supports multiple transport mechanisms for communication between clients and servers:</p>
+
+            <div class="comparison">
+                <div class="comparison-box after">
+                    <h4 style="color: #2e7d32;">📍 Local (stdio)</h4>
+                    <p style="margin-top: 15px;"><strong>Standard Input/Output</strong></p>
+                    <ul style="text-align: left; margin-left: 20px; margin-top: 15px;">
+                        <li>For servers on same machine</li>
+                        <li>Process-to-process communication</li>
+                        <li>Low latency</li>
+                        <li>Perfect for development</li>
+                    </ul>
+                </div>
+                <div class="comparison-box after" style="background: #e1f5fe; border-color: #0277bd;">
+                    <h4 style="color: #01579b;">☁️ Remote (HTTP/SSE)</h4>
+                    <p style="margin-top: 15px;"><strong>HTTP with Server-Sent Events</strong></p>
+                    <ul style="text-align: left; margin-left: 20px; margin-top: 15px;">
+                        <li>For cloud-deployed servers</li>
+                        <li>Network communication</li>
+                        <li>Scalable</li>
+                        <li>Production-ready</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 30px;">
+                <h3 style="margin-top: 0; color: #667eea;">All Transports Use JSON-RPC 2.0</h3>
+                <p>Regardless of the transport mechanism, all messages are exchanged using JSON-RPC 2.0 protocol. This ensures:</p>
+                <ul style="margin-left: 20px; margin-top: 12px;">
+                    <li>✅ Standardized message format</li>
+                    <li>✅ Interoperability across languages and platforms</li>
+                    <li>✅ Request-response patterns</li>
+                    <li>✅ Error handling</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Slide 11: Capability Negotiation -->
+        <div class="slide">
+            <h2><span class="emoji">🤝</span>Capability-Based Negotiation</h2>
+            
+            <p>MCP uses a <strong>capability-based negotiation system</strong> where clients and servers explicitly declare their supported features during initialization.</p>
+
+            <h3>How It Works:</h3>
+            <div class="flow-container">
+                <div class="flow-box">
+                    <h4 style="color: white;">Client Declares</h4>
+                    <p>Sampling support, notification handling</p>
+                </div>
+                <div class="flow-arrow">↔️</div>
+                <div class="flow-box">
+                    <h4 style="color: white;">Server Declares</h4>
+                    <p>Available tools, resources, prompts</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">Key Principles:</h3>
+            <ul>
+                <li><strong>Both parties must respect declared capabilities</strong> throughout the session</li>
+                <li><strong>Additional capabilities can be negotiated</strong> through protocol extensions</li>
+                <li><strong>Each capability unlocks specific protocol features</strong> for use during the session</li>
+            </ul>
+
+            <h3 style="margin-top: 25px;">Examples:</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Server Capabilities</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Tool invocation requires declaring tool capabilities</li>
+                        <li>Resource subscriptions require subscription support</li>
+                        <li>Implemented features must be advertised</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>Client Capabilities</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Sampling requires client support declaration</li>
+                        <li>Notifications require handling support</li>
+                        <li>Progress updates require capability flag</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <p><strong>This ensures clear understanding and protocol extensibility.</strong> Clients and servers know exactly what features are available without assumptions.</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 12: How MCP Empowers AI Agents (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">🤖</span>How MCP Empowers AI Agents</h2>
+            
+            <p style="font-size: 1.25em; margin-bottom: 25px;">These three components (Tools, Resources, Prompts) directly enable the creation of powerful, autonomous AI agents.</p>
+
+            <h3>1. Context-Awareness</h3>
+            <div class="highlight-box">
+                <p><strong>Before MCP:</strong> Agents were isolated "brains in a jar" with no connection to real-world data</p>
+                <p style="margin-top: 12px;"><strong>With MCP:</strong> Agents become context-aware systems that can access real-time data from diverse sources</p>
+            </div>
+            <div class="example-box">
+                <p><strong>Example:</strong> An agent can now access:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Your company's internal documentation</li>
+                    <li>Real-time database records</li>
+                    <li>Live API data from external services</li>
+                    <li>Current file system state</li>
+                </ul>
+                <p style="margin-top: 12px; color: #667eea;"><strong>→ All through standard MCP interfaces!</strong></p>
+            </div>
+
+            <h3 style="margin-top: 25px;">2. Dynamic Capabilities</h3>
+            <p>Agents can <strong>dynamically discover</strong> the tools and resources available at runtime.</p>
+            <div class="highlight-box">
+                <p style="font-size: 1.15em;"><strong>Game Changer:</strong> If you connect a new MCP server (e.g., a new "Salesforce" server), <strong>all your agents instantly gain "Salesforce" skills</strong> without any code changes!</p>
+            </div>
+
+            <h3 style="margin-top: 30px;">3. Multi-Agent Orchestration</h3>
+            <p>MCP provides a standard communication channel for different, specialized agents to coordinate.</p>
+            
+            <div class="flow-container" style="margin-top: 25px;">
+                <div class="flow-box">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔍</div>
+                    <h4 style="color: white;">Research Agent</h4>
+                    <p>Uses MCP to find and gather information</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <div style="font-size: 2em; margin-bottom: 10px;">✍️</div>
+                    <h4 style="color: white;">Writing Agent</h4>
+                    <p>Uses MCP to access findings and draft report</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">4. Production-Ready</h3>
+            <div class="comparison">
+                <div class="comparison-box after">
+                    <h4 style="color: #2e7d32;">💻 Development</h4>
+                    <p style="margin-top: 15px;">Local (stdio) connections</p>
+                    <ul style="text-align: left; margin: 15px 20px;">
+                        <li>Run on laptop</li>
+                        <li>Fast iteration</li>
+                        <li>Easy debugging</li>
+                    </ul>
+                </div>
+                <div class="comparison-box after" style="background: #e8eaf6; border-color: #3f51b5;">
+                    <h4 style="color: #1a237e;">☁️ Production</h4>
+                    <p style="margin-top: 15px;">Remote (HTTP/SSE) connections</p>
+                    <ul style="text-align: left; margin: 15px 20px;">
+                        <li>Deploy to cloud</li>
+                        <li>Scale automatically</li>
+                        <li>Enterprise-ready</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 30px;">
+                <p style="text-align: center; font-size: 1.3em;"><strong>The same agent code works in both environments!</strong> 🚀</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 13: LSP Comparison & Real-World Workflow (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">🔗</span>MCP's Inspiration: Language Server Protocol</h2>
+            
+            <p>MCP deliberately reuses the proven architectural patterns from the <strong>Language Server Protocol (LSP)</strong>.</p>
+
+            <h3>What is LSP?</h3>
+            <p>LSP is a protocol that standardizes how code editors communicate with language-specific intelligence providers (for autocomplete, go-to-definition, error checking, etc.).</p>
+
+            <div class="comparison">
+                <div class="comparison-box after">
+                    <h4 style="color: #2e7d32;">📝 LSP</h4>
+                    <p style="margin-top: 12px;"><strong>For Code Editors</strong></p>
+                    <ul style="text-align: left; margin: 12px 15px;">
+                        <li>VS Code + Python LSP</li>
+                        <li>Sublime + Java LSP</li>
+                        <li>Vim + Rust LSP</li>
+                    </ul>
+                    <p style="margin-top: 12px; font-size: 0.95em;">M editors × N languages<br>= M+N implementations</p>
+                </div>
+                <div class="comparison-box after" style="background: #e8f5fe; border-color: #0277bd;">
+                    <h4 style="color: #01579b;">🤖 MCP</h4>
+                    <p style="margin-top: 12px;"><strong>For AI Applications</strong></p>
+                    <ul style="text-align: left; margin: 12px 15px;">
+                        <li>Claude + GitHub MCP</li>
+                        <li>Cursor + Slack MCP</li>
+                        <li>Custom App + DB MCP</li>
+                    </ul>
+                    <p style="margin-top: 12px; font-size: 0.95em;">M apps × N tools<br>= M+N implementations</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 25px;">Shared Design Principles:</h3>
+            <ul>
+                <li><strong>Client-Server Architecture:</strong> Clear separation of concerns</li>
+                <li><strong>JSON-RPC 2.0:</strong> Standardized message transport</li>
+                <li><strong>Capability Negotiation:</strong> Explicit feature discovery</li>
+                <li><strong>Transport Agnostic:</strong> Works locally or remotely</li>
+            </ul>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <p><strong>Key Difference:</strong> LSP is for <em>textual languages</em> and code editing. MCP is for <em>AI context</em> and agent capabilities. Both solve the M×N problem in their respective domains!</p>
+            </div>
+
+            <h3 style="margin-top: 40px;"><span class="emoji">⚙️</span>Real-World MCP Workflow Example</h3>
+            
+            <p>Let's see how all the pieces work together in a complete interaction:</p>
+
+            <div class="example-box">
+                <h4 style="color: #333; margin-bottom: 12px;">Scenario: Code Review Assistant</h4>
+                <p><strong>User Request:</strong> "Review my code and check for security issues"</p>
+            </div>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer" style="background: #e8f5e9; border-color: #4caf50;">
+                    <h4>Step 1: Resource Access</h4>
+                    <p>IDE provides as <strong>Resources</strong>:</p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>Current code files</li>
+                        <li>Project dependencies</li>
+                        <li>Git commit history</li>
+                    </ul>
+                </div>
+
+                <div class="arch-layer" style="background: #fff3e0; border-color: #ff9800;">
+                    <h4>Step 2: Tool Execution</h4>
+                    <p>AI invokes <strong>Tools</strong>:</p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li><code>run_security_scan</code> - Checks for vulnerabilities</li>
+                        <li><code>analyze_code_quality</code> - Reviews code patterns</li>
+                        <li><code>check_dependencies</code> - Validates package security</li>
+                    </ul>
+                </div>
+
+                <div class="arch-layer" style="background: #e3f2fd; border-color: #2196f3;">
+                    <h4>Step 3: Result Synthesis</h4>
+                    <p>AI combines context from Resources and results from Tools to generate:</p>
+                    <ul style="margin-left: 20px; margin-top: 8px;">
+                        <li>✅ Security assessment report</li>
+                        <li>⚠️ List of potential issues</li>
+                        <li>💡 Recommended fixes</li>
+                        <li>📊 Code quality metrics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <p><strong>The Power:</strong> All of this happens through standard MCP interfaces. Add a new security tool? It's instantly available. Switch to a different AI? Same workflow works!</p>
+            </div>
+
+        </div>
+
+        <!-- Slide 14: Ecosystem and Summary (MERGED) -->
+        <div class="slide">
+            <h2><span class="emoji">🌐</span>The Growing MCP Ecosystem</h2>
+            
+            <h3>Major Adopters (Hosts/Clients)</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>AI Assistants</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Claude Desktop (Anthropic)</li>
+                        <li>ChatGPT (OpenAI)</li>
+                        <li>Gemini (Google)</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h4>Development Tools</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Cursor IDE</li>
+                        <li>VS Code extensions</li>
+                        <li>Zed editor</li>
+                        <li>Replit</li>
+                        <li>Codeium</li>
+                        <li>Sourcegraph</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 25px;">Available MCP Servers</h3>
+            <p>The ecosystem includes servers for:</p>
+            <div class="benefit-list">
+                <ul>
+                    <li><strong>Development:</strong> GitHub, GitLab, Docker, Kubernetes</li>
+                    <li><strong>Databases:</strong> PostgreSQL, MySQL, MongoDB, SQLite</li>
+                    <li><strong>Communication:</strong> Slack, Discord, Email</li>
+                    <li><strong>Cloud Services:</strong> AWS, Azure, Google Cloud</li>
+                    <li><strong>Business Tools:</strong> Jira, Linear, Asana, Notion</li>
+                    <li><strong>File Systems:</strong> Local files, Google Drive, Dropbox</li>
+                    <li><strong>APIs:</strong> REST APIs, GraphQL, custom integrations</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <p style="text-align: center; font-size: 1.2em;"><strong>Hundreds of servers already available, with more being added daily! 🚀</strong></p>
+            </div>
+
+            <h2 style="margin-top: 50px;"><span class="emoji">📌</span>Summary: Part 1 - The 'What' and 'Why'</h2>
+            
+            <div class="highlight-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 style="color: white; margin-top: 0;">Core Concept</h3>
+                <p style="color: white; font-size: 1.3em; margin: 0;">MCP is <strong>"USB for AI"</strong> - a universal standard for connecting AI applications to tools and data sources</p>
+            </div>
+
+            <h3 style="margin-top: 25px;">What We Covered:</h3>
+            <ul>
+                <li>✅ <strong>What MCP is:</strong> A universal protocol for AI integrations</li>
+                <li>✅ <strong>Who created it:</strong> Anthropic (Nov 2024), adopted by OpenAI & Google</li>
+                <li>✅ <strong>The problem it solves:</strong> M×N combinatorial explosion → M+N solution</li>
+                <li>✅ <strong>Why it matters:</strong> Breaks silos, AI-native, proven foundations, strong ecosystem</li>
+                <li>✅ <strong>Three core components:</strong> Tools (actions), Resources (data), Prompts (templates)</li>
+                <li>✅ <strong>Architecture:</strong> Client-Host-Server with capability negotiation</li>
+                <li>✅ <strong>How it empowers agents:</strong> Context-aware, dynamic, orchestrated, production-ready</li>
+            </ul>
+
+            <div class="highlight-box" style="margin-top: 25px;">
+                <h3 style="margin-top: 0; color: #667eea;">The Big Picture</h3>
+                <p>MCP is transforming how AI applications interact with the world. By providing a standardized protocol, it enables:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Interoperability</strong> across the entire AI ecosystem</li>
+                    <li><strong>Reduced development time</strong> by 70% or more</li>
+                    <li><strong>Future-proof</strong> AI agent architectures</li>
+                    <li><strong>Universal compatibility</strong> between tools and applications</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+    </div>
+    <div class="nav">
+        <button id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Scroll to top of new slide
+            slides[currentSlide].scrollTop = 0;
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        document.getElementById('prev-btn').disabled = true;
+    </script>
+</body>
+</html>

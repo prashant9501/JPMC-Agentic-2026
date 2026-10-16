@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 6 — Observability, Evaluation & Responsible AI</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-deep: #0a0e27;
+    --bg-mid:  #111733;
+    --bg-card: #161c3a;
+    --bg-card-hover: #1d2447;
+    --accent-sky:     #38bdf8;
+    --accent-violet:  #a78bfa;
+    --accent-emerald: #34d399;
+    --accent-amber:   #fbbf24;
+    --accent-rose:    #fb7185;
+    --text-primary: #e2e8f0;
+    --text-muted:   #94a3b8;
+    --text-dim:     #64748b;
+    --border-soft:  rgba(148, 163, 184, 0.15);
+    --code-bg: #1e293b;
+  }
+
+  .reveal {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--bg-deep) 0%, #0f1430 100%);
+    font-size: 24px;
+  }
+  .reveal .slides { text-align: left; }
+  .reveal .slides section { padding: 12px 0; }
+
+  .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #ffffff;
+    text-transform: none;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+    margin: 0 0 0.4em 0;
+  }
+  .reveal h1 { font-size: 2.0em;  line-height: 1.1; font-weight: 700; }
+  .reveal h2 { font-size: 1.25em; line-height: 1.2; }
+  .reveal h3 { font-size: 1.0em;  line-height: 1.3; color: var(--accent-sky); font-weight: 600; }
+  .reveal h4 { font-size: 0.85em; line-height: 1.3; color: var(--accent-violet); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .reveal p, .reveal li { line-height: 1.5; color: var(--text-primary); font-size: 0.85em; }
+  .reveal ul, .reveal ol { margin-left: 1em; }
+  .reveal li { margin-bottom: 0.32em; }
+  .reveal strong { color: #ffffff; font-weight: 600; }
+  .reveal em { color: var(--accent-amber); font-style: italic; }
+  .reveal a { color: var(--accent-sky); text-decoration: none; border-bottom: 1px dotted var(--accent-sky); }
+
+  .reveal code {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--accent-sky);
+    padding: 0.08em 0.32em;
+    border-radius: 4px;
+    font-size: 0.82em;
+  }
+  .reveal pre {
+    width: 100%;
+    box-shadow: none;
+    margin: 0.4em 0;
+  }
+  .reveal pre code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6em;
+    line-height: 1.5;
+    padding: 0.85em 1em;
+    background: var(--code-bg);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-sky);
+    max-height: 380px;
+    overflow: auto;
+  }
+
+  .reveal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.4em 0;
+    font-size: 0.78em;
+  }
+  .reveal table th {
+    background: linear-gradient(180deg, rgba(56,189,248,0.18) 0%, rgba(56,189,248,0.08) 100%);
+    color: #ffffff;
+    text-align: left;
+    padding: 0.5em 0.8em;
+    border-bottom: 2px solid var(--accent-sky);
+    font-weight: 600;
+    font-size: 0.95em;
+  }
+  .reveal table td {
+    padding: 0.45em 0.8em;
+    border-bottom: 1px solid var(--border-soft);
+    transition: background 180ms ease;
+  }
+  .reveal table tr:hover td { background: rgba(56, 189, 248, 0.06); }
+  .reveal table tr:nth-child(even) td { background: rgba(255, 255, 255, 0.018); }
+  .reveal table tr:nth-child(even):hover td { background: rgba(56, 189, 248, 0.08); }
+
+  /* Title slide */
+  .reveal section.title-slide {
+    text-align: center;
+    background:
+      radial-gradient(circle at 25% 30%, rgba(167, 139, 250, 0.22) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.20) 0%, transparent 50%),
+      linear-gradient(135deg, var(--bg-deep) 0%, #0f1430 100%);
+  }
+  .reveal section.title-slide .eyebrow {
+    color: var(--accent-sky);
+    font-size: 0.55em;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.8em;
+  }
+  .reveal section.title-slide h1 {
+    font-size: 2.4em;
+    line-height: 1.05;
+    background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 50%, #fb7185 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5em;
+    animation: titleFade 1.2s ease-out;
+  }
+  @keyframes titleFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal section.title-slide .subtitle {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 0.4em;
+  }
+  .reveal section.title-slide .tag {
+    display: inline-block;
+    margin-top: 0.4em;
+    padding: 0.3em 1em;
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-sky);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 999px;
+    font-size: 0.6em;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+  .reveal section.title-slide .presenter-block {
+    margin-top: 1.6em;
+    padding: 0.6em 1.4em;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+  }
+  .reveal section.title-slide .presenter-label {
+    color: var(--accent-violet);
+    font-size: 0.5em;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.15em;
+  }
+  .reveal section.title-slide .presenter-name {
+    color: #ffffff;
+    font-size: 1.0em;
+    font-weight: 600;
+  }
+  .reveal section.title-slide .meta {
+    margin-top: 1.4em;
+    color: var(--text-dim);
+    font-size: 0.55em;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* Section divider */
+  .reveal section.divider {
+    text-align: left;
+    background:
+      radial-gradient(circle at 20% 60%, rgba(56, 189, 248, 0.18) 0%, transparent 55%),
+      radial-gradient(circle at 90% 30%, rgba(167, 139, 250, 0.13) 0%, transparent 55%),
+      linear-gradient(135deg, var(--bg-deep) 0%, #0f1430 100%);
+  }
+  .reveal section.divider .part-label {
+    display: block;
+    color: var(--accent-sky);
+    font-size: 0.6em;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.4em;
+  }
+  .reveal section.divider h1 {
+    font-size: 2.2em;
+    line-height: 1.05;
+    color: #ffffff;
+    margin-bottom: 0.5em;
+  }
+  .reveal section.divider .subtitle {
+    color: var(--text-muted);
+    font-size: 0.7em;
+    max-width: 800px;
+    line-height: 1.5;
+  }
+  .reveal section.divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: linear-gradient(180deg, var(--accent-sky), var(--accent-violet));
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 0.75em 1.05em;
+    border-left: 3px solid var(--accent-sky);
+    margin: 0.35em 0;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.12);
+  }
+  .card.violet  { border-left-color: var(--accent-violet); }
+  .card.violet:hover  { box-shadow: 0 8px 24px rgba(167, 139, 250, 0.15); }
+  .card.emerald { border-left-color: var(--accent-emerald); }
+  .card.emerald:hover { box-shadow: 0 8px 24px rgba(52, 211, 153, 0.12); }
+  .card.amber   { border-left-color: var(--accent-amber); }
+  .card.amber:hover   { box-shadow: 0 8px 24px rgba(251, 191, 36, 0.12); }
+  .card.rose    { border-left-color: var(--accent-rose); }
+  .card.rose:hover    { box-shadow: 0 8px 24px rgba(251, 113, 133, 0.12); }
+  .card h3, .card h4 { margin-top: 0; }
+  .card p { margin: 0.3em 0; font-size: 0.78em; }
+
+  .info-card {
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+    padding: 0.65em 0.95em;
+    font-size: 0.82em;
+    margin: 0.4em 0;
+  }
+  .info-card.violet  { background: rgba(167, 139, 250, 0.08); border-color: rgba(167, 139, 250, 0.2); }
+  .info-card.emerald { background: rgba(52, 211, 153, 0.08);  border-color: rgba(52, 211, 153, 0.2); }
+  .info-card.amber   { background: rgba(251, 191, 36, 0.08);  border-color: rgba(251, 191, 36, 0.25); }
+  .info-card.rose    { background: rgba(251, 113, 133, 0.08); border-color: rgba(251, 113, 133, 0.25); }
+
+  .pill {
+    display: inline-block;
+    padding: 0.12em 0.55em;
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--accent-sky);
+    border-radius: 999px;
+    font-size: 0.65em;
+    font-weight: 500;
+    margin: 0.05em 0.15em;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+  }
+  .pill.violet  { background: rgba(167, 139, 250, 0.16); color: var(--accent-violet); border-color: rgba(167, 139, 250, 0.3); }
+  .pill.emerald { background: rgba(52, 211, 153, 0.16);  color: var(--accent-emerald); border-color: rgba(52, 211, 153, 0.3); }
+  .pill.amber   { background: rgba(251, 191, 36, 0.16);  color: var(--accent-amber); border-color: rgba(251, 191, 36, 0.3); }
+  .pill.rose    { background: rgba(251, 113, 133, 0.16); color: var(--accent-rose); border-color: rgba(251, 113, 133, 0.3); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85em; align-items: stretch; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.65em; align-items: stretch; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.55em; align-items: stretch; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5em; align-items: stretch; }
+
+  svg.diagram {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 8px;
+    width: 100%;
+    height: auto;
+    margin: 0.3em 0;
+    border: 1px solid var(--border-soft);
+  }
+
+  .kpi {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 0.55em 0.85em;
+    text-align: center;
+    border-top: 3px solid var(--accent-sky);
+    transition: transform 200ms ease;
+  }
+  .kpi:hover { transform: translateY(-3px); }
+  .kpi.violet  { border-top-color: var(--accent-violet); }
+  .kpi.emerald { border-top-color: var(--accent-emerald); }
+  .kpi.amber   { border-top-color: var(--accent-amber); }
+  .kpi.rose    { border-top-color: var(--accent-rose); }
+  .kpi-value {
+    font-family: 'JetBrains Mono', monospace;
+    color: #ffffff;
+    font-size: 1.4em;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .kpi-label {
+    color: var(--text-muted);
+    font-size: 0.66em;
+    margin-top: 0.3em;
+    letter-spacing: 0.06em;
+  }
+
+  .quote-box {
+    border-left: 3px solid var(--accent-amber);
+    padding: 0.45em 0.95em;
+    background: rgba(251, 191, 36, 0.06);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 0.82em;
+    margin: 0.4em 0;
+  }
+  .quote-box::before { content: '"'; color: var(--accent-amber); font-size: 1.5em; line-height: 0.5; vertical-align: middle; margin-right: 0.2em; }
+
+  .reveal ul.checklist { list-style: none; padding-left: 0.4em; }
+  .reveal ul.checklist li::before {
+    content: '▸';
+    color: var(--accent-sky);
+    margin-right: 0.5em;
+    font-weight: 700;
+  }
+
+  .reveal .progress { color: var(--accent-sky); height: 4px; }
+  .reveal .slide-number {
+    background: rgba(10, 14, 39, 0.65);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .footer-tag {
+    position: absolute;
+    bottom: 0.3em;
+    right: 0.5em;
+    color: var(--text-dim);
+    font-size: 0.45em;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Bad-vs-good comparison boxes */
+  .bad-good {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7em;
+    margin: 0.4em 0;
+  }
+  .bad-good .bad, .bad-good .good {
+    border-radius: 10px;
+    padding: 0.7em 1em;
+    font-size: 0.78em;
+    transition: all 220ms ease;
+  }
+  .bad-good .bad {
+    background: rgba(251, 113, 133, 0.08);
+    border: 1px solid rgba(251, 113, 133, 0.3);
+  }
+  .bad-good .bad:hover { background: rgba(251, 113, 133, 0.13); }
+  .bad-good .good {
+    background: rgba(52, 211, 153, 0.08);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+  }
+  .bad-good .good:hover { background: rgba(52, 211, 153, 0.13); }
+  .bad-good h4 { margin-bottom: 0.3em; }
+  .bad-good .bad h4  { color: var(--accent-rose); }
+  .bad-good .good h4 { color: var(--accent-emerald); }
+
+  /* Lever / dimension card */
+  .lever {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 0.7em 0.9em;
+    border-bottom: 3px solid var(--accent-sky);
+    transition: transform 220ms ease;
+  }
+  .lever:hover { transform: translateY(-3px); }
+  .lever .lever-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-sky);
+    font-size: 0.7em;
+  }
+  .lever h4 { margin: 0.2em 0 0.3em 0; color: #ffffff; text-transform: none; letter-spacing: 0; font-size: 0.95em; }
+  .lever p { font-size: 0.72em; color: var(--text-muted); margin: 0; }
+  .lever.violet  { border-bottom-color: var(--accent-violet); }
+  .lever.emerald { border-bottom-color: var(--accent-emerald); }
+  .lever.amber   { border-bottom-color: var(--accent-amber); }
+  .lever.rose    { border-bottom-color: var(--accent-rose); }
+
+  @media print {
+    .reveal pre code { font-size: 0.5em; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ═══════════════════════ TITLE ═══════════════════════ -->
+<section class="title-slide">
+  <div class="eyebrow">Module 6</div>
+  <h1>Observability,<br>Evaluation &<br>Responsible AI</h1>
+  <div class="subtitle">From "it seems to work" to "we can prove it works, fairly, in production"</div>
+  <div class="tag">Companion deck for Labs 5.2, 5.3, 6.1 &amp; 6.2</div>
+</section>
+
+<!-- ═══════════════════════ ROADMAP ═══════════════════════ -->
+<section>
+  <h2>What we'll cover today</h2>
+  <div class="grid-3" style="margin-top:0.4em;">
+    <div class="card"><h4>Part 1</h4><p>Why observability for LLM apps — the new operational reality</p></div>
+    <div class="card violet"><h4>Part 2</h4><p>LangSmith — instrumentation, datasets, evaluators, hub (Lab 6.2)</p></div>
+    <div class="card emerald"><h4>Part 3</h4><p>Custom callbacks for audit trails — <code>BaseCallbackHandler</code></p></div>
+  </div>
+  <div class="grid-3" style="margin-top:0.4em;">
+    <div class="card amber"><h4>Part 4</h4><p>Langfuse — open-source observability, self-hosting, data residency (Lab 6.2)</p></div>
+    <div class="card rose"><h4>Part 5</h4><p>3-layer agent eval — routing · quality · trajectory · pass@k (Lab 5.3)</p></div>
+    <div class="card"><h4>Part 6</h4><p>Skills-as-prompts + prompt optimization loop (Lab 5.2)</p></div>
+  </div>
+  <div class="grid-3" style="margin-top:0.4em;">
+    <div class="card violet"><h4>Part 7</h4><p>Responsible AI — PII redaction (Lab 6.1) + Fair-Lending Four-Fifths Rule</p></div>
+    <div class="card emerald"><h4>Part 8</h4><p>Map to the labs</p></div>
+    <div class="card amber"><h4>Goal</h4><p>Instrument, evaluate, and guard a production agent — and know how to test it for fairness</p></div>
+  </div>
+  <div class="info-card amber" style="margin-top:0.5em;">
+    <strong>One sentence summary.</strong> Observability turns LLM apps from <em>magic</em> into <em>engineering</em>; evaluation turns vibes into numbers; responsible-AI turns numbers into release gates.
+  </div>
+  <div class="footer-tag">Roadmap</div>
+</section>
+
+<!-- ═══════════════════════ PART 1 — WHY OBSERVABILITY ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 1</span>
+  <h1>Why observability<br>for LLM apps</h1>
+  <p class="subtitle">Stochastic outputs · multi-step chains · third-party endpoints · per-call dollar costs · hallucinations that look correct. The traditional logging stack was not designed for this.</p>
+</section>
+
+<section>
+  <h2>The new operational reality</h2>
+  <div class="grid-2">
+    <div>
+      <ul class="checklist">
+        <li><strong>Non-determinism.</strong> Same input, different output — even at temperature 0.</li>
+        <li><strong>Token cost is per call.</strong> Every retry, every sub-chain, every tool call shows up on the bill.</li>
+        <li><strong>Latency is variable.</strong> P50 ≠ P95; tail latencies blow SLAs.</li>
+        <li><strong>Hallucinations look correct.</strong> A confident, fluent answer hides the wrong order ID.</li>
+        <li><strong>Multi-step chains.</strong> Failures rarely happen at the surface — they're 4 nodes in.</li>
+        <li><strong>Third-party endpoints.</strong> You can't <code>strace</code> a model running in someone else's data centre.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="info-card violet"><strong>What you need to see.</strong> Per-request: prompt, tool calls (name + args), per-step latency, token in/out, model + version, error trace, judge score, user-id, session-id, deployment env.</div>
+      <div class="info-card emerald"><strong>What you need to query.</strong> "Show me all fraud-router queries last hour with quality score &lt; 3 and latency &gt; 5 s." That's not <code>grep</code>. That's a tracing platform.</div>
+      <div class="info-card amber"><strong>What you need to gate.</strong> A new prompt or model version should not ship until it scores ≥ baseline on the eval suite. Eval = release gate, not retro dashboard.</div>
+    </div>
+  </div>
+  <div class="footer-tag">Part 1 · 1/2</div>
+</section>
+
+<section>
+  <h2>The four pillars of LLM-app observability</h2>
+  <svg class="diagram" viewBox="0 0 1100 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="pillarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
+      </linearGradient>
+    </defs>
+    <g font-family="Inter,sans-serif" font-size="14" fill="#e2e8f0">
+      <!-- Pillar 1 -->
+      <rect x="40"  y="60" width="220" height="200" rx="14" fill="#161c3a" stroke="#38bdf8"/>
+      <rect x="40"  y="60" width="220" height="60"  rx="14" fill="url(#pillarGrad)"/>
+      <text x="150" y="98"  text-anchor="middle" font-weight="700" fill="#fff" font-size="17">TRACES</text>
+      <text x="150" y="148" text-anchor="middle" fill="#94a3b8">per-request</text>
+      <text x="150" y="172" text-anchor="middle">prompt · tool calls</text>
+      <text x="150" y="194" text-anchor="middle">latency · tokens</text>
+      <text x="150" y="216" text-anchor="middle">model + version</text>
+      <text x="150" y="240" text-anchor="middle" fill="#a78bfa" font-style="italic">LangSmith / Langfuse</text>
+
+      <rect x="290" y="60" width="220" height="200" rx="14" fill="#161c3a" stroke="#a78bfa"/>
+      <rect x="290" y="60" width="220" height="60"  rx="14" fill="#a78bfa" fill-opacity="0.25"/>
+      <text x="400" y="98"  text-anchor="middle" font-weight="700" fill="#fff" font-size="17">EVALS</text>
+      <text x="400" y="148" text-anchor="middle" fill="#94a3b8">labelled test sets</text>
+      <text x="400" y="172" text-anchor="middle">routing · quality</text>
+      <text x="400" y="194" text-anchor="middle">trajectory · pass@k</text>
+      <text x="400" y="216" text-anchor="middle">LLM-as-Judge</text>
+      <text x="400" y="240" text-anchor="middle" fill="#a78bfa" font-style="italic">CI gate before release</text>
+
+      <rect x="540" y="60" width="220" height="200" rx="14" fill="#161c3a" stroke="#34d399"/>
+      <rect x="540" y="60" width="220" height="60"  rx="14" fill="#34d399" fill-opacity="0.25"/>
+      <text x="650" y="98"  text-anchor="middle" font-weight="700" fill="#fff" font-size="17">AUDIT</text>
+      <text x="650" y="148" text-anchor="middle" fill="#94a3b8">structured logs</text>
+      <text x="650" y="172" text-anchor="middle">JSON-lines</text>
+      <text x="650" y="194" text-anchor="middle">PII-redacted</text>
+      <text x="650" y="216" text-anchor="middle">retained 7 yrs</text>
+      <text x="650" y="240" text-anchor="middle" fill="#a78bfa" font-style="italic">Custom callback handlers</text>
+
+      <rect x="790" y="60" width="270" height="200" rx="14" fill="#161c3a" stroke="#fbbf24"/>
+      <rect x="790" y="60" width="270" height="60"  rx="14" fill="#fbbf24" fill-opacity="0.25"/>
+      <text x="925" y="98"  text-anchor="middle" font-weight="700" fill="#fff" font-size="17">RESPONSIBLE-AI GATES</text>
+      <text x="925" y="148" text-anchor="middle" fill="#94a3b8">PII redaction</text>
+      <text x="925" y="172" text-anchor="middle">Four-Fifths Rule</text>
+      <text x="925" y="194" text-anchor="middle">disparate-impact check</text>
+      <text x="925" y="216" text-anchor="middle">block release on fail</text>
+      <text x="925" y="240" text-anchor="middle" fill="#a78bfa" font-style="italic">Comprehend · custom guards</text>
+    </g>
+  </svg>
+  <p style="font-size:0.78em;color:var(--text-muted); margin-top:0.4em;">All four pillars compose. A trace platform feeds an eval pipeline; eval scores show up in audit logs; audit logs trigger fairness guardrails. The order matters: <em>traces first</em> — without them, you can't debug, evaluate, or audit anything.</p>
+  <div class="footer-tag">Part 1 · 2/2</div>
+</section>
+
+<!-- ═══════════════════════ PART 2 — LANGSMITH ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 2</span>
+  <h1>LangSmith</h1>
+  <p class="subtitle">The first-party tracing + eval platform from the LangChain team. Three env-vars and every <code>.invoke</code> in your code starts producing structured traces.</p>
+</section>
+
+<section>
+  <h2>Setup is three environment variables</h2>
+  <pre><code class="language-bash">export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=ls_...
+export LANGSMITH_PROJECT="customer-support-router"</code></pre>
+  <p style="font-size:0.82em; color:var(--text-muted);">No code changes. Every LangChain / LangGraph <code>.invoke</code>, <code>.stream</code>, <code>.batch</code> emits a trace tree to LangSmith Cloud (or your self-hosted instance). Tool calls, retries, parser failures, model + version, token counts — all captured automatically.</p>
+  <div class="grid-3" style="margin-top:0.7em;">
+    <div class="card emerald"><h4>Auto</h4><p>chain · sub-chain · LLM call · tool call · output parser · retries</p></div>
+    <div class="card amber"><h4>Manual</h4><p>add custom <code>metadata</code> / <code>tags</code> via <code>RunnableConfig</code></p></div>
+    <div class="card violet"><h4>Filterable</h4><p>by user-id · session · model · latency · error · tag</p></div>
+  </div>
+  <div class="footer-tag">Part 2 · 1/3</div>
+</section>
+
+<section>
+  <h2>Datasets · Evaluators · Experiments</h2>
+  <table>
+    <thead><tr><th style="width:22%">Concept</th><th>What it is</th><th>When to add</th></tr></thead>
+    <tbody>
+      <tr><td><code>Dataset</code></td><td>A versioned list of <code>{input, expected_output}</code> examples.</td><td>Day-1 — even 20 hand-curated cases beats nothing.</td></tr>
+      <tr><td><code>Evaluator</code></td><td>A function (deterministic, LLM-as-Judge, or human) that scores one example.</td><td>One per quality dimension you care about.</td></tr>
+      <tr><td><code>Experiment</code></td><td>Runs a chain over a dataset, applies evaluators, stores the matrix of results.</td><td>Every prompt or model change → new experiment → diff.</td></tr>
+    </tbody>
+  </table>
+  <pre><code class="language-python">from langsmith import Client; from langsmith.evaluation import evaluate
+client = Client()
+client.create_dataset("support-router", description="20 routing test cases")
+def correctness(run, example): return {"score": run.outputs["category"] == example.outputs["category"]}
+results = evaluate(my_chain.invoke, data="support-router", evaluators=[correctness])</code></pre>
+  <div class="footer-tag">Part 2 · 2/3</div>
+</section>
+
+<section>
+  <h2>LangSmith Hub for prompt versioning</h2>
+  <div class="grid-2">
+    <div>
+      <div class="info-card emerald"><strong>Why.</strong> A prompt is a piece of source code. Versioning it in the Hub lets every commit be reviewed, rolled back, A/B-tested.</div>
+      <div class="info-card violet"><strong>Pattern.</strong> <code>hub.push("my-team/router", prompt)</code> from a CI job; <code>hub.pull("my-team/router")</code> at chain init time. Lock to a SHA in production.</div>
+    </div>
+    <div>
+      <pre><code class="language-python">from langchain import hub
+# CI: publish on prompt change
+hub.push("my-team/support-router-v3", prompt_template,
+         parent_commit_hash="abc123")
+
+# Runtime: pull a specific version
+prompt = hub.pull("my-team/support-router-v3:b7d4e9f")
+chain = prompt | llm | StrOutputParser()</code></pre>
+    </div>
+  </div>
+  <div class="quote-box" style="margin-top:0.5em;">"Prompts that ship to production are source code. Treat them like source code — review, version, rollback, test."</div>
+  <div class="footer-tag">Part 2 · 3/3</div>
+</section>
+
+<!-- ═══════════════════════ PART 3 — CUSTOM CALLBACKS ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 3</span>
+  <h1>Custom callbacks<br>for audit trails</h1>
+  <p class="subtitle">When LangSmith Cloud isn't allowed (data residency) or when you need a CloudWatch-shaped, SIEM-friendly JSON-lines record per request.</p>
+</section>
+
+<section>
+  <h2>The callback hook timeline</h2>
+  <svg class="diagram" viewBox="0 0 1100 280" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="JetBrains Mono, monospace" font-size="13" fill="#e2e8f0">
+      <line x1="60" y1="140" x2="1040" y2="140" stroke="#38bdf8" stroke-width="3"/>
+      <!-- ticks -->
+      <g>
+        <circle cx="120"  cy="140" r="9" fill="#38bdf8"/>
+        <text x="120"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_chain_start</text>
+        <text x="120"  y="170" text-anchor="middle" fill="#94a3b8">timer.start</text>
+
+        <circle cx="290"  cy="140" r="9" fill="#a78bfa"/>
+        <text x="290"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_llm_start</text>
+        <text x="290"  y="170" text-anchor="middle" fill="#94a3b8">log prompt + model</text>
+
+        <circle cx="460"  cy="140" r="9" fill="#a78bfa"/>
+        <text x="460"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_llm_end</text>
+        <text x="460"  y="170" text-anchor="middle" fill="#94a3b8">tokens in/out · latency</text>
+
+        <circle cx="640"  cy="140" r="9" fill="#34d399"/>
+        <text x="640"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_tool_start</text>
+        <text x="640"  y="170" text-anchor="middle" fill="#94a3b8">tool name + args</text>
+
+        <circle cx="800"  cy="140" r="9" fill="#34d399"/>
+        <text x="800"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_tool_end</text>
+        <text x="800"  y="170" text-anchor="middle" fill="#94a3b8">result + latency</text>
+
+        <circle cx="970"  cy="140" r="9" fill="#fb7185"/>
+        <text x="970"  y="115" text-anchor="middle" fill="#fff" font-weight="700">on_chain_end</text>
+        <text x="970"  y="170" text-anchor="middle" fill="#94a3b8">total · status</text>
+
+        <text x="60"   y="240" text-anchor="start" fill="#fbbf24">on_chain_error / on_llm_error / on_tool_error  →  log + downgrade severity</text>
+      </g>
+    </g>
+  </svg>
+  <p style="font-size:0.78em;color:var(--text-muted);">Subclass <code>BaseCallbackHandler</code>, override the hooks you need, append a JSON-lines record per event to your audit sink. Compose with retries, latency timers, and PII-redactors — all observe the same chain without modifying it.</p>
+  <div class="footer-tag">Part 3 · 1/2</div>
+</section>
+
+<section>
+  <h2>Audit-handler skeleton</h2>
+  <pre><code class="language-python">from langchain_core.callbacks import BaseCallbackHandler
+import time, json, uuid
+
+class AuditHandler(BaseCallbackHandler):
+    def __init__(self, sink_path: str): self.sink_path, self._t = sink_path, {}
+    def on_llm_start(self, serialized, prompts, run_id, **kw):
+        self._t[run_id] = time.time()
+    def on_llm_end(self, response, run_id, **kw):
+        usage = response.llm_output.get("token_usage", {}) if response.llm_output else {}
+        self._write({"event":"llm_end","run_id":str(run_id),"latency_ms":int((time.time()-self._t[run_id])*1000),
+                     "tokens_in":usage.get("input_tokens"), "tokens_out":usage.get("output_tokens")})
+    def on_tool_end(self, output, run_id, **kw):
+        self._write({"event":"tool_end","run_id":str(run_id),"output_preview":str(output)[:120]})
+    def _write(self, rec): open(self.sink_path,"a").write(json.dumps(rec)+"\n")
+
+agent.invoke({"messages":[...]}, config={"callbacks":[AuditHandler("audit.jsonl")]})</code></pre>
+  <div class="info-card violet" style="margin-top:0.4em;"><strong>Regulatory pattern.</strong> JSON-lines + PII-redacted + write-once + 7-year retention satisfies most banking record-keeping rules. Stream to S3 → Glacier for long-term tier.</div>
+  <div class="footer-tag">Part 3 · 2/2</div>
+</section>
+
+<!-- ═══════════════════════ PART 4 — LANGFUSE ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 4</span>
+  <h1>Langfuse</h1>
+  <p class="subtitle">The open-source observability platform. Same trace model as LangSmith, but you can self-host on prem — the right answer when data residency or sovereignty rules forbid cloud-trace platforms.</p>
+</section>
+
+<section>
+  <h2>LangSmith vs Langfuse — architectural comparison</h2>
+  <svg class="diagram" viewBox="0 0 1100 320" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="Inter,sans-serif" font-size="13" fill="#e2e8f0">
+      <!-- Left: LangSmith -->
+      <rect x="40" y="40" width="490" height="250" rx="14" fill="#161c3a" stroke="#a78bfa" stroke-dasharray="6,4"/>
+      <text x="285" y="68" text-anchor="middle" font-weight="700" fill="#fff" font-size="17">LangSmith Cloud (or LS Self-Hosted)</text>
+      <rect x="70"  y="100" width="180" height="60" rx="8" fill="#1d2447" stroke="#38bdf8"/>
+      <text x="160" y="135" text-anchor="middle">Your app</text>
+      <line x1="250" y1="130" x2="335" y2="130" stroke="#38bdf8" stroke-width="2" marker-end="url(#a)"/>
+      <rect x="335" y="100" width="170" height="60" rx="8" fill="#1d2447" stroke="#a78bfa"/>
+      <text x="420" y="125" text-anchor="middle" fill="#fff">LangChain Inc.</text>
+      <text x="420" y="146" text-anchor="middle" fill="#94a3b8">cloud trace store</text>
+      <text x="285" y="200" text-anchor="middle" fill="#fbbf24" font-style="italic">+ Closed source · per-seat pricing</text>
+      <text x="285" y="225" text-anchor="middle" fill="#fbbf24" font-style="italic">+ Self-hosted is paid (LS Enterprise)</text>
+      <text x="285" y="255" text-anchor="middle" fill="#34d399" font-style="italic">+ Best dev experience · official prompts hub</text>
+
+      <!-- Right: Langfuse -->
+      <rect x="560" y="40" width="500" height="250" rx="14" fill="#161c3a" stroke="#34d399" stroke-dasharray="6,4"/>
+      <text x="810" y="68" text-anchor="middle" font-weight="700" fill="#fff" font-size="17">Langfuse Cloud OR Self-Hosted</text>
+      <rect x="590" y="100" width="180" height="60" rx="8" fill="#1d2447" stroke="#38bdf8"/>
+      <text x="680" y="135" text-anchor="middle">Your app</text>
+      <line x1="770" y1="130" x2="855" y2="130" stroke="#38bdf8" stroke-width="2" marker-end="url(#a)"/>
+      <rect x="855" y="100" width="180" height="60" rx="8" fill="#1d2447" stroke="#34d399"/>
+      <text x="945" y="125" text-anchor="middle" fill="#fff">Your VPC</text>
+      <text x="945" y="146" text-anchor="middle" fill="#94a3b8">Postgres + Clickhouse</text>
+      <text x="810" y="200" text-anchor="middle" fill="#34d399" font-style="italic">+ MIT-licensed · Docker self-host free</text>
+      <text x="810" y="225" text-anchor="middle" fill="#34d399" font-style="italic">+ Data never leaves your boundary</text>
+      <text x="810" y="255" text-anchor="middle" fill="#fbbf24" font-style="italic">+ Smaller hub of integrations vs LangSmith</text>
+
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/></marker></defs>
+    </g>
+  </svg>
+  <div class="footer-tag">Part 4 · 1/2</div>
+</section>
+
+<section>
+  <h2>Three integration patterns · production decision</h2>
+  <div class="grid-3">
+    <div class="card emerald"><h4>Decorator API</h4><pre><code class="language-python">from langfuse.decorators import observe
+
+@observe()
+def run_pipeline(q):
+    return chain.invoke(q)</code></pre><p>Best for plain Python functions outside LangChain.</p></div>
+    <div class="card violet"><h4>LangChain callback</h4><pre><code class="language-python">from langfuse.langchain import CallbackHandler
+
+cb = CallbackHandler(user_id="...")
+chain.invoke(q, config={"callbacks":[cb]})</code></pre><p>Same pattern as LangSmith — drop-in.</p></div>
+    <div class="card amber"><h4>OpenAI SDK wrap</h4><pre><code class="language-python">from langfuse.openai import openai
+
+# every openai.chat.completions.create()
+# is auto-traced</code></pre><p>For raw OpenAI / Anthropic SDK code.</p></div>
+  </div>
+  <div class="info-card violet" style="margin-top:0.4em;"><strong>Decision rule.</strong> Default to LangSmith for dev velocity and the prompts hub. Use Langfuse self-hosted when (a) regulator forbids cloud trace platforms, (b) you need data residency in your VPC, or (c) license cost crosses a few hundred users.</div>
+  <div class="footer-tag">Part 4 · 2/2</div>
+</section>
+
+<!-- ═══════════════════════ PART 5 — 3-LAYER EVAL ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 5</span>
+  <h1>3-layer agent<br>evaluation</h1>
+  <p class="subtitle">Routing accuracy · response quality · trajectory correctness. Each catches a failure mode no other layer can. Plus pass@k for stochastic brittleness.</p>
+</section>
+
+<section>
+  <h2>The 3-layer eval hierarchy</h2>
+  <svg class="diagram" viewBox="0 0 1100 320" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="Inter,sans-serif" font-size="14" fill="#e2e8f0">
+      <!-- L1 -->
+      <rect x="50"  y="40" width="320" height="240" rx="14" fill="#161c3a" stroke="#38bdf8"/>
+      <text x="210" y="78" text-anchor="middle" fill="#fff" font-weight="700" font-size="20">L1 — Routing</text>
+      <text x="210" y="110" text-anchor="middle" fill="#a78bfa" font-style="italic">Did the agent pick the right tool?</text>
+      <text x="210" y="155" text-anchor="middle">Deterministic exact-match</text>
+      <text x="210" y="183" text-anchor="middle">Fast · cheap · run on every release</text>
+      <text x="210" y="225" text-anchor="middle" fill="#34d399">Catches: mis-route</text>
+      <text x="210" y="252" text-anchor="middle" fill="#fbbf24">Misses: bad answer in right category</text>
+      <!-- L2 -->
+      <rect x="390" y="40" width="320" height="240" rx="14" fill="#161c3a" stroke="#a78bfa"/>
+      <text x="550" y="78" text-anchor="middle" fill="#fff" font-weight="700" font-size="20">L2 — Quality</text>
+      <text x="550" y="110" text-anchor="middle" fill="#a78bfa" font-style="italic">Is the answer good?</text>
+      <text x="550" y="155" text-anchor="middle">LLM-as-Judge with rubric</text>
+      <text x="550" y="183" text-anchor="middle">accuracy · completeness · helpfulness · tone</text>
+      <text x="550" y="225" text-anchor="middle" fill="#34d399">Catches: hallucination · poor tone</text>
+      <text x="550" y="252" text-anchor="middle" fill="#fbbf24">Misses: confident-but-wrong-record</text>
+      <!-- L3 -->
+      <rect x="730" y="40" width="320" height="240" rx="14" fill="#161c3a" stroke="#34d399"/>
+      <text x="890" y="78" text-anchor="middle" fill="#fff" font-weight="700" font-size="20">L3 — Trajectory</text>
+      <text x="890" y="110" text-anchor="middle" fill="#a78bfa" font-style="italic">Did it take the right STEPS?</text>
+      <text x="890" y="155" text-anchor="middle">Contains-check on must_contain</text>
+      <text x="890" y="183" text-anchor="middle">(or full tool-call match in prod)</text>
+      <text x="890" y="225" text-anchor="middle" fill="#34d399">Catches: wrong order ID, wrong API</text>
+      <text x="890" y="252" text-anchor="middle" fill="#fbbf24">Needs: labelled trajectory data</text>
+    </g>
+  </svg>
+  <div class="quote-box" style="margin-top:0.4em;">"A response can score 5/5 on quality, route correctly, AND cite the wrong customer's order. Without L3, you'd never know."</div>
+  <div class="footer-tag">Part 5 · 1/2</div>
+</section>
+
+<section>
+  <h2>pass@k · LLM-as-Judge calibration</h2>
+  <div class="grid-2">
+    <div>
+      <div class="info-card emerald"><strong>pass@k</strong> · Run each test <code>k</code> times. <code>pass@1</code> = single-try accuracy; <code>pass@k</code> = at least one of <code>k</code> tries passes. The gap quantifies stochastic brittleness — useful even at temperature 0.</div>
+      <pre><code class="language-python">for trial in range(K):
+    out = agent.invoke(test["query"])
+    trials.append(grade(out))
+pass_at_1 += int(trials[0])
+pass_at_k += int(any(trials))</code></pre>
+    </div>
+    <div>
+      <div class="info-card amber"><strong>LLM-as-Judge biases (and fixes).</strong></div>
+      <ul class="checklist">
+        <li><strong>Self-preference.</strong> Same-family judges inflate ~3–7%. Use a different family (OpenAI judging Anthropic, etc.).</li>
+        <li><strong>Position bias.</strong> A vs B comparisons favour the first option. Randomise order.</li>
+        <li><strong>Verbosity bias.</strong> Judges over-reward longer answers. Anchor the rubric to specific criteria, not "thoroughness".</li>
+        <li><strong>Calibration.</strong> Hold a small human-rated gold set; track judge-vs-human Cohen's κ over time.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-tag">Part 5 · 2/2</div>
+</section>
+
+<!-- ═══════════════════════ PART 6 — SKILLS + OPTIMIZATION ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 6</span>
+  <h1>Skills as prompts +<br>prompt-optimization loop</h1>
+  <p class="subtitle">A skill = a self-contained instruction pack. Load on demand, A/B test, optimize the weakest, ship measurable improvements.</p>
+</section>
+
+<section>
+  <h2>Skills-as-prompts pattern</h2>
+  <div class="bad-good">
+    <div class="bad">
+      <h4>One giant prompt</h4>
+      <p>System message tries to cover claims + support + compliance in one go. Token cost high. Updates risky. Model often mixes domains.</p>
+    </div>
+    <div class="good">
+      <h4>Skills registry</h4>
+      <p>One dict per skill: <code>{name, system_prompt, rules, few_shot}</code>. Classifier picks one. Only that skill is loaded. Updates isolated. Cheap tokens.</p>
+    </div>
+  </div>
+  <pre><code class="language-python">SKILLS = {"claim_processing": {...}, "customer_support": {...}, "compliance_review": {...}}
+def run_skill_agent(q):
+    key = classify_skill(q)
+    sys = SKILLS[key]["system_prompt"] + "\n" + SKILLS[key]["rules"]
+    return (ChatPromptTemplate.from_messages([("system",sys),("user","{q}")]) | llm).invoke({"q":q})</code></pre>
+  <div class="info-card violet" style="margin-top:0.3em;"><strong>Two patterns.</strong> (a) <em>Tool-loaded</em>: the agent calls <code>load_skill</code> as a tool — extra round-trip but fully agentic. (b) <em>Dynamic system prompt</em> (above): classify-then-load — cheaper and faster. Default to (b) for production.</div>
+  <div class="footer-tag">Part 6 · 1/2</div>
+</section>
+
+<section>
+  <h2>The eval-driven optimization loop</h2>
+  <svg class="diagram" viewBox="0 0 1100 280" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="Inter,sans-serif" font-size="13" fill="#e2e8f0">
+      <rect x="40"   y="100" width="170" height="80" rx="10" fill="#1d2447" stroke="#38bdf8"/>
+      <text x="125" y="135" text-anchor="middle" fill="#fff" font-weight="700">A/B test</text>
+      <text x="125" y="160" text-anchor="middle" fill="#94a3b8">V1 vs V2 on fixed set</text>
+      <line x1="210" y1="140" x2="265" y2="140" stroke="#38bdf8" stroke-width="2" marker-end="url(#b)"/>
+
+      <rect x="265" y="100" width="180" height="80" rx="10" fill="#1d2447" stroke="#a78bfa"/>
+      <text x="355" y="135" text-anchor="middle" fill="#fff" font-weight="700">Identify weakest</text>
+      <text x="355" y="160" text-anchor="middle" fill="#94a3b8">domain · skill · category</text>
+      <line x1="445" y1="140" x2="500" y2="140" stroke="#a78bfa" stroke-width="2" marker-end="url(#b)"/>
+
+      <rect x="500" y="100" width="180" height="80" rx="10" fill="#1d2447" stroke="#34d399"/>
+      <text x="590" y="135" text-anchor="middle" fill="#fff" font-weight="700">Analyse failures</text>
+      <text x="590" y="160" text-anchor="middle" fill="#94a3b8">meta-LLM proposes patch</text>
+      <line x1="680" y1="140" x2="735" y2="140" stroke="#34d399" stroke-width="2" marker-end="url(#b)"/>
+
+      <rect x="735" y="100" width="180" height="80" rx="10" fill="#1d2447" stroke="#fbbf24"/>
+      <text x="825" y="135" text-anchor="middle" fill="#fff" font-weight="700">Apply patch · V2</text>
+      <text x="825" y="160" text-anchor="middle" fill="#94a3b8">edit rules in registry</text>
+      <line x1="915" y1="140" x2="970" y2="140" stroke="#fbbf24" stroke-width="2" marker-end="url(#b)"/>
+
+      <rect x="970" y="100" width="100" height="80" rx="10" fill="#1d2447" stroke="#fb7185"/>
+      <text x="1020" y="135" text-anchor="middle" fill="#fff" font-weight="700">Re-eval</text>
+      <text x="1020" y="160" text-anchor="middle" fill="#94a3b8">Δ ≥ 0?</text>
+
+      <path d="M 1020 180 Q 1020 240 555 240 Q 90 240 90 180" stroke="#fb7185" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#b)"/>
+      <text x="555" y="265" text-anchor="middle" fill="#fb7185" font-style="italic">repeat until lift plateaus</text>
+
+      <defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+    </g>
+  </svg>
+  <p style="font-size:0.78em;color:var(--text-muted);">Every prompt change is justified by a measurable score delta on a fixed test set. No vibes-based tuning. This is the engineering loop that separates a research demo from a production product.</p>
+  <div class="footer-tag">Part 6 · 2/2</div>
+</section>
+
+<!-- ═══════════════════════ PART 7 — RESPONSIBLE AI ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 7</span>
+  <h1>Responsible AI<br>for lending</h1>
+  <p class="subtitle">PII redaction (Comprehend) · disparate-impact analysis (Four-Fifths Rule) · fairness as a release gate, not a dashboard.</p>
+</section>
+
+<section>
+  <h2>PII redaction pipeline as a callback</h2>
+  <pre><code class="language-python">def redact_pii(text: str) -> tuple[str, list[dict]]:
+    pii = comprehend.detect_pii_entities(Text=text, LanguageCode="en")["Entities"]
+    redacted = text
+    # Sort right-to-left so each splice doesn't shift the next offset
+    for p in sorted(pii, key=lambda e: e["BeginOffset"], reverse=True):
+        redacted = redacted[:p["BeginOffset"]] + f"[{p['Type']}]" + redacted[p["EndOffset"]:]
+    return redacted, pii
+
+# Compose into the chain BEFORE the model
+chain = RunnableLambda(lambda s: {**s, "user_text": redact_pii(s["user_text"])[0]}) \
+        | summarise_prompt | llm</code></pre>
+  <div class="grid-3" style="margin-top:0.4em;">
+    <div class="card emerald"><h4>Comprehend wins</h4><p>cheap · fast · deterministic · span-accurate · regulator-friendly audit story</p></div>
+    <div class="card amber"><h4>Comprehend gaps</h4><p>Aadhaar / PAN / GSTIN · context spread across sentences · custom internal IDs</p></div>
+    <div class="card violet"><h4>Production pattern</h4><p>Comprehend first → regex pass for India IDs → LLM fallback on high-stakes channels</p></div>
+  </div>
+  <div class="footer-tag">Part 7 · 1/3</div>
+</section>
+
+<section>
+  <h2>Fair-Lending pipeline with the Four-Fifths guardrail</h2>
+  <svg class="diagram" viewBox="0 0 1100 260" xmlns="http://www.w3.org/2000/svg">
+    <g font-family="Inter,sans-serif" font-size="13" fill="#e2e8f0">
+      <rect x="40"  y="80" width="170" height="100" rx="10" fill="#1d2447" stroke="#38bdf8"/>
+      <text x="125" y="115" text-anchor="middle" fill="#fff" font-weight="700">200 applications</text>
+      <text x="125" y="138" text-anchor="middle" fill="#94a3b8">income · credit_score</text>
+      <text x="125" y="158" text-anchor="middle" fill="#94a3b8">+ race · gender (held out)</text>
+
+      <line x1="210" y1="130" x2="265" y2="130" stroke="#38bdf8" stroke-width="2" marker-end="url(#c)"/>
+
+      <rect x="265" y="80"  width="180" height="100" rx="10" fill="#1d2447" stroke="#a78bfa"/>
+      <text x="355" y="115" text-anchor="middle" fill="#fff" font-weight="700">Loan agent (LLM)</text>
+      <text x="355" y="138" text-anchor="middle" fill="#94a3b8">sees only financial fields</text>
+      <text x="355" y="158" text-anchor="middle" fill="#94a3b8">decides approve / deny</text>
+
+      <line x1="445" y1="130" x2="500" y2="130" stroke="#a78bfa" stroke-width="2" marker-end="url(#c)"/>
+
+      <rect x="500" y="80"  width="220" height="100" rx="10" fill="#1d2447" stroke="#fbbf24"/>
+      <text x="610" y="115" text-anchor="middle" fill="#fff" font-weight="700">Approval rate by group</text>
+      <text x="610" y="138" text-anchor="middle" fill="#94a3b8">rate(group) / max(rate)</text>
+      <text x="610" y="158" text-anchor="middle" fill="#94a3b8">≥ 0.80 ?</text>
+
+      <line x1="720" y1="130" x2="775" y2="130" stroke="#fbbf24" stroke-width="2" marker-end="url(#c)"/>
+
+      <rect x="775" y="80"  width="290" height="100" rx="10" fill="#1d2447" stroke="#fb7185"/>
+      <text x="920" y="115" text-anchor="middle" fill="#fff" font-weight="700">Fairness guardrail</text>
+      <text x="920" y="138" text-anchor="middle" fill="#34d399">PASS → release</text>
+      <text x="920" y="158" text-anchor="middle" fill="#fb7185">FAIL → block + remediate</text>
+
+      <defs><marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+    </g>
+  </svg>
+  <pre><code class="language-python">def fairness_guardrail(decisions, attrs, threshold=0.80):
+    for a in attrs:
+        rates = decisions.groupby(a)["approved"].mean()
+        if (rates / rates.max() < threshold).any():
+            raise FairnessGuardrailFailure(f"{a}: ratio < 0.80 — release blocked")</code></pre>
+  <div class="footer-tag">Part 7 · 2/3</div>
+</section>
+
+<section>
+  <h2>Disparate impact vs disparate treatment</h2>
+  <div class="bad-good">
+    <div class="bad">
+      <h4>Disparate treatment (intent)</h4>
+      <p>The model uses a protected attribute (race / gender / religion) as an explicit input. <strong>Illegal regardless of outcome.</strong></p>
+      <p style="margin-top:0.4em; color:var(--text-muted);">Easy to defend: just don't pass the attribute.</p>
+    </div>
+    <div class="good">
+      <h4>Disparate impact (outcome)</h4>
+      <p>The model's decisions correlate with a protected attribute even though it isn't an input. <strong>Tested via the Four-Fifths Rule.</strong></p>
+      <p style="margin-top:0.4em; color:var(--text-muted);">Hard to defend: proxies (zip code, name, credit-score history) leak the attribute even when removed from inputs. Requires <em>business-necessity justification</em>.</p>
+    </div>
+  </div>
+  <div class="info-card amber"><strong>Proxy discrimination.</strong> An agent that never receives race or gender can still produce disparate impact through income and credit-score proxies. <em>That is the textbook fair-lending failure mode.</em> Fairness audits must measure outcomes, not just check that the protected attribute isn't passed in.</div>
+  <div class="footer-tag">Part 7 · 3/3</div>
+</section>
+
+<!-- ═══════════════════════ PART 8 — MAP TO LABS ═══════════════════════ -->
+<section class="divider">
+  <span class="part-label">Part 8</span>
+  <h1>Map to the labs</h1>
+  <p class="subtitle">Each slide informs a specific lab section. Use this as your in-class navigation guide.</p>
+</section>
+
+<section>
+  <h2>Slide → Lab cross-reference</h2>
+  <table>
+    <thead><tr><th style="width:22%">Lab</th><th>Slides that inform it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lab 6.2</strong> — Observability with LangSmith &amp; Langfuse</td>
+          <td>Part 1 (the four pillars), Part 2 (LangSmith setup, Datasets/Evaluators/Experiments, Hub), Part 3 (callback hook timeline + audit handler skeleton), Part 4 (architectural comparison + three integration patterns + production decision rule)</td></tr>
+      <tr><td><strong>Lab 5.3</strong> — Agent Eval Suite</td>
+          <td>Part 5 (3-layer hierarchy + pass@k + LLM-as-Judge biases)</td></tr>
+      <tr><td><strong>Lab 5.2</strong> — Reusable Skills &amp; Prompt Optimization</td>
+          <td>Part 6 (skills-as-prompts + the optimization loop)</td></tr>
+      <tr><td><strong>Lab 6.1</strong> — Four-Layer Guardrails</td>
+          <td>Part 7 (PII redaction pipeline; the fair-lending material is for discussion)</td></tr>
+    </tbody>
+  </table>
+  <div class="info-card violet" style="margin-top:0.5em;"><strong>What to bring to each lab.</strong> A populated <code>.env</code> with <code>OPENAI_API_KEY</code> (every lab), <code>ANTHROPIC_API_KEY</code> (Labs 5.2, 5.3 and 6.2), and <code>LANGSMITH_API_KEY</code> + <code>LANGFUSE_PUBLIC_KEY</code> + <code>LANGFUSE_SECRET_KEY</code> (Lab 6.2).</div>
+  <div class="footer-tag">Part 8 · 1/1</div>
+</section>
+
+<!-- ═══════════════════════ END / Q&A ═══════════════════════ -->
+<section class="title-slide">
+  <div class="eyebrow">End of Module 6</div>
+  <h1>Questions?</h1>
+  <div class="subtitle">Next up: open Lab 6.2 — Observability with LangSmith &amp; Langfuse.<br>
+    Make sure your <code>.env</code> has <code>LANGSMITH_TRACING=true</code> and a valid <code>LANGSMITH_API_KEY</code>.</div>
+  <div class="meta">Module 6 · Observability, Evaluation & Responsible AI</div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280,
+    height: 720,
+    margin: 0.04,
+    minScale: 0.2,
+    maxScale: 2.0,
+    hash: true,
+    slideNumber: 'c/t',
+    controls: true,
+    progress: true,
+    center: false,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'fade',
+    pdfSeparateFragments: false,
+    plugins: [RevealHighlight, RevealZoom, RevealSearch],
+  });
+</script>
+</body>
+</html>

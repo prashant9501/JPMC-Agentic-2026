@@ -1,8 +1,8 @@
 # Agentic AI Mastery — Hands-On Labs
 
 Design, build, evaluate, deploy and secure AI agents. This repository holds the hands-on labs, the data
-files they read and the slide decks for the program. **Modules 1 to 5 are here now**; each later module is
-added to this repository before its sessions.
+files they read and the slide decks for the program. **Modules 1 to 6 are here now**; Module 7 is added
+to this repository before its sessions.
 
 ## The program, module by module
 
@@ -13,7 +13,7 @@ added to this repository before its sessions.
 | **3 · Multi-Agent Architectures in LangGraph** | Supervisor, orchestrator-worker, evaluator-optimizer, swarm and reflection patterns — **Project 2**, a multi-agent customer-support system, and **Project 3**, a compliance report generator. **Available now — see the labs below.** |
 | **4 · Multi-Framework Agent Development** | The OpenAI Agents SDK (handoffs, guardrails, tracing), a realtime voice agent, CrewAI (**Project 4**, a content pipeline) and AutoGen — and how to choose between frameworks. **Available now — see the labs below.** |
 | **5 · Context Engineering & Agent Evaluations** | Context-window budgeting and compaction, reusable skills and prompt optimization, and three layers of evaluation: LLM, RAG and agent evals, with LLM-as-judge and pass@k. **Available now — see the labs below.** |
-| **6 · Guardrails, Security, Observability & MCP/A2A** | A four-layer guardrail stack (prompt injection, PII redaction, output safety, human review), tracing with LangSmith and Langfuse, the Model Context Protocol and Agent-to-Agent protocol — **Project 5**, secure insurance-claims processing. |
+| **6 · Guardrails, Security, Observability & MCP/A2A** | A four-layer guardrail stack (prompt injection, PII redaction, output safety, human review), tracing with LangSmith and Langfuse, the Model Context Protocol and Agent-to-Agent protocol — **Project 5**, secure insurance-claims processing. **Available now — see the labs below.** |
 | **7 · Production Deployment & Advanced Agents** | From notebook to service: FastAPI, Chainlit, Docker, nginx and AWS; managed models on AWS Bedrock; Google's Agent Development Kit (**Project 6**); multimodal agents. |
 
 ## Module 1 labs
@@ -120,6 +120,30 @@ folder next to the notebook and keep its name.
 - `Lab_5.4 Files/docs/` — Project 1's five investment-policy PDFs.
 - Lab 5.2 needs no data files.
 
+## Module 6 labs
+
+| Lab | Title | What you do |
+|---|---|---|
+| 6.1 | Four-Layer Guardrails: A Stack That Admits What It Misses | Wrap the ShopSmart support agent in four guardrail layers — prompt-injection screening, input sanitization, PII redaction with Presidio, and output safety — then run an adversarial suite that is written to find what the layers miss, and report it. |
+| 6.2 | Observability with LangSmith & Langfuse | Trace the same ShopSmart routing agent in LangSmith and in Langfuse — tool calls, latency, cost, sessions and custom scores — and use the traces to answer the questions a production team gets asked, without archiving the customer's personal data. |
+| 6.3 | MCP & A2A Protocol Deep Dive | Build a banking MCP server with FastMCP (tools, resources and prompts), call it over stdio and as a shared HTTP service, give an agent its read-only tools, then publish and discover A2A agent cards. |
+| 6.4 | ⭐ **Project 5:** Secure Insurance Claims with MCP & A2A | A claims MCP server over the SecureLife database, A2A agent cards that split read and write privileges, and a guarded five-node LangGraph pipeline — triage, document check, fraud analysis, decision and compliance audit — traced in Langfuse and put through an adversarial test. |
+
+### Slide decks
+
+- *Observability, Evaluation & Responsible AI* (`Observability_Evaluation_Responsible_AI.html`) — the
+  companion deck for Labs 5.2, 5.3, 6.1 and 6.2.
+- *MCP — Part 1* and *MCP — Parts 2 & 3* (`MCP - Part 1.html`, `MCP - Part 2&3.html`) — for Labs 6.3 and 6.4.
+
+### Data files
+
+As in Modules 3 and 5, each lab's data files sit in a **`Lab_6.N Files`** folder beside its notebook.
+
+- `Lab_6.1 Files/` and `Lab_6.2 Files/` — the ShopSmart customers, orders, products, support tickets and
+  policies (each lab has its own copy).
+- `Lab_6.4 Files/` — `SecureLife_claims.db`, the insurance-claims SQLite database.
+- Lab 6.3 needs no data files.
+
 ## Getting the labs onto your VM
 
 Your training VM is already set up: a course folder on the Desktop holds the Python environment (`.venv`).
@@ -168,6 +192,8 @@ GROQ_API_KEY=...
 LANGSMITH_API_KEY=...
 TAVILY_API_KEY=...
 WEATHER_API_KEY=...
+LANGFUSE_PUBLIC_KEY=...
+LANGFUSE_SECRET_KEY=...
 ```
 
 Every lab finds this file from its module folder. Because it sits outside `JPMC-Agentic-2026`, git never
@@ -176,14 +202,16 @@ uploads it and never overwrites it. Never paste a key into a notebook cell.
 | Key | Used by |
 |---|---|
 | `OPENAI_API_KEY` | every lab |
-| `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8, and Labs 5.1–5.4 (their judge models) |
+| `ANTHROPIC_API_KEY` | Labs 1.1, 1.4 and 1.8, Labs 5.1–5.4 (their judge models) and Lab 6.2 |
 | `GEMINI_API_KEY` | Labs 1.1 and 1.4 |
 | `GROQ_API_KEY` | Labs 1.1, 1.5 and 2.1 |
-| `LANGSMITH_API_KEY` | Lab 1.5 (optional tracing in Lab 3.2) |
+| `LANGSMITH_API_KEY` | Labs 1.5 and 6.2 (optional tracing in Lab 3.2) |
 | `TAVILY_API_KEY` | Labs 2.1 and 2.2 |
 | `WEATHER_API_KEY` | Lab 2.1 |
+| `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` | Labs 6.2 and 6.4. They point at Langfuse's EU cloud; for a project in another region, add `LANGFUSE_HOST` (for example `https://us.cloud.langfuse.com`). |
 
-Later modules need a few more keys; your instructor will give them to you with those modules.
+Lab 6.2 checks for all five of its keys (OpenAI, Anthropic, LangSmith and both Langfuse keys) before it
+starts. Module 7 may need a few more; your instructor will give them to you with that module.
 
 ### 4. Get new modules and updates
 
@@ -226,11 +254,18 @@ Open each notebook from its own module folder: the labs read their data with pat
 - Some labs write working files as they run: `data.csv` and `chat_data.json` in Lab 1.6, the
   `chroma_banking/` and `banking_faiss_index/` vector stores in Lab 1.7, and the `quickloan_checkpoints.sqlite`
   checkpoint database in Lab 2.6, the `skills/` folder of `SKILL.md` files in Lab 5.2, and in Lab 5.3 the
-  `test_shopsmart_evals.py` gate with its `.github/workflows/` CI template. They are recreated on every run,
-  so deleting them is always safe.
-- The LangGraph labs (2.2–2.6 and 3.1–3.4) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
+  `test_shopsmart_evals.py` gate with its `.github/workflows/` CI template, and in Lab 6.3 the
+  `banking_mcp_server.py` server it writes, its `.log` files and the `a2a_card_site/` folder. They are
+  recreated on every run, so deleting them is always safe.
+- Lab 6.4 writes to its database as it runs (status changes and audit rows in `SecureLife_claims.db`). To
+  start from a clean database, copy `Lab_6.4 Files/SecureLife_claims.db` again from `JPMC-Agentic-2026`.
+- Lab 6.3 starts its MCP server as a background process on port 8765 and stops it in Section 12. If you leave
+  the lab before then, run Section 12 anyway, or the server keeps the port busy.
+- The LangGraph labs (2.2–2.6, 3.1–3.4 and 6.4) draw each graph with `draw_mermaid_png()`, which calls the mermaid.ink web
   service — the VM needs internet access for those cells.
 - Lab 1.8 downloads a small re-ranking model from Hugging Face the first time it runs.
+- Lab 6.1's PII layer uses Presidio with spaCy's small English model, `en_core_web_sm`. If the lab reports
+  the model missing, run the install lines in its Section 6 (they are commented out).
 - **Lab 4.2's live voice call (its Section 5) needs a microphone and headphones** on the machine that runs the
   notebook. On the training VM it works only if your remote-desktop connection passes your microphone and
   audio through; if it does not, follow your instructor's demonstration for that section. Every other section
